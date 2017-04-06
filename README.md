@@ -14,7 +14,7 @@ operating system (e.g. Centos7) is required.
 	ipbb init build
 	cd build
 	ipbb add git https://github.com/ipbus/ipbus-firmware.git -b ipbus_2_0_v1
-	ipbb add git git@bitbucket.org:david_newbold/firmware.git -b v8
+	ipbb add git https://your_id@bitbucket.org/solidexperiment/solid_firmware.git -b v8
 	ipbb proj create vivado 64chan firmware:projects/64chan_test
 	cd proj/64chan
 	ipbb vivado project
