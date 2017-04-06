@@ -1,0 +1,10 @@
+src state_history.vhd
+src -c components/ipbus_core ipbus_fabric_sel.vhd
+src ipbus_decode_state_history.vhd
+addrtab -t state_history.xml
+src -c components/ipbus_slaves ipbus_ported_sdpram72.vhd
+include -c components/ipbus_slaves syncreg_v.dep
+src mp7_ttc_decl.vhd
+src -c components/ipbus_slaves ipbus_reg_types.vhd
+src -c components/ipbus_core ipbus_package.vhd
+

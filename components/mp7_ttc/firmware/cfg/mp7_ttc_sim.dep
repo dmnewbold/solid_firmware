@@ -1,0 +1,2 @@
+src ../sim_hdl/mp7_ttc_sim.vhd ../sim_hdl/ttc_clocks_sim.vhd
+include mp7_ttc_common.dep

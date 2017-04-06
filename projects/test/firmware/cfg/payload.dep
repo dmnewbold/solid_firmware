@@ -1,0 +1,9 @@
+src payload.vhd sync_routing.vhd
+src -c components/ipbus_core ipbus_fabric_sel.vhd
+src ipbus_decode_top.vhd
+addrtab -t top.xml
+src -c components/ipbus_slaves ipbus_ctrlreg_v.vhd
+include -c projects/solid/components sc_io.dep
+include -c projects/solid/components sc_timing.dep
+include -c projects/solid/components sc_chan_standalone.dep
+src -c components/ipbus_slaves ipbus_reg_types.vhd

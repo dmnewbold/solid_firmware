@@ -1,0 +1,6 @@
+src sc_seq.vhd
+src -c ipbus-firmware:components/ipbus_slaves ipbus_ported_dpram.vhd
+include -c ipbus-firmware:components/ipbus_slaves ipbus_ctrs_ported.dep
+src ipbus_decode_sc_seq.vhd
+addrtab -t sc_seq.xml
+src -c ipbus-firmware:components/ipbus_slaves ipbus_reg_types.vhd

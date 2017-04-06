@@ -1,0 +1,8 @@
+src sc_trig.vhd sc_local_trig.vhd sc_trig_ro_block.vhd sc_deadtime_mon.vhd 
+src sc_trig_gen_random.vhd sc_trig_gen_thresh.vhd
+src sc_npeaks.vhd sc_npeaks_thresh.vhd sc_tot.vhd sc_tot_thresh.vhd sc_thresh.vhd
+include sc_seq.dep
+src ipbus_decode_sc_trig.vhd
+addrtab -t sc_trig.xml
+include -c ipbus-firmware:components/ipbus_slaves syncreg_v.dep
+src -c ipbus-firmware:components/ipbus_slaves ipbus_reg_types.vhd

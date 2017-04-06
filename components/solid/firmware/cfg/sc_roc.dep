@@ -1,0 +1,6 @@
+src sc_roc.vhd occ_histo_unscaled.vhd sc_derand.vhd
+src -c ipbus-firmware:components/ipbus_util big_fifo_36.vhd
+src -c ipbus-firmware:components/ipbus_core ipbus_fabric_sel.vhd
+src ipbus_decode_sc_roc.vhd
+addrtab -t sc_roc.xml
+src -c ipbus-firmware:components/ipbus_slaves ipbus_ctrlreg_v.vhd ipbus_reg_types.vhd

@@ -1,0 +1,9 @@
+src sc_channels_standalone.vhd
+src -c ipbus-firmware:components/ipbus_core ipbus_fabric_sel.vhd
+src sc_chan_standalone.vhd
+src -c ipbus-firmware:components/ipbus_core ipbus_fabric_sel.vhd
+src ipbus_decode_sc_chan_standalone.vhd
+addrtab -t sc_chan_standalone.xml
+src -c ipbus-firmware:components/ipbus_slaves ipbus_ctrlreg_v.vhd
+src sc_input_serdes.vhd sc_cap_fifo_16.vhd
+src -c ipbus-firmware:components/ipbus_slaves ipbus_reg_types.vhd

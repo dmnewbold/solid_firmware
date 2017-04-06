@@ -1,0 +1,3 @@
+include -c boards/pc051b/base_fw/synth pc051b.dep
+include payload.dep
+src top_decl.vhd

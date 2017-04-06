@@ -1,0 +1,2 @@
+src mp7_ttc.vhd ttc_clocks.vhd
+include mp7_ttc_common.dep
