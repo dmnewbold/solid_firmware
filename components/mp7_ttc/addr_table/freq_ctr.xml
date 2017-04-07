@@ -1,4 +1,4 @@
-<node description="Frequency counter" fwinfo="endpoint;width=1">
+<node id="freq_ctr" description="Frequency counter" fwinfo="endpoint;width=1">
 	<node id="ctrl" address="0x0">
 		<node id="chan_sel" mask="0xf"/>
 		<node id="en_crap_mode" mask="0x10"/>
