@@ -239,10 +239,7 @@ begin
 			mark => mark,
 			sctr => sctr(BLK_RADIX - 1 downto 0),
 			keep => keep_i,
-			veto => veto_i,
-			rveto => rveto,
-			trig_q => lq,
-			trig_valid => lvalid
+			veto => veto_i
 		);
 
 end rtl;

@@ -27,17 +27,14 @@ entity sc_deadtime_mon is
 		mark: in std_logic;
 		sctr: in std_logic_vector(BLK_RADIX - 1 downto 0);
 		keep: in std_logic_vector(N_CHAN - 1 downto 0);
-		veto: in std_logic_vector(N_CHAN - 1 downto 0);
-		rveto: in std_logic;
-		trig_q: in std_logic_vector(15 downto 0);
-		trig_valid: in std_logic
+		veto: in std_logic_vector(N_CHAN - 1 downto 0)
 	);
 
 end sc_deadtime_mon;
 
 architecture rtl of sc_deadtime_mon is
 
-	constant ADDR_BITS: integer := calc_width(N_CHAN + N_TRG) + 2;
+	constant ADDR_BITS: integer := calc_width(N_CHAN) + 2;
 	signal c: unsigned(1 downto 0);
 	signal en_i, first: std_logic;
 	signal d_ram, q_ram: std_logic_vector(31 downto 0);
@@ -45,9 +42,6 @@ architecture rtl of sc_deadtime_mon is
 	signal we, inc, done, p: std_logic;
 	signal sel: integer range 2 ** (ADDR_BITS - 1) - 1 downto 0 := 0;
 	signal sel_c: integer range N_CHAN - 1 downto 0 := 0;
-	signal sel_t: integer range N_TRG - 1 downto 0 := 0;
-	signal tnum: integer range 15 downto 0 := 0;
-	signal tlatch: std_logic_vector(N_TRG - 1 downto 0);
 	
 begin
 
@@ -78,23 +72,8 @@ begin
 				first <= en and not en_i;
 			elsif and_reduce(sctr(BLK_RADIX - 2 downto 0)) = '1' then
 				done <= '0';
-			elsif sel = N_CHAN + N_TRG then
+			elsif sel = N_CHAN then
 				done <= '1';
-			end if;
-		end if;
-	end process;
-	
--- Trigger latch
-
-	tnum <= to_integer(unsigned(trig_q(3 downto 0)));
-
-	process(clk40)
-	begin
-		if rising_edge(clk40) then
-			if rst40 = '1' or mark = '1' then
-				tlatch <= (others => '0');
-			elsif trig_valid = '1' then
-				tlatch(tnum) <= '1';
 			end if;
 		end if;
 	end process;
@@ -126,17 +105,11 @@ begin
 
 	sel <= to_integer(unsigned(sctr(ADDR_BITS - 1 downto 1)));
 	sel_c <= sel when sel < N_CHAN else 0;
-	sel_t <= sel - N_CHAN when sel > N_CHAN - 1 and sel < N_CHAN + N_TRG else 0;
-	p <= '0' when sel < N_CHAN else '1';
 	
-	with std_logic_vector'(p & sctr(0) & c(1)) select inc <=
-		'1' when "000",
-		keep(sel_c) when "001",
-		veto(sel_c) when "010",
-		keep(sel_c) and veto(sel_c) when "011",
-		'1' when "100",
-		tlatch(sel_t) when "101",
-		rveto when "110",
-		tlatch(sel_t) and rveto when others;
+	with std_logic_vector'(sctr(0) & c(1)) select inc <=
+		'1' when "00",
+		keep(sel_c) when "01",
+		veto(sel_c) when "10",
+		keep(sel_c) and veto(sel_c) when others;
 		
 end rtl;
