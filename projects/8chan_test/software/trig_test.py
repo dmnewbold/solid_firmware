@@ -43,8 +43,8 @@ for j in range(100):
 
 	sleep(1)
 	
-	board.getNode("seq.ctrs.addr").write(0)
-	tv = board.getNode("seq.ctrs.data").readBlock(2)
+	board.getNode("trig.seq.ctrs.addr").write(0)
+	tv = board.getNode("trig.seq.ctrs.data").readBlock(2)
 	board.dispatch()
 	
 	for i in range(len(tv)):
