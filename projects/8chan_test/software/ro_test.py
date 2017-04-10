@@ -25,7 +25,7 @@ def dump():
 	print "Evt_ctr: %08x Trig_stat: %08x Roc_stat: %08x Buf_cnt: %08x Roc_tot: %08x Chan_stat: %08x Wctr: %08x" % (int(b0), int(b1), int(b2), int(b3), int(b4), int(b5), int(b6))
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.1:50001", "file://addr_tab/top.xml")
+board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.1:50001", "file://addrtab/top.xml")
 #board.getClient().setTimeoutPeriod(10000)
 
 v = board.getNode("csr.id").read()
