@@ -69,18 +69,20 @@ begin
 			trig => trig(0)
 		);
 		
-	trg1: entity work.sc_npeaks_thresh
-		generic map(
-			VAL_WIDTH => VAL_WIDTH
-		)
-		port map(
-			clk => clk40,
-			rst => rst40,
-			req => req,
-			d => d,
-			threshold_trig => threshold_sig,
-			threshold_fe => threshold_fe,
-			trig => trig(1)
-		);
+	-- trg1: entity work.sc_npeaks_thresh
+		-- generic map(
+			-- VAL_WIDTH => VAL_WIDTH
+		-- )
+		-- port map(
+			-- clk => clk40,
+			-- rst => rst40,
+			-- req => req,
+			-- d => d,
+			-- threshold_trig => threshold_sig,
+			-- threshold_fe => threshold_fe,
+			-- trig => trig(1)
+		-- );
+		
+	trig(1) <= '0';
 		
 end rtl;
