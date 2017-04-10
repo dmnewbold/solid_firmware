@@ -1,7 +1,7 @@
 src ../sim_hdl/payload_sim.vhd
-src -c components/ipbus_core ipbus_fabric_sel.vhd
+src -c ipbus-firmware:components/ipbus_core ipbus_fabric_sel.vhd
 src ipbus_decode_top.vhd
 addrtab -t top.xml
-src -c components/ipbus_slaves ipbus_ctrlreg_v.vhd
-src -c components/ipbus_slaves ipbus_reg_types.vhd
-src -c components/ipbus_core ipbus_package.vhd
+src -c ipbus-firmware:components/ipbus_slaves ipbus_ctrlreg_v.vhd
+src -c ipbus-firmware:components/ipbus_slaves ipbus_reg_types.vhd
+src -c ipbus-firmware:components/ipbus_core ipbus_package.vhd
