@@ -98,7 +98,7 @@ def main_reliability():
 	#Parameters
 	totaltests=100000
 	loggingperiod=100000/10
-	nodes=["reg","io.clock_i2c.data","ctrl_reg.id"] #leave emty if every node should be checked
+	nodes=["reg","io.clock_i2c.data","csr.id"] #leave emty if every node should be checked
 
 	#Logfile
 	logfile = open("talk.log","w")
@@ -156,7 +156,7 @@ def main_dac():
 	init_board(library,deviceaddress,xmlfile)
 	sleeptime=0.01
 	# initialize registers
-	id=init_node("ctrl_reg.id")	
+	id=init_node("csr.id")	
 	ctrl=init_node("io.analog_i2c.ctrl")	
 	ps_lo=init_node("io.analog_i2c.ps_lo")	
 	ps_hi=init_node("io.analog_i2c.ps_hi")	
@@ -203,9 +203,9 @@ def main_clockconfig():
 	ps_hi=init_node("io.clock_i2c.ps_hi")	
 	data=init_node("io.clock_i2c.data")	
 	cmd_stat=init_node("io.clock_i2c.cmd_stat")	
-	soft_rst=init_node("ctrl_reg.ctrl.soft_rst")	
+	soft_rst=init_node("csr.ctrl.soft_rst")	
 	si5326_rst=init_node("io.csr.ctrl.si5326_rst")	
-	id=init_node("ctrl_reg.id")	
+	id=init_node("csr.id")	
 	# soft reset
 	#writereg(soft_rst,0x1)
 	# enable I2C
@@ -337,7 +337,7 @@ def main_freq():
 
 def main_reset():
 	init_board(library,deviceaddress,xmlfile)
-	soft_rst=init_node("ctrl_reg.ctrl.soft_rst")	
+	soft_rst=init_node("csr.ctrl.soft_rst")	
 	si5326_rst=init_node("io.csr.ctrl.si5326_rst")	
 	print "Soft reset"
 	writereg(soft_rst,0x1)
