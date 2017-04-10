@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import uhal
 import csv
 from time import sleep
