@@ -21,7 +21,7 @@ def std_address(addr="192.168.235.0"):
 	global library,deviceaddress,xmlfile
 	library="glib"
 	deviceaddress=addr
-	xmlfile="../addr_table/top.xml"
+	xmlfile="addrtab/top.xml"
 	
 
 #Initialize node
