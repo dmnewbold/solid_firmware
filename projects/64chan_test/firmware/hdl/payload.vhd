@@ -57,7 +57,7 @@ architecture rtl of payload is
 	signal stat: ipb_reg_v(1 downto 0);
 	signal clk40, rst40, clk160, clk280: std_logic;
 	signal sync_in, sync_out: std_logic;
-	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl, ctrl_sync_mode: std_logic;
+	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl: std_logic;
 	signal ctrl_chan: std_logic_vector(7 downto 0);
 	signal sync_ctrl: std_logic_vector(3 downto 0);
 	signal adc_d: std_logic_vector(63 downto N_CHAN);
@@ -102,8 +102,7 @@ begin
 			ipbus_in => ipbw(N_SLV_CSR),
 			ipbus_out => ipbr(N_SLV_CSR),
 			d => stat,
-			q => ctrl,
-			qmask(0) => X"FFFFFF0F"
+			q => ctrl
 		);
 		
 	stat(0) <= X"a753" & FW_REV;
@@ -113,7 +112,6 @@ begin
 	nuke <= ctrl(0)(1);
 	ctrl_rst_mmcm <= ctrl(0)(2);
 	ctrl_rst_idelayctrl <= ctrl(0)(3);
-	ctrl_sync_mode <= ctrl(0)(4);
 	ctrl_chan <= ctrl(0)(15 downto 8);
 	sel <= ctrl(0)(28 downto 24);
 	userleds <= ctrl(0)(31 downto 29);

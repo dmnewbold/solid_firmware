@@ -114,8 +114,7 @@ begin
 			ipbus_in => ipbw(N_SLV_CSR),
 			ipbus_out => ipbr(N_SLV_CSR),
 			d => stat,
-			q => ctrl,
-			qmask(0) => X"00FFFF0F"
+			q => ctrl
 		);
 		
 	stat(0) <= X"a753" & FW_REV;
