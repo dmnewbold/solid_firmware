@@ -59,12 +59,12 @@ process(rst,clk)
 		case maximum is
 			when False =>	maximum_start	:= 0;
 					shiftreg(0)	<= '0';
-			when True =>	maximum_start	:= 1;
+			when others =>	maximum_start	:= 1;
 					shiftreg(0)	<= '1';
 		end case;
 		case shiftreg((2**windowlength)-2) is
 			when '0' =>	maximum_end	:= 0;
-			when '1' =>	maximum_end	:= 1;
+			when others =>	maximum_end	:= 1;
 		end case;
 
 		for i in 1 to ((2**windowlength)-2) loop -- not first element

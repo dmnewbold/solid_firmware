@@ -60,12 +60,12 @@ process(rst,clk)
 		case val is
 			when False =>	val_start	:= 0;
 					shiftreg(0)	<= '0';
-			when True =>	val_start	:= 1;
+			when others =>	val_start	:= 1;
 					shiftreg(0)	<= '1';
 		end case;
 		case shiftreg(windowlength-1) is
 			when '0' =>	val_end		:= 0;
-			when '1' =>	val_end		:= 1;
+			when others =>	val_end		:= 1;
 		end case;
 
 		for i in 1 to windowlength-1 loop -- not first element
