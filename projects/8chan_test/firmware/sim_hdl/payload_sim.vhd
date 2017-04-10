@@ -114,6 +114,7 @@ begin
 			clk280 => clk280,
 			sync_in => '0',
 			sync_out => open,
+			ext_trig_in => '0',
 			sctr => sctr,
 			chan_sync_ctrl => sync_ctrl,
 			trig_en => trig_en,
