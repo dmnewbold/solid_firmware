@@ -408,10 +408,10 @@ def main_adcconfig():
 
 		
 if __name__ == "__main__":
-	for address in ["192.168.235.0"]:#["192.168.235.0","192.168.235.1"]:
+	for address in ["192.168.235.1"]:#["192.168.235.0","192.168.235.1"]:
 		std_address(address)
 		main_reset()
-		main_dac()
-	#	main_adcconfig()
-	#	main_clockconfig()
-	#	main_freq()
+#		main_dac()
+#		main_adcconfig()
+		main_clockconfig()
+		main_freq()
