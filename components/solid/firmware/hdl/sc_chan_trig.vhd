@@ -15,7 +15,8 @@ use work.ipbus_reg_types.all;
 use work.top_decl.all;
 
 entity sc_chan_trig is
-	generic( VAL_WIDTH:	natural := 14 -- bit
+	generic(
+		VAL_WIDTH: natural := 14 -- bit
 	);
 	port(
 		clk: in std_logic;
@@ -34,12 +35,14 @@ end sc_chan_trig;
 architecture rtl of sc_chan_trig is
 
 	signal ctrl: ipb_reg_v(2 downto 0);
-	signal threshold_trig,threshold_sig,threshold_fe: std_logic_vector(VAL_WIDTH-1 DOWNTO 0);
+	signal threshold_trig, threshold_sig, threshold_fe: std_logic_vector(VAL_WIDTH - 1 DOWNTO 0);
 
 begin
+
 	threshold_trig <= ctrl(0)(VAL_WIDTH-1 DOWNTO 0);
-	threshold_sig 	<= ctrl(1)(VAL_WIDTH-1 DOWNTO 0);
-	threshold_fe	<= ctrl(2)(VAL_WIDTH-1 DOWNTO 0);
+	threshold_sig <= ctrl(1)(VAL_WIDTH-1 DOWNTO 0);
+	threshold_fe <= ctrl(2)(VAL_WIDTH-1 DOWNTO 0);
+
 	reg: entity work.ipbus_ctrlreg_v
 		generic map(
 			N_CTRL => 3,

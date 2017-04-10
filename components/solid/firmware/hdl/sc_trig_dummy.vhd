@@ -6,6 +6,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
 
 entity sc_trig_dummy is
 	generic(
@@ -31,7 +32,7 @@ begin
 		if rising_edge(clk) then
 			if rst = '1' then
 				trig <= '0';
-			elsif val > threshold then
+			elsif unsigned(val) > unsigned(threshold) then
 				trig <= '1';
 			elsif req = '1' then
 				trig <= '0';

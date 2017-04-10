@@ -1,5 +1,5 @@
 src sc_channels.vhd sc_chan.vhd sc_input_serdes.vhd sc_chan_buf.vhd sc_derand.vhd
-src sc_chan_trig.vhd sc_trig_dummy.vhd
+src sc_chan_trig.vhd sc_trig_dummy.vhd sc_npeaks.vhd sc_npeaks_thresh.vhd sc_thresh.vhd
 src -c ipbus-firmware:components/ipbus_core ipbus_fabric_sel.vhd
 src -c ipbus-firmware:components/ipbus_slaves ipbus_ported_dpram.vhd
 src ipbus_decode_sc_chan.vhd
