@@ -101,7 +101,27 @@ begin
 
 -- Threshold trigger generator
 
-	tg1: entity work.sc_trig_gen_thresh
+	tg1: entity work.sc_trig_gen_or
+		generic map(
+			TBIT => 0,
+			DELAY => 2
+		)
+		port map(
+			clk => clk40,
+			en => trig_en,
+			mark => mark,
+			chan_trig => chan_trig,
+			valid => tv(1),
+			ack => ta(1)
+		);
+		
+-- Neutron trigger generator
+
+	tg2: entity work.sc_trig_gen_or
+		generic map(
+			TBIT => 1,
+			DELAY => 2
+		)
 		port map(
 			clk => clk40,
 			en => trig_en,

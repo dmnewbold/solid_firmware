@@ -15,9 +15,10 @@ use ieee.std_logic_misc.all;
 
 use work.top_decl.all;
 
-entity sc_trig_gen_thresh is
+entity sc_trig_gen_or is
 	generic(
-		TBIT: natural := 0
+		TBIT: natural := 0;
+		DELAY: positive := 1;
 	);
 	port(
 		clk: in std_logic;
@@ -28,17 +29,16 @@ entity sc_trig_gen_thresh is
 		ack: in std_logic
 	);
 
-end sc_trig_gen_thresh;
+end sc_trig_gen_or;
 
-architecture rtl of sc_trig_gen_thresh is
+architecture rtl of sc_trig_gen_or is
 
 	signal mark_d, mark_dd: std_logic;
+	signal mark_del: std_logic_vector(DELAY - 1 downto 0);
 
 begin
 
-	mark_d <= mark when rising_edge(clk);
-	mark_dd <= mark_d when rising_edge(clk);
-			
-	valid <= (or_reduce(chan_trig(TBIT)) and mark_dd) and not (ack or not en) when rising_edge(clk);
+	mark_del <= mark_del(DELAY - 2 downto 0) & mark when rising_edge(clk);
+	valid <= (or_reduce(chan_trig(TBIT)) and mark_del(DELAY - 1)) and not (ack or not en) when rising_edge(clk);
 
 end rtl;

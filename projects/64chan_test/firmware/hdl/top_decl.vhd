@@ -19,7 +19,7 @@ package top_decl is
 	constant BUF_RADIX: integer := 11; -- One BRAM for NZS / ZS buffer
 	constant NZS_BLKS: integer := 2; -- Reserve two blocks of space for NZS buffer
 	constant ZS_BLKS: integer := 2; -- Time window for ZS buffer
-	constant N_TRG: integer := 2; -- Number of trigger types
+	constant N_TRG: integer := 3; -- Number of trigger types
 	constant N_CHAN_TRG: integer := 2; -- Number of channel trigger bits
 	constant FIFO_RADIX: integer := 3; -- 8 FIFO blocks in readout buffer
 	
