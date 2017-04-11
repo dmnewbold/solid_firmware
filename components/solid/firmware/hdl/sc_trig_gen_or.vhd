@@ -18,7 +18,7 @@ use work.top_decl.all;
 entity sc_trig_gen_or is
 	generic(
 		TBIT: natural := 0;
-		DELAY: positive := 1;
+		DELAY: positive := 1
 	);
 	port(
 		clk: in std_logic;
