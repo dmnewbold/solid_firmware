@@ -127,8 +127,8 @@ begin
 			en => trig_en,
 			mark => mark,
 			chan_trig => chan_trig,
-			valid => tv(1),
-			ack => ta(1)
+			valid => tv(2),
+			ack => ta(2)
 		);
 	
 -- Add more trigger generators here...
