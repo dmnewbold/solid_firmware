@@ -26,7 +26,7 @@ entity sc_chan_trig is
 		clk40: in std_logic;
 		rst40: in std_logic;
 		d: in std_logic_vector(13 downto 0);
-		req: in std_logic;
+		mark: in std_logic;
 		trig: out std_logic_vector(N_CHAN_TRG - 1 downto 0)
 	);
 
@@ -35,15 +35,10 @@ end sc_chan_trig;
 architecture rtl of sc_chan_trig is
 
 	signal ctrl: ipb_reg_v(2 downto 0);
-	signal threshold_trig, threshold_sig, threshold_fe: std_logic_vector(VAL_WIDTH - 1 DOWNTO 0);
 
 begin
 
-	threshold_trig <= ctrl(0)(VAL_WIDTH-1 DOWNTO 0);
-	threshold_sig <= ctrl(1)(VAL_WIDTH-1 DOWNTO 0);
-	threshold_fe <= ctrl(2)(VAL_WIDTH-1 DOWNTO 0);
-
-	reg: entity work.ipbus_ctrlreg_v
+	reg: entity work.ipbus_ctrlreg_v -- CDC between ctrl (ipb_clk) and (clk40)
 		generic map(
 			N_CTRL => 3,
 			N_STAT => 0
@@ -56,33 +51,47 @@ begin
 			q => ctrl
 		);
 
-	trg0: entity work.sc_trig_dummy
+	trg0: entity work.sc_ctrig_thresh -- direct threshold trigger, delay = 1
 		generic map(
 			VAL_WIDTH => VAL_WIDTH
 		)
 		port map(
 			clk => clk40,
 			rst => rst40,
-			req => req,
-			val => d,
-			threshold => threshold_trig,
+			clr => mark,
+			d => d,
+			threshold => ctrl(0)(VAL_WIDTH - 1 downto 0),
 			trig => trig(0)
 		);
 		
-	-- trg1: entity work.sc_npeaks_thresh
-		-- generic map(
-			-- VAL_WIDTH => VAL_WIDTH
-		-- )
-		-- port map(
-			-- clk => clk40,
-			-- rst => rst40,
-			-- req => req,
-			-- d => d,
-			-- threshold_trig => threshold_sig,
-			-- threshold_fe => threshold_fe,
-			-- trig => trig(1)
-		-- );
-		
-	trig(1) <= '0';
+	trg1: entity work.sc_ctrig_npeaks -- peaks-above-threshold trigger, delay = 2
+		generic map(
+			VAL_WIDTH => VAL_WIDTH
+		)
+		port map(
+			clk => clk40,
+			rst => rst40,
+			clr => mark,
+			d => d,
+			cthresh => ctrl(1)(20 downto 16),
+			wsize => ctrl(1)(27 downto 24),
+			pthresh => ctrl(1)(VAL_WIDTH - 1 downto 0),
+			trig => trig(1)
+		);
+
+	trg2: entity work.sc_ctrig_tot -- time-over-threshold trigger, delay = 1
+		generic map(
+			VAL_WIDTH => VAL_WIDTH
+		)
+		port map(
+			clk => clk40,
+			rst => rst40,
+			clr => mark,
+			d => d,
+			cthresh => ctrl(2)(20 downto 16),
+			wsize => ctrl(2)(27 downto 24),
+			pthresh => ctrl(2)(VAL_WIDTH - 1 downto 0),
+			trig => trig(2)
+		);
 		
 end rtl;

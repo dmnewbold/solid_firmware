@@ -43,6 +43,7 @@ entity sc_chan is
 		rand: in std_logic_vector(13 downto 0);		
 		nzs_en: in std_logic;
 		zs_en: in std_logic;
+		mark: in std_logic;
 		keep: in std_logic;
 		flush: in std_logic;
 		err: out std_logic;
@@ -205,8 +206,6 @@ begin
 	
 -- Local triggers
 	
-	req <= not or_reduce(sctr(BLK_RADIX - 1 downto 0));
-
 	ctrig: entity work.sc_chan_trig
 		generic map(
 			VAL_WIDTH => 14
@@ -219,7 +218,7 @@ begin
 			clk40 => clk40,
 			rst40 => chan_rst,
 			d => d_buf,
-			req => req,
+			mark => mark,
 			trig => trig
 		);
 

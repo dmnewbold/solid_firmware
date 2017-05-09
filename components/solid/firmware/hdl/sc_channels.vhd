@@ -34,6 +34,7 @@ entity sc_channels is
 		rand: in std_logic_vector(13 downto 0);
 		nzs_en: in std_logic;
 		zs_en: in std_logic;
+		mark: in std_logic;
 		keep: in std_logic_vector(N_CHAN - 1 downto 0);
 		flush: in std_logic_vector(N_CHAN - 1 downto 0);
 		err: out std_logic;
@@ -114,6 +115,7 @@ begin
 				rand => rand,
 				nzs_en => nzs_en,
 				zs_en => zs_en,
+				mark => mark,
 				keep => keep(i),
 				flush => flush(i),
 				err => chan_err(i),

@@ -24,7 +24,7 @@ entity sc_trig_gen_or is
 		clk: in std_logic;
 		en: in std_logic;
 		mark: in std_logic;
-		chan_trig: in sc_trig_array;		
+		chan_trig: in sc_trig_array;
 		valid: out std_logic;
 		ack: in std_logic
 	);

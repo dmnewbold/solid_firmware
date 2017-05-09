@@ -103,8 +103,8 @@ begin
 
 	tg1: entity work.sc_trig_gen_or
 		generic map(
-			TBIT => 0,
-			DELAY => 2
+			TBIT => 0
+			DELAY => 1
 		)
 		port map(
 			clk => clk40,
@@ -115,7 +115,7 @@ begin
 			ack => ta(1)
 		);
 		
--- Neutron trigger generator
+-- peaks-over-threshold trigger generator
 
 	tg2: entity work.sc_trig_gen_or
 		generic map(
@@ -131,6 +131,22 @@ begin
 			ack => ta(2)
 		);
 	
+-- time-over-threshold trigger generator
+
+	tg3: entity work.sc_trig_gen_or
+		generic map(
+			TBIT => 2,
+			DELAY => 1
+		)
+		port map(
+			clk => clk40,
+			en => trig_en,
+			mark => mark,
+			chan_trig => chan_trig,
+			valid => tv(3),
+			ack => ta(3)
+		);
+
 -- Add more trigger generators here...
 
 -- Priority encoder
