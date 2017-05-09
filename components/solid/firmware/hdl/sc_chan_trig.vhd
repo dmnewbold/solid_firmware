@@ -36,6 +36,7 @@ end sc_chan_trig;
 architecture rtl of sc_chan_trig is
 
 	signal ctrl: ipb_reg_v(2 downto 0);
+	signal dd: std_logic_vector(13 downto 0);
 
 begin
 
@@ -52,19 +53,22 @@ begin
 			q => ctrl
 		);
 
+	dd <= d when rising_edge(clk40); -- pipeline register
+		
 	trg0: entity work.sc_ctrig_thresh -- direct threshold trigger, delay = 1
 		generic map(
-			VAL_WIDTH => VAL_WIDTH
+			VAL_WIDTH => VAL_WIDTH,
+			DELAY => 2
 		)
 		port map(
 			clk => clk40,
 			rst => rst40,
 			clr => mark,
-			d => d,
+			d => dd,
 			threshold => ctrl(0)(VAL_WIDTH - 1 downto 0),
 			trig => trig(0)
 		);
-		
+
 	trg1: entity work.sc_ctrig_npeaks -- peaks-above-threshold trigger, delay = 2
 		generic map(
 			VAL_WIDTH => VAL_WIDTH
@@ -74,7 +78,7 @@ begin
 			rst => rst40,
 			clr => mark,
 			en => en,
-			d => d,
+			d => dd,
 			cthresh => ctrl(1)(24 downto 16),
 			wsize => ctrl(1)(31 downto 28),
 			pthresh => ctrl(1)(VAL_WIDTH - 1 downto 0),
@@ -90,7 +94,7 @@ begin
 			rst => rst40,
 			clr => mark,
 			en => en,
-			d => d,
+			d => dd,
 			cthresh => ctrl(2)(24 downto 16),
 			wsize => ctrl(2)(31 downto 28),
 			pthresh => ctrl(2)(VAL_WIDTH - 1 downto 0),

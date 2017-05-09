@@ -10,8 +10,7 @@ use ieee.numeric_std.all;
 
 entity sc_ctrig_npeaks is
 	generic(
-		VAL_WIDTH: natural;
-		DELAY: positive := 1
+		VAL_WIDTH: natural
 	);
 	port(
 		clk: in std_logic;
@@ -56,7 +55,7 @@ begin
 	thresh: entity work.sc_ctrig_thresh
 		generic map(
 			VAL_WIDTH => cthresh'length,
-			DELAY => 2
+			DELAY => 3
 		)
 		port map(
 			clk => clk,
