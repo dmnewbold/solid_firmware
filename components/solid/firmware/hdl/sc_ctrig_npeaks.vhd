@@ -52,7 +52,7 @@ begin
 
 	thresh: entity work.sc_ctrig_thresh
 		generic map(
-			VAL_WIDTH => cthresh'length
+			VAL_WIDTH => cthresh'length,
 			DELAY => 2
 		)
 		port map(

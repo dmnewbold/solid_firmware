@@ -8,6 +8,11 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
+library unisim;
+use unisim.VComponents.all;
+
+use work.top_decl.all;
+
 entity sc_ctrig_window is
 	generic(
 		C_WIDTH: natural
@@ -27,7 +32,7 @@ architecture rtl of sc_ctrig_window is
 	constant WINDOW_LEN: integer := BLK_RADIX;
 	
 	signal w, f: std_logic_vector(2 ** wsize'length downto 0);
-	signal p, r: std_logic;
+	signal r: std_logic;
 	signal count_i: unsigned(C_WIDTH - 1 downto 0);
 	
 begin

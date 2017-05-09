@@ -103,7 +103,7 @@ begin
 
 	tg1: entity work.sc_trig_gen_or
 		generic map(
-			TBIT => 0
+			TBIT => 0,
 			DELAY => 1
 		)
 		port map(

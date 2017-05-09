@@ -26,7 +26,7 @@ end sc_ctrig_thresh;
 
 architecture rtl of sc_ctrig_thresh is
 
-	cdel: std_logic_vector(DELAY - 1 downto 0);
+	signal cdel: std_logic_vector(DELAY - 1 downto 0);
 	
 begin
 
