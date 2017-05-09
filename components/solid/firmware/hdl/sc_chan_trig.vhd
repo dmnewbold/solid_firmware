@@ -25,8 +25,9 @@ entity sc_chan_trig is
 		ipb_out: out ipb_rbus;
 		clk40: in std_logic;
 		rst40: in std_logic;
-		d: in std_logic_vector(13 downto 0);
 		mark: in std_logic;
+		en: in std_logic;
+		d: in std_logic_vector(13 downto 0);
 		trig: out std_logic_vector(N_CHAN_TRG - 1 downto 0)
 	);
 
@@ -72,9 +73,10 @@ begin
 			clk => clk40,
 			rst => rst40,
 			clr => mark,
+			en => en,
 			d => d,
-			cthresh => ctrl(1)(20 downto 16),
-			wsize => ctrl(1)(27 downto 24),
+			cthresh => ctrl(1)(24 downto 16),
+			wsize => ctrl(1)(31 downto 28),
 			pthresh => ctrl(1)(VAL_WIDTH - 1 downto 0),
 			trig => trig(1)
 		);
@@ -87,9 +89,10 @@ begin
 			clk => clk40,
 			rst => rst40,
 			clr => mark,
+			en => en,
 			d => d,
-			cthresh => ctrl(2)(20 downto 16),
-			wsize => ctrl(2)(27 downto 24),
+			cthresh => ctrl(2)(24 downto 16),
+			wsize => ctrl(2)(31 downto 28),
 			pthresh => ctrl(2)(VAL_WIDTH - 1 downto 0),
 			trig => trig(2)
 		);

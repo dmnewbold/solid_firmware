@@ -216,8 +216,9 @@ begin
 			ipb_out => ipbr(N_SLV_TRIG_THRESH),
 			clk40 => clk40,
 			rst40 => chan_rst,
-			d => d_buf,
 			mark => blkend,
+			en => nzs_en,
+			d => d_buf,
 			trig => trig
 		);
 
