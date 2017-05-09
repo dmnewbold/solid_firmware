@@ -43,7 +43,6 @@ entity sc_chan is
 		rand: in std_logic_vector(13 downto 0);		
 		nzs_en: in std_logic;
 		zs_en: in std_logic;
-		mark: in std_logic;
 		keep: in std_logic;
 		flush: in std_logic;
 		err: out std_logic;
@@ -218,7 +217,7 @@ begin
 			clk40 => clk40,
 			rst40 => chan_rst,
 			d => d_buf,
-			mark => mark,
+			mark => blkend,
 			trig => trig
 		);
 

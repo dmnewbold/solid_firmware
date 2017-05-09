@@ -62,7 +62,7 @@ architecture rtl of payload is
 	signal sync_ctrl: std_logic_vector(3 downto 0);
 	signal adc_d: std_logic_vector(63 downto N_CHAN);
 	signal sctr: std_logic_vector(47 downto 0);
-	signal trig_en, nzs_en, zs_en, chan_err, mark: std_logic;
+	signal trig_en, nzs_en, zs_en, chan_err: std_logic;
 	signal trig_keep, trig_flush, trig_veto: std_logic_vector(N_CHAN - 1 downto 0);
 	signal chan_trig: sc_trig_array;
 	signal link_d, link_q: std_logic_vector(15 downto 0);
@@ -192,7 +192,6 @@ begin
 			rand => rand(13 downto 0),
 			nzs_en => nzs_en,
 			zs_en => zs_en,
-			mark => mark,
 			keep => trig_keep,
 			flush => trig_flush,
 			err => chan_err,
@@ -221,7 +220,6 @@ begin
 			zs_en => zs_en,
 			sctr => sctr,
 			rand => rand,
-			mark => mark,
 			keep => trig_keep,
 			flush => trig_flush,
 			veto => trig_veto,
