@@ -37,7 +37,7 @@ architecture rtl of sc_ctrig_window is
 	
 begin
 
-	w(0) <= p;
+	w(0) <= p and not rst;
 
 	dgen: for i in 2 ** wsize'length - 1 downto 0 generate
 	

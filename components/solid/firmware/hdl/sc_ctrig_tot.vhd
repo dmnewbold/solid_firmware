@@ -17,6 +17,7 @@ entity sc_ctrig_tot is
 		clk: in std_logic;
 		rst: in std_logic;
 		clr: in std_logic;
+		en: in std_logic;
 		d: in std_logic_vector(VAL_WIDTH - 1 downto 0);
 		cthresh: in std_logic_vector(8 downto 0);
 		wsize: in std_logic_vector(3 downto 0);
@@ -28,10 +29,12 @@ end sc_ctrig_tot;
 
 architecture rtl of sc_ctrig_tot is
 	
-	signal p: std_logic;
+	signal p, rsti: std_logic;
 	signal count: std_logic_vector(cthresh'range);
 	
 begin
+
+	rsti <= rst or not en;
 
 	p <= '1' when unsigned(d) > unsigned(pthresh) else '0';
 	
@@ -41,7 +44,7 @@ begin
 		)
 		port map(
 			clk => clk,
-			rst => rst,
+			rst => rsti,
 			wsize => wsize,
 			p => p,
 			count => count
@@ -53,7 +56,7 @@ begin
 		)
 		port map(
 			clk => clk,
-			rst => rst,
+			rst => rsti,
 			clr => clr,
 			d => count,
 			threshold => cthresh,
