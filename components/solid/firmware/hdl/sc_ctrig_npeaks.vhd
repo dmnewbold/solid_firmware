@@ -38,7 +38,7 @@ begin
 	d2 <= d1 when rising_edge(clk);
 	p <= '1' when unsigned(d1) > unsigned(pthresh) and unsigned(d2) < unsigned(d1) and unsigned(d) <= unsigned(d1) else '0';
 	
-	count: entity work.sc_ctrig_window
+	cnt: entity work.sc_ctrig_window
 		generic map(
 			C_WIDTH => cthresh'length
 		)

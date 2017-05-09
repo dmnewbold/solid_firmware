@@ -41,7 +41,7 @@ begin
 
 	dgen: for i in 2 ** wsize'length - 1 downto 0 generate
 	
-		srl: SRL32CE
+		srl0: SRLC32E
 			port map(
 				clk => clk,
 				ce => '1',

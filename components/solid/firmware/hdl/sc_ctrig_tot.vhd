@@ -35,7 +35,7 @@ begin
 
 	p <= '1' when unsigned(d) > unsigned(pthresh) else '0';
 	
-	count: entity work.sc_ctrig_window
+	cnt: entity work.sc_ctrig_window
 		generic map(
 			C_WIDTH => cthresh'length
 		)
