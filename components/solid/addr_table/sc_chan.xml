@@ -31,15 +31,15 @@
 		</node>
 	</node>
 	<node id="trig_thresh" address="0x8" description="trigger thresholds" fwinfo="endpoint;width=2">
-		<node id="t0" address="0x0">
-			<node id="thresh" mask="0x3ff">
+		<node id="threshold" address="0x0">
+			<node id="thresh" mask="0x3ff"/>
 		</node>
-		<node id="t1" address="0x1">
+		<node id="neutronpeaks" address="0x1">
 			<node id="pthresh" mask="0x3ff"/>
 			<node id="cthresh" mask="0x1ff0000"/>
 			<node id="wsize" mask="0xf0000000"/>
 		</node>
-		<node id="t2" address="0x2">
+		<node id="neutronsamples" address="0x2">
 			<node id="pthresh" mask="0x3ff"/>
 			<node id="cthresh" mask="0x1ff0000"/>
 			<node id="wsize" mask="0xf0000000"/>

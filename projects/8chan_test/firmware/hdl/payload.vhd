@@ -66,23 +66,11 @@ architecture rtl of payload is
 	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(1 downto 0);
-	signal clk40, rst40, clk160, clk280: std_logic;
+	signal clk40: std_logic;
 	signal sync_in, sync_out: std_logic;
 	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl, ctrl_sync_mode: std_logic;
 	signal ctrl_chan: std_logic_vector(7 downto 0);
 	signal ctrl_board_id: std_logic_vector(7 downto 0);
-	signal sync_ctrl: std_logic_vector(3 downto 0);
-	signal adc_d: std_logic_vector(N_CHAN - 1 downto 0);
-	signal sctr: std_logic_vector(47 downto 0);
-	signal trig_en, nzs_en, zs_en, chan_err: std_logic;
-	signal trig_keep, trig_flush, trig_veto: std_logic_vector(N_CHAN - 1 downto 0);
-	signal chan_trig: sc_trig_array;
-	signal link_d, link_q: std_logic_vector(15 downto 0);
-	signal link_d_valid, link_q_valid, link_ack: std_logic;
-	signal ro_chan: std_logic_vector(7 downto 0);
-	signal ro_d, trig_d: std_logic_vector(31 downto 0);
-	signal ro_blkend, ro_empty, ro_ren, en_ro, trig_sync, trig_blkend, trig_we, trig_roc_veto: std_logic;
-	signal rand: std_logic_vector(31 downto 0);
 
 begin
 
@@ -169,138 +157,38 @@ begin
 			analog_sda_i => analog_sda_i
 		);
 	
--- Timing
+-- DAQ core
 
-	timing: entity work.sc_timing
+	daq: entity work.sc_daq
 		port map(
-			clk => ipb_clk,
-			rst => ipb_rst,
-			ipb_in => ipbw(N_SLV_TIMING),
-			ipb_out => ipbr(N_SLV_TIMING),
+			ipb_clk => ipb_clk,
+			ipb_rst => ipb_rst,
+			ipb_in_timing => ipbw(N_SLV_TIMING),
+			ipb_out_timing => ipbr(N_SLV_TIMING),
+			ipb_in_chan => ipbw(N_SLV_CHAN),
+			ipb_out_chan => ipbr(N_SLV_CHAN),
+			ipb_in_trig => ipbw(N_SLV_TRIG),
+			ipb_out_trig => ipbr(N_SLV_TRIG),
+			ipb_in_tlink => ipbw(N_SLV_TLINK),
+			ipb_out_tlink => ipbr(N_SLV_TLINK),
+			ipb_in_roc => ipbw(N_SLV_ROC),
+			ipb_out_roc => ipbr(N_SLV_ROC),
 			rst_mmcm => ctrl_rst_mmcm,
 			locked => locked,
 			clk_in_p => clk40_p,
 			clk_in_n => clk40_n,
 			clk40 => clk40,
-			rst40 => rst40,
-			clk160 => clk160,
-			clk280 => clk280,
 			sync_in => sync_in,
 			sync_out => sync_out,
-			ext_trig_in => '0',
-			sctr => sctr,
-			chan_sync_ctrl => sync_ctrl,
-			trig_en => trig_en,
-			nzs_en => nzs_en,
-			zs_en => zs_en,
-			rand => rand
-		);
-
--- Data channels
-
-	chans: entity work.sc_channels
-		port map(
-			clk => ipb_clk,
-			rst => ipb_rst,
-			ipb_in => ipbw(N_SLV_CHAN),
-			ipb_out => ipbr(N_SLV_CHAN),
+			trig_in => '0',
 			chan => ctrl_chan,
-			clk40 => clk40,
-			rst40 => rst40,
-			clk160 => clk160,
-			clk280 => clk280,
 			d_p => adc_d_p,
 			d_n => adc_d_n,
-			sync_ctrl => sync_ctrl,
-			sctr => sctr(13 downto 0),
-			rand => rand(13 downto 0),
-			nzs_en => nzs_en,
-			zs_en => zs_en,
-			keep => trig_keep,
-			flush => trig_flush,
-			err => chan_err,
-			veto => trig_veto,
-			trig => chan_trig,
-			dr_chan => ro_chan,
-			clk_dr => ipb_clk,
-			q => ro_d,
-			q_blkend => ro_blkend,
-			q_empty => ro_empty,
-			ren => ro_ren
-		);
-		
--- Trigger
-
-	trig: entity work.sc_trig
-		port map(
-			clk => ipb_clk,
-			rst => ipb_rst,
-			ipb_in => ipbw(N_SLV_TRIG),
-			ipb_out => ipbr(N_SLV_TRIG),
-			clk40 => clk40,
-			rst40 => rst40,
-			clk160 => clk160,
-			trig_en => trig_en,
-			zs_en => zs_en,
-			sctr => sctr,
-			rand => rand,
-			keep => trig_keep,
-			flush => trig_flush,
-			veto => trig_veto,
-			trig => chan_trig,
-			ro_d => trig_d,
-			ro_blkend => trig_blkend,
-			ro_we => trig_we,
-			ro_veto => trig_roc_veto,
-			q => link_d,
-			q_valid => link_d_valid,
-			d => link_q,
-			d_valid => link_q_valid,
-			d_ack => link_ack
-		);
-
--- Trigger serial links
-
-	tlink: entity work.sc_trig_link
-		port map(
-			clk => ipb_clk,
-			rst => ipb_rst,
-			ipb_in => ipbw(N_SLV_TLINK),
-			ipb_out => ipbr(N_SLV_TLINK),
 			clk125 => clk125,
 			rst125 => rst125,
-			clk40 => clk40,
-			rst40 => rst40,
-			d => link_d,
-			d_valid => link_d_valid,
-			q => link_q,
-			q_valid => link_q_valid,
-			ack => link_ack
+			board_id => ctrl_board_id
 		);
-		
--- Readout
-
-	roc: entity work.sc_roc
-		port map(
-			clk => ipb_clk,
-			rst => ipb_rst,
-			ipb_in => ipbw(N_SLV_ROC),
-			ipb_out => ipbr(N_SLV_ROC),
-			board_id => ctrl_board_id,
-			clk40 => clk40,
-			rst40 => rst40,
-			rand => rand,
-			d_trig => trig_d,
-			blkend_trig => trig_blkend,
-			we_trig => trig_we,
-			veto_trig => trig_roc_veto,
-			chan => ro_chan,
-			d => ro_d,
-			blkend => ro_blkend,
-			empty => ro_empty,
-			ren => ro_ren
-		);
-		
+	
 -- Clocks n stuff
 
 	switch: entity work.sync_routing
