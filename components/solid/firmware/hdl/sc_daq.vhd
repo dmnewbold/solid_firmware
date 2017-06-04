@@ -50,6 +50,7 @@ architecture rtl of sc_daq is
 	signal sctr: std_logic_vector(47 downto 0);
 	signal trig_en, nzs_en, zs_en, chan_err: std_logic;
 	signal trig_keep, trig_flush, trig_veto: std_logic_vector(N_CHAN - 1 downto 0);
+	signal fake: std_logic_vector(13 downto 0);
 	signal chan_trig: sc_trig_array;
 	signal link_d, link_q: std_logic_vector(15 downto 0);
 	signal link_d_valid, link_q_valid, link_ack: std_logic;
@@ -88,7 +89,19 @@ begin
 		);
 		
 	clk40 <= clk40_i;
+	
+-- Fake data generator
 
+	faker: entity work.sc_fake
+		port map(
+			clk => ipb_clk,
+			rst => ipb_rst,
+			ipb_in => ipb_in_fake,
+			ipb_out => ipb_out_fake,		
+			rand => rand,
+			fake => fake
+		);
+			
 -- Data channels
 
 	chans: entity work.sc_channels
@@ -106,7 +119,7 @@ begin
 			d_n => d_n,
 			sync_ctrl => sync_ctrl,
 			sctr => sctr(13 downto 0),
-			rand => rand(13 downto 0),
+			fake => fake,
 			nzs_en => nzs_en,
 			zs_en => zs_en,
 			keep => trig_keep,

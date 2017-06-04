@@ -3,7 +3,7 @@
 -- All the stuff belonging to one input channel
 --
 -- ctrl_mode: 0 normal; 1 playback; 2 capture; 3 reserved
--- ctrl_src: 0 external; 1 playback buffer; 2 counter; 3 random data
+-- ctrl_src: 0 external; 1 playback buffer; 2 counter; 3 fake data
 --
 -- Dave Newbold, February 2016
 
@@ -40,7 +40,7 @@ entity sc_chan is
 		q_test: out std_logic_vector(13 downto 0);
 		sync_ctrl: in std_logic_vector(3 downto 0);
 		sctr: in std_logic_vector(13 downto 0);		
-		rand: in std_logic_vector(13 downto 0);		
+		fake: in std_logic_vector(13 downto 0);		
 		nzs_en: in std_logic;
 		zs_en: in std_logic;
 		keep: in std_logic;
@@ -143,7 +143,7 @@ begin
 		d_in_i when "00",
 		d_test when "01",
 		sctr when "10",
-		rand when others;
+		fake when others;
 		
 -- Channel status
 
