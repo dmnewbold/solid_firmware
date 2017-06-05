@@ -97,8 +97,11 @@ begin
 			clk => ipb_clk,
 			rst => ipb_rst,
 			ipb_in => ipb_in_fake,
-			ipb_out => ipb_out_fake,		
+			ipb_out => ipb_out_fake,
+			clk40 => clk40_i,
+			rst40 => rst40_i,
 			rand => rand,
+			sctr => sctr(7 downto 0),
 			fake => fake
 		);
 			
