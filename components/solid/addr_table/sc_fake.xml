@@ -16,4 +16,5 @@
 			<node id="ampl" mask="0x3ff"/>
 			<node id="ped" mask="0x3ff0000"/>
 		</node>
+	</node>
 </node>
