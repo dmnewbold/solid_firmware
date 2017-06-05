@@ -84,7 +84,7 @@ begin
     
 -- Parameters
 
-	csr: entity work.ipbus_ctrlreg_v
+	params_csr: entity work.ipbus_ctrlreg_v
 		generic map(
 			N_CTRL => 2
 		)
@@ -142,11 +142,11 @@ begin
 		end if;
 	end process;
 				
-	done <= '1' when pcnt = params_n else '0';
+	done <= '1' when pcnt = unsigned(params_n) else '0';
 	
 -- Output
 
 	pulse <= std_logic_vector(unsigned(params_ped) + unsigned(params_ampl)) when p = '1' else params_ped;
-	fake <= rand(13 downto 0) when mode = '0' else pulse;
+	fake <= rand(13 downto 0) when ctrl_mode = '0' else pulse;
 	
 end rtl;
