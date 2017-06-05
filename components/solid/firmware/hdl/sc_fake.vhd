@@ -26,7 +26,7 @@ entity sc_fake is
 		fake: out std_logic_vector(13 downto 0)
 	);
 
-end sc_fake
+end sc_fake;
 
 architecture rtl of sc_fake is
 
