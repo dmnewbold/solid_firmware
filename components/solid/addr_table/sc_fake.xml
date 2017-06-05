@@ -5,7 +5,7 @@
 		<node id="force" mask="0x4"/>
 		<node id="samp_lock" mask="0x8"/>
 	</node>
-	<node id="params" address="0x0" description="fake data params" fwinfo="endpoint;width=1">
+	<node id="params" address="0x2" description="fake data params" fwinfo="endpoint;width=1">
 		<node id="freq" address="0x0">
 			<node id="freq_div" mask="0xf"/>
 			<node id="n" mask="0xff00"/>
