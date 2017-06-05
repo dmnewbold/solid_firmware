@@ -17,6 +17,8 @@ entity sc_daq is
 		ipb_rst: in std_logic;
 		ipb_in_timing: in ipb_wbus;
 		ipb_out_timing: out ipb_rbus;
+		ipb_in_fake: in ipb_wbus;
+		ipb_out_fake: out ipb_rbus;
 		ipb_in_chan: in ipb_wbus;
 		ipb_out_chan: out ipb_rbus;
 		ipb_in_trig: in ipb_wbus;

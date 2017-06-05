@@ -140,6 +140,8 @@ begin
 			ipb_rst => ipb_rst,
 			ipb_in_timing => ipbw(N_SLV_TIMING),
 			ipb_out_timing => ipbr(N_SLV_TIMING),
+			ipb_in_fake => ipbw(N_SLV_FAKE),
+			ipb_out_fake => ipbr(N_SLV_FAKE),
 			ipb_in_chan => ipbw(N_SLV_CHAN),
 			ipb_out_chan => ipbr(N_SLV_CHAN),
 			ipb_in_trig => ipbw(N_SLV_TRIG),
