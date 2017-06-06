@@ -196,7 +196,7 @@ begin
 	
 -- Trigger data to readout
 
-	go <= (go or (ro_go and ((or_reduce(tc) and not rveto) or last_gasp or hoorah))) and not blkend and trig_en when rising_edge(clk40);
+	go <= (go or (ro_go and ((or_reduce(tc) and not rveto) or last_gasp or hoorah))) and not blkend and trig_en and not rst40 when rising_edge(clk40);
 	blkend <= '1' when unsigned(ro_ctr) = 3 + 2 * N_CHAN_TRG else '0';
 	ro_valid <= go;
 	ro_blkend <= blkend;
@@ -208,7 +208,7 @@ begin
 
 	with ro_ctr select ro_q <=
 		X"100" & "00" & last_gasp & hoorah & (15 downto N_TRG => '0') & tc when X"00", -- Type 1
-		std_logic_vector(sctr(31 downto 0)) when X"01",
+		std_logic_vector(sctr(31 downto BLK_RADIX)) & (BLK_RADIX - 1 downto 0 => '0') when X"01",
 		X"0000" & std_logic_vector(sctr(47 downto 32)) when X"02",
 		X"00000000" when X"03",
 		b when others;

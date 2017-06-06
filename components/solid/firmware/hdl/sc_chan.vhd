@@ -70,6 +70,7 @@ architecture rtl of sc_chan is
 	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert: std_logic;
 	signal ctrl_mode, ctrl_src: std_logic_vector(1 downto 0);
 	signal cap_full, buf_full, dr_full, dr_warn: std_logic;
+	signal sctr_p: std_logic_vector(11 downto 0);
 	signal dr_d: std_logic_vector(31 downto 0);
 	signal ro_en, keep_i, flush_i, err_i, req, blkend, dr_blkend, dr_wen: std_logic;
 	
@@ -138,11 +139,17 @@ begin
 		);
 		
 	d_in_i <= d_in when ctrl_invert = '0' else not d_in;
-		
+	
+	with sctr(1 downto 0) select sctr_p <=
+		sctr(11 downto 0) when "00",
+		sctr(23 downto 12) when "01",
+		sctr(35 downto 24) when "10",
+		sctr(47 downto 36) when others;
+	
 	with ctrl_src select d_buf <=
 		d_in_i when "00",
 		d_test when "01",
-		sctr when "10",
+		"00" & sctr_p when "10",
 		fake when others;
 		
 -- Channel status
