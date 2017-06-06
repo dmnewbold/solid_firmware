@@ -54,6 +54,6 @@ begin
 	rtrig <= ((not mode(0) and not or_reduce(rand(mask'range) and mask)) or
 		(mode(0) and not or_reduce(sctr(BLK_RADIX + mask'left downto BLK_RADIX) and mask))) and mode(1);
 		
-	valid <= ((rtrig or force_c) and mark) and not (ack or not en) when rising_edge(clk);
+	valid <= (valid or ((rtrig or force_c) and mark)) and not (ack or not en) when rising_edge(clk);
 
 end rtl;

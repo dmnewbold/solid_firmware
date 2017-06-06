@@ -52,7 +52,7 @@ architecture rtl of sc_local_trig is
 	signal ctrl_trig_force: std_logic;
 	signal ctrl_rnd_div: std_logic_vector(5 downto 0);
 	signal tv, te, ta, tc: std_logic_vector(N_TRG - 1 downto 0);
-	signal s: integer range N_TRG downto 0;
+	signal s: integer range N_TRG - 1 downto 0;
 	signal ch: integer range 2 ** ro_ctr'length - 1 downto 0;
 	signal ch_i: integer range N_CHAN - 1 downto 0 := 0;
 	signal go, blkend, rveto_d, last_gasp, hoorah: std_logic;
@@ -155,8 +155,8 @@ begin
 
 	process(te)
 	begin
-		for i in te'range loop
-			s <= 0;
+		s <= 0;
+		for i in te'reverse_range loop
 			if te(i) = '1' then
 				s <= i;
 			end if;
