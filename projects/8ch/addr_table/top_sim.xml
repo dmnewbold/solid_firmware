@@ -1,6 +1,6 @@
 <node id="TOP">
 	<node id="csr" address="0x0" module="file://payload.xml"/>
-	<node id="chan" address="0x8" module="file://sc_chan.xml"/>
+	<node id="chan" address="0x10" module="file://sc_chan.xml"/>
 	<node id="timing" address="0x40" module="file://sc_timing.xml"/>
 	<node id="fake" address="0x50" module="file://sc_fake.xml"/>
 	<node id="tlink" address="0x60" fwinfo="endpoint;width=0"/>

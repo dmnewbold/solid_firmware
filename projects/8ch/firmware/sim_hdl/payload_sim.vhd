@@ -36,18 +36,6 @@ architecture rtl of payload_sim is
 	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl: std_logic;
 	signal ctrl_chan: std_logic_vector(7 downto 0);
 	signal ctrl_board_id: std_logic_vector(7 downto 0);
-	signal sync_ctrl: std_logic_vector(3 downto 0);
-	signal adc_d: std_logic_vector(N_CHAN - 1 downto 0);
-	signal sctr: std_logic_vector(47 downto 0);
-	signal trig_en, nzs_en, zs_en, chan_err: std_logic;
-	signal trig_keep, trig_flush, trig_veto: std_logic_vector(N_CHAN - 1 downto 0);
-	signal chan_trig: sc_trig_array;
-	signal link_d, link_q: std_logic_vector(15 downto 0);
-	signal link_d_valid, link_q_valid, link_ack: std_logic;
-	signal ro_chan: std_logic_vector(7 downto 0);
-	signal ro_d, trig_d: std_logic_vector(31 downto 0);
-	signal ro_blkend, ro_empty, ro_ren, en_ro, trig_sync, trig_blkend, trig_we, trig_roc_veto: std_logic;
-	signal rand: std_logic_vector(31 downto 0);
 
 begin
 

@@ -58,7 +58,7 @@ architecture rtl of sc_daq is
 	signal link_d_valid, link_q_valid, link_ack: std_logic;
 	signal ro_chan: std_logic_vector(7 downto 0);
 	signal ro_d, trig_d: std_logic_vector(31 downto 0);
-	signal ro_blkend, ro_empty, ro_ren, en_ro, trig_sync, trig_blkend, trig_we, trig_roc_veto: std_logic;
+	signal ro_blkend, ro_empty, ro_ren, trig_sync, trig_blkend, trig_we, trig_roc_veto: std_logic;
 	signal rand: std_logic_vector(31 downto 0);
 
 begin
