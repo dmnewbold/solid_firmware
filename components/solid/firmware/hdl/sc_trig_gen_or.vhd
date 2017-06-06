@@ -35,10 +35,12 @@ architecture rtl of sc_trig_gen_or is
 
 	signal mark_d, mark_dd: std_logic;
 	signal mark_del: std_logic_vector(DELAY - 1 downto 0);
+	signal v: std_logic;
 
 begin
 
 	mark_del <= mark_del(DELAY - 2 downto 0) & mark when rising_edge(clk);
-	valid <= (valid or (or_reduce(chan_trig(TBIT)) and mark_del(DELAY - 1))) and not (ack or not en) when rising_edge(clk);
-
+	v <= (v or (or_reduce(chan_trig(TBIT)) and mark_del(DELAY - 1))) and not (ack or not en) when rising_edge(clk);
+	valid <= v;
+	
 end rtl;
