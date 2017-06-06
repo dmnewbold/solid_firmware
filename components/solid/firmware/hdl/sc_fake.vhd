@@ -38,7 +38,7 @@ architecture rtl of sc_fake is
 	signal params: ipb_reg_v(1 downto 0);
 	signal params_freq_div: std_logic_vector(3 downto 0);
 	signal params_n, params_gap, params_samp: std_logic_vector(7 downto 0);
-	signal params_ampl, params_ped: std_logic_vector(13 downto 0);
+	signal params_level, params_ped: std_logic_vector(13 downto 0);
 	signal mask: std_logic_vector(15 downto 0);
 	signal pulse: std_logic_vector(13 downto 0);
 	signal p, go, samp, pend, act, done: std_logic;
@@ -100,7 +100,7 @@ begin
 	params_n <= params(0)(15 downto 8);
 	params_gap <= params(0)(23 downto 16);
 	params_samp <= params(0)(31 downto 24);
-	params_ampl <= params(1)(13 downto 0);
+	params_level <= params(1)(13 downto 0);
 	params_ped <= params(1)(29 downto 16);
 	
 -- Trigger
@@ -129,6 +129,7 @@ begin
 			if rst40 = '1' or done = '1' then
 				pcnt <= (others => '0');
 				gcnt <= (others => '0');
+				p <= '0';
 			elsif act = '1' then
 				if gcnt = 0 then
 					gcnt <= unsigned(params_gap);
@@ -146,7 +147,7 @@ begin
 	
 -- Output
 
-	pulse <= std_logic_vector(unsigned(params_ped) + unsigned(params_ampl)) when p = '1' else params_ped;
+	pulse <= params_level when p = '1' else params_ped;
 	fake <= rand(13 downto 0) when ctrl_mode = '0' else pulse;
 	
 end rtl;
