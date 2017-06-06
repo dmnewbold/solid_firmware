@@ -71,6 +71,7 @@ architecture rtl of payload is
 	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl, ctrl_sync_mode: std_logic;
 	signal ctrl_chan: std_logic_vector(7 downto 0);
 	signal ctrl_board_id: std_logic_vector(7 downto 0);
+	signal chan_err: std_logic;
 
 begin
 
@@ -184,6 +185,7 @@ begin
 			sync_out => sync_out,
 			trig_in => '0',
 			chan => ctrl_chan,
+			chan_err => chan_err,
 			d_p => adc_d_p,
 			d_n => adc_d_n,
 			clk125 => clk125,

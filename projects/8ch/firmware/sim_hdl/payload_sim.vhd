@@ -36,6 +36,7 @@ architecture rtl of payload_sim is
 	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl: std_logic;
 	signal ctrl_chan: std_logic_vector(7 downto 0);
 	signal ctrl_board_id: std_logic_vector(7 downto 0);
+	signal chan_err: std_logic;
 
 begin
 
@@ -111,6 +112,7 @@ begin
 			sync_out => open,
 			trig_in => '0',
 			chan => ctrl_chan,
+			chan_err => chan_err,
 			d_p => (others => '0'),
 			d_n => (others => '1'),
 			clk125 => clk125,
