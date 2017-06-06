@@ -37,6 +37,7 @@ architecture rtl of sc_chan_trig is
 
 	signal ctrl: ipb_reg_v(2 downto 0);
 	signal dd: std_logic_vector(13 downto 0);
+	signal trig_i: std_logic_vector(N_CHAN_TRG - 1 downto 0);
 
 begin
 
@@ -66,7 +67,7 @@ begin
 			clr => mark,
 			d => dd,
 			threshold => ctrl(0)(VAL_WIDTH - 1 downto 0),
-			trig => trig(0)
+			trig => trig_i(0)
 		);
 
 	trg1: entity work.sc_ctrig_npeaks -- peaks-above-threshold trigger, delay = 2
@@ -82,7 +83,7 @@ begin
 			cthresh => ctrl(1)(24 downto 16),
 			wsize => ctrl(1)(31 downto 28),
 			pthresh => ctrl(1)(VAL_WIDTH - 1 downto 0),
-			trig => trig(1)
+			trig => trig_i(1)
 		);
 
 	trg2: entity work.sc_ctrig_tot -- time-over-threshold trigger, delay = 1
@@ -98,7 +99,9 @@ begin
 			cthresh => ctrl(2)(24 downto 16),
 			wsize => ctrl(2)(31 downto 28),
 			pthresh => ctrl(2)(VAL_WIDTH - 1 downto 0),
-			trig => trig(2)
+			trig => trig_i(2)
 		);
+		
+	trig <= trig_i when en = '1' else (others => '0');
 		
 end rtl;

@@ -28,8 +28,6 @@ entity sc_ctrig_window is
 end sc_ctrig_window;
 
 architecture rtl of sc_ctrig_window is
-
-	constant WINDOW_LEN: integer := BLK_RADIX;
 	
 	signal w, f: std_logic_vector(2 ** wsize'length downto 0);
 	signal r: std_logic;

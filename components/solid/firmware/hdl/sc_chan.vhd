@@ -67,12 +67,12 @@ architecture rtl of sc_chan is
 	signal d_in, d_in_i, d_buf: std_logic_vector(13 downto 0);
 	signal d_c: std_logic_vector(1 downto 0);
 	signal slip, chan_rst, buf_we, inc: std_logic;
-	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert: std_logic;
+	signal ctrl_en_sync, ctrl_en_buf, ctrl_en_trig, ctrl_invert: std_logic;
 	signal ctrl_mode, ctrl_src: std_logic_vector(1 downto 0);
 	signal cap_full, buf_full, dr_full, dr_warn: std_logic;
 	signal sctr_p: std_logic_vector(11 downto 0);
 	signal dr_d: std_logic_vector(31 downto 0);
-	signal ro_en, keep_i, flush_i, err_i, req, blkend, dr_blkend, dr_wen: std_logic;
+	signal ro_en, keep_i, flush_i, err_i, req, blkend, dr_blkend, dr_wen, trig_en: std_logic;
 	
 begin
 
@@ -109,7 +109,8 @@ begin
 		
 	ctrl_en_sync <= ctrl(0)(0);
 	ctrl_en_buf <= ctrl(0)(1);
-	ctrl_invert <= ctrl(0)(2);
+	ctrl_en_trig <= ctrl(0)(2);
+	ctrl_invert <= ctrl(0)(3);
 	ctrl_mode <= ctrl(0)(5 downto 4);
 	ctrl_src <= ctrl(0)(7 downto 6);
 	
@@ -212,6 +213,8 @@ begin
 	
 -- Local triggers
 	
+	trig_en <= nzs_en and ctrl_en_trig;
+
 	ctrig: entity work.sc_chan_trig
 		generic map(
 			VAL_WIDTH => 14
