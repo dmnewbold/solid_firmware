@@ -84,10 +84,9 @@ begin
     
 -- Parameters
 
-	params_csr: entity work.ipbus_ctrlreg_v
+	params_csr: entity work.ipbus_reg_v
 		generic map(
-			N_CTRL => 2,
-			N_STAT => 0
+			N_REG => 2
 		)
 		port map(
 			clk => clk,
