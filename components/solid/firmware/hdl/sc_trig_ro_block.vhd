@@ -34,6 +34,7 @@ end sc_trig_ro_block;
 
 architecture rtl of sc_trig_ro_block is
 
+	constant OFFSET: integer := (NZS_BLKS + ZS_BLKS) * 2 ** BLK_RADIX;
 	signal tctr_i: unsigned(27 downto 0);
 	signal go, blkend: std_logic;
 	signal chen, keep_c: std_logic_vector(63 downto 0);
@@ -67,7 +68,7 @@ begin
 	
 	with ro_ctr select ro_q <=
 		X"0" & std_logic_vector(tctr_i) when X"00", -- Type 0
-		std_logic_vector(sctr(31 downto 1)) & '0' when X"01", -- Hack so that counter is taken at start-of-block
+		std_logic_vector(unsigned(sctr(31 downto 1) & '0') - OFFSET) when X"01", -- Hack so that counter is taken at start-of-block
 		X"0000" & std_logic_vector(sctr(47 downto 32)) when X"02",
 		chen(31 downto 0) when X"03", -- Corresponds to CH_WORD = 3 in sc_roc
 		chen(63 downto 32) when X"04",
