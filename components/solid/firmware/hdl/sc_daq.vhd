@@ -124,7 +124,7 @@ begin
 			d_p => d_p,
 			d_n => d_n,
 			sync_ctrl => sync_ctrl,
-			sctr => sctr(13 downto 0),
+			sctr => sctr,
 			fake => fake,
 			nzs_en => nzs_en,
 			zs_en => zs_en,

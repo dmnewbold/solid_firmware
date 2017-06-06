@@ -39,7 +39,7 @@ entity sc_chan is
 		d_test: in std_logic_vector(13 downto 0);
 		q_test: out std_logic_vector(13 downto 0);
 		sync_ctrl: in std_logic_vector(3 downto 0);
-		sctr: in std_logic_vector(13 downto 0);		
+		sctr: in std_logic_vector(47 downto 0);		
 		fake: in std_logic_vector(13 downto 0);		
 		nzs_en: in std_logic;
 		zs_en: in std_logic;
