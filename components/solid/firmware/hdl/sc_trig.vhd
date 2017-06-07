@@ -52,6 +52,8 @@ architecture rtl of sc_trig is
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(1 downto 0);
 	signal ctrl_dtmon_en: std_logic;
+	signal masks: ipb_reg_v(N_CHAN_TRG * 2 - 1 downto 0);
+	signal ctrig: sc_trig_array;
 	signal lq: std_logic_vector(15 downto 0);
 	signal rveto, lvalid, lack, mark, err: std_logic;
 	signal veto_p, veto_i, keep_i, flush_i: std_logic_vector(N_CHAN - 1 downto 0);
@@ -113,6 +115,27 @@ begin
 			end if;
 		end if;
 	end process;
+	
+-- Channel trigger masks
+
+	masks: entity work.ipbus_reg_v
+		generic map(
+			N_REG => N_CHAN_TRG * 2
+		)
+		port map(
+			clk => clk,
+			reset => rst,
+			ipbus_in => ipbw(N_SLV_MASKS),
+			ipbus_out => ipbr(N_SLV_MASKS),
+			q => masks
+		);
+		
+	mgen: for i in N_CHAN_TRG - 1 downto 0 generate
+		signal m: std_logic_vector(63 downto 0);
+	begin
+		m <= masks(i * 2 + 1) & masks(i * 2);
+		ctrig(i) <= trig(i) and m(N_CHAN - 1 downto 0);
+	end generate;
 		
 -- Local trigger logic
 
@@ -128,7 +151,7 @@ begin
 			mark => mark,
 			sctr => sctr,
 			rand => rand,
-			chan_trig => trig,
+			chan_trig => ctrig,
 			trig_q => lq,
 			trig_valid => lvalid,
 			trig_ack => lack,

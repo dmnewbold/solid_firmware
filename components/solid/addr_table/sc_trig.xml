@@ -20,4 +20,5 @@
 		<node id="data" address="0x1" mode="port"/>
 	</node>
 	<node id="seq" address="0x8" module="file://sc_seq.xml"/>
+	<node id="masks" address="0x10" mode="block" size="0x10" description="channel trigger masks" fwinfo="endpoint;width=4">
 </node>
