@@ -118,7 +118,7 @@ begin
 	
 -- Channel trigger masks
 
-	masks: entity work.ipbus_reg_v
+	mask: entity work.ipbus_reg_v
 		generic map(
 			N_REG => N_CHAN_TRG * 2
 		)
