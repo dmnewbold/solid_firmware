@@ -113,15 +113,15 @@ begin
 			N_CTRS => N_TRG
 		)
 		port map(
-			clk => clk,
-			rst => rst,
+			ipb_clk => clk,
+			ipb_rst => rst,
 			ipb_in => ipbw(N_SLV_CTRS),
 			ipb_out => ipbr(N_SLV_CTRS),
-			slv_clk => clk40,
-			slv_rst => crst,
+			clk => clk40,
+			rst => crst,
 			inc => cinc
 		);
-	
+
 -- Trigger offset / length table
 
 	nclk40 <= not clk40;
