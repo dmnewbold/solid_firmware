@@ -17,7 +17,7 @@ package ipbus_decode_top_sim is
   subtype ipbus_sel_t is std_logic_vector(IPBUS_SEL_WIDTH - 1 downto 0);
   function ipbus_sel_top_sim(addr : in std_logic_vector(31 downto 0)) return ipbus_sel_t;
 
--- START automatically  generated VHDL the Tue Jun  6 13:22:51 2017 
+-- START automatically  generated VHDL the Wed Jun  7 10:07:49 2017 
   constant N_SLV_CSR: integer := 0;
   constant N_SLV_CHAN: integer := 1;
   constant N_SLV_TIMING: integer := 2;
@@ -37,7 +37,7 @@ package body ipbus_decode_top_sim is
     variable sel: ipbus_sel_t;
   begin
 
--- START automatically  generated VHDL the Tue Jun  6 13:22:51 2017 
+-- START automatically  generated VHDL the Wed Jun  7 10:07:49 2017 
     if    std_match(addr, "------------------------0000----") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_CSR, IPBUS_SEL_WIDTH)); -- csr / base 0x00000000 / mask 0x000000f0
     elsif std_match(addr, "------------------------0001----") then
@@ -48,10 +48,10 @@ package body ipbus_decode_top_sim is
       sel := ipbus_sel_t(to_unsigned(N_SLV_FAKE, IPBUS_SEL_WIDTH)); -- fake / base 0x00000050 / mask 0x000000f0
     elsif std_match(addr, "------------------------0110----") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_TLINK, IPBUS_SEL_WIDTH)); -- tlink / base 0x00000060 / mask 0x000000f0
-    elsif std_match(addr, "------------------------0111----") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_TRIG, IPBUS_SEL_WIDTH)); -- trig / base 0x00000070 / mask 0x000000f0
     elsif std_match(addr, "------------------------100-----") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_ROC, IPBUS_SEL_WIDTH)); -- roc / base 0x00000080 / mask 0x000000e0
+      sel := ipbus_sel_t(to_unsigned(N_SLV_TRIG, IPBUS_SEL_WIDTH)); -- trig / base 0x00000080 / mask 0x000000e0
+    elsif std_match(addr, "------------------------101-----") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_ROC, IPBUS_SEL_WIDTH)); -- roc / base 0x000000a0 / mask 0x000000e0
 -- END automatically generated VHDL
 
     else
