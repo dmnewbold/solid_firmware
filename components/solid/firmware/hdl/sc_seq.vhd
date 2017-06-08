@@ -47,7 +47,7 @@ architecture rtl of sc_seq is
 	signal ipbw: ipb_wbus_array(N_SLAVES - 1 downto 0);
 	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
 	signal td: std_logic_vector(15 downto 0);
-	signal tv, tv_d, terr: std_logic;
+	signal tv, terr: std_logic;
 	signal we: std_logic;
 	signal d_ram, q_ram: std_logic_vector(15 downto 0);
 	signal a_ram: std_logic_vector(BUF_RADIX - 1 downto 0);
@@ -79,15 +79,14 @@ begin
 -- Trigger input
 
 	td <= d_loc when valid_loc = '1' else d_ext;
-	tv <= valid_loc or valid_ext;
+	tv <= (valid_loc or valid_ext) and not rseq and zs_en;
 	ack_loc <= valid_loc;
 	ack_ext <= valid_ext and not valid_loc;
 	
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
-			tv_d <= tv and not tv_d and not rseq;
-			terr <= (terr or (tv and rseq)) and zs_en;
+			terr <= (terr or ((valid_loc or valid_ext) and rseq)) and zs_en;
 		end if;
 	end process;
 
@@ -167,7 +166,7 @@ begin
 			addr => a_ram
 		);
 		
-	we <= '1' when (tv_d = '1' and unsigned(d_ram) > unsigned(q_ram)) or (rseq = '1' and sctr(1 downto 0) = "11") else '0';
+	we <= '1' when (tv = '1' and unsigned(d_ram) > unsigned(q_ram)) or (rseq = '1' and sctr(1 downto 0) = "11") else '0';
 	a_ram <= std_logic_vector(ptr + unsigned(q_s_ram(BUF_RADIX - 1 downto 0))) when rseq = '0' else std_logic_vector(ptr);
 	d_ram <= q_s_ram(31 downto 16) when rseq = '0' else (others => '0');
 
