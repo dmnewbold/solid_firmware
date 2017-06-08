@@ -11,7 +11,7 @@ package top_decl is
   
 	constant MAC_ADDR: std_logic_vector(47 downto 0) := X"020ddba11503";
 	constant IP_ADDR: std_logic_vector(31 downto 0) := X"c0a8eb00";
-	constant FW_REV: std_logic_vector(15 downto 0) := X"000b";
+	constant FW_REV: std_logic_vector(15 downto 0) := X"000c";
 
 	constant N_CHAN: integer := 8;
 	constant BLK_RADIX: integer := 8; -- 256 sample blocks
