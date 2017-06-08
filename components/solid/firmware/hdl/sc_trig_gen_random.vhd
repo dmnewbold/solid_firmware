@@ -56,6 +56,6 @@ begin
 		(mode(0) and not or_reduce(sctr(BLK_RADIX + mask'left downto BLK_RADIX) and mask))) and mode(1);
 		
 	v <= ((v and not mark) or ((rtrig or force_c) and mark)) and not (ack or not en) when rising_edge(clk);
-	valid <= v and not ack;
+	valid <= v;
 	
 end rtl;

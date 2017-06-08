@@ -41,6 +41,6 @@ begin
 
 	mark_del <= mark_del(DELAY - 2 downto 0) & mark when rising_edge(clk);
 	v <= ((v and not mark_del(DELAY - 1)) or (or_reduce(chan_trig(TBIT)) and mark_del(DELAY - 1))) and not (ack or not en) when rising_edge(clk);
-	valid <= v and not ack;
+	valid <= v;
 	
 end rtl;

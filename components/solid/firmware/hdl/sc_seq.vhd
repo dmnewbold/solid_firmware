@@ -80,8 +80,8 @@ begin
 
 	td <= d_loc when valid_loc = '1' else d_ext;
 	tv <= valid_loc or valid_ext;
-	ack_loc <= valid_loc when rising_edge(clk40);
-	ack_ext <= valid_ext and not valid_loc when rising_edge(clk40);
+	ack_loc <= valid_loc;
+	ack_ext <= valid_ext and not valid_loc;
 	
 	process(clk40)
 	begin
