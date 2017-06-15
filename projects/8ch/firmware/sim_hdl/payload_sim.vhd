@@ -91,8 +91,6 @@ begin
 		port map(
 			ipb_clk => ipb_clk,
 			ipb_rst => ipb_rst,
-			ipb_in_timing => ipbw(N_SLV_TIMING),
-			ipb_out_timing => ipbr(N_SLV_TIMING),
 			ipb_in => ipbw(N_SLV_DAQ),
 			ipb_out => ipbr(N_SLV_DAQ),
 			rst_mmcm => ctrl_rst_mmcm,
