@@ -1,3 +1,0 @@
-src ipbus_spi.vhd spi_top.v spi_clgen.v spi_shift.v spi_defines.v timescale.v
-addrtab opencores_spi.xml
-src -c ipbus-firmware:components/ipbus_core ipbus_package.vhd
