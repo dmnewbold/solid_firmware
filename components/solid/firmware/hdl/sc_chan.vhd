@@ -72,7 +72,7 @@ architecture rtl of sc_chan is
 	signal ctrl_mode, ctrl_src: std_logic_vector(1 downto 0);
 	signal cap_full, buf_full, dr_full, dr_warn: std_logic;
 	signal zs_thresh_v: ipb_reg_v(N_ZS_THRESH - 1 downto 0);
-	signal zs_sel: integer range 2 ** zs_sel'length - 1 downto 0 := 0;
+	signal zs_sel_i: integer range 2 ** zs_sel'length - 1 downto 0 := 0;
 	signal zs_thresh: std_logic_vector(13 downto 0);
 	signal sctr_p: std_logic_vector(11 downto 0);
 	signal dr_d: std_logic_vector(31 downto 0);
@@ -167,7 +167,7 @@ begin
 	
 -- ZS thresholds
 
-	zs_thresh: entity work.ipbus_reg_v
+	zs_t: entity work.ipbus_reg_v
 		generic map(
 			N_REG => N_ZS_THRESH
 		)
