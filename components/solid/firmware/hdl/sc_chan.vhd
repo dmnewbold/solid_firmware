@@ -181,7 +181,7 @@ begin
 		);
 		
 	zs_sel_i <= to_integer(unsigned(zs_sel));
-	zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0) when zs_sel_i < N_SZ_THRESH else (others => '0');
+	zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0) when zs_sel_i < N_ZS_THRESH else (others => '0');
 	
 -- Buffers
 	
