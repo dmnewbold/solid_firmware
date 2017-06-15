@@ -33,6 +33,7 @@ entity sc_trig is
 		veto: in std_logic_vector(N_CHAN - 1 downto 0);
 		zs_sel: out std_logic_vector(1 downto 0);
 		trig: in sc_trig_array;
+		force: in std_logic;
 		ro_d: out std_logic_vector(31 downto 0);
 		ro_blkend: out std_logic;
 		ro_we: out std_logic;
