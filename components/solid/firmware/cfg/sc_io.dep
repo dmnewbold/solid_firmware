@@ -3,8 +3,8 @@ src -c ipbus-firmware:components/ipbus_core ipbus_fabric_sel.vhd
 src ipbus_decode_sc_io.vhd
 addrtab -t sc_io.xml 
 src -c ipbus-firmware:components/ipbus_slaves ipbus_ctrlreg_v.vhd
-include -c components/opencores_i2c
-include -c components/opencores_spi
+include -c ipbus-firmware:components/opencores_i2c
+include -c ipbus-firmware:components/opencores_spi
 src -c components/mp7_ttc freq_ctr.vhd freq_ctr_div.vhd
 addrtab -c components/mp7_ttc freq_ctr.xml
 src -c ipbus-firmware:components/ipbus_slaves ipbus_reg_types.vhd
