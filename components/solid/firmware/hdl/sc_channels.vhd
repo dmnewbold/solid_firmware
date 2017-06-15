@@ -59,8 +59,6 @@ architecture rtl of sc_channels is
 	signal chan_q: chan_q_t;
 	signal chan_q_blkend, chan_q_empty, chan_ren: std_logic_vector(N_CHAN - 1 downto 0);
 	signal sel: integer range N_CHAN - 1 downto 0 := 0;
-	type chan_q_test_t is array(N_CHAN - 1 downto 0) of std_logic_vector(13 downto 0);
-	signal q_test: chan_q_test_t;
 
 begin
 
@@ -86,7 +84,6 @@ begin
 	cgen: for i in N_CHAN - 1 downto 0 generate
 	
 		signal ren_loc: std_logic;
-		constant p: integer := i + 1 - 2 * (i mod 2);
 		signal ltrig: std_logic_vector(N_CHAN_TRG - 1 downto 0);
 	
 	begin
@@ -108,8 +105,6 @@ begin
 				clk280 => clk280,				
 				d_p => d_p(i),
 				d_n => d_n(i),
-				d_test => q_test(p),
-				q_test => q_test(i),
 				sync_ctrl => sync_ctrl,
 				zs_sel => zs_sel,
 				sctr => sctr,

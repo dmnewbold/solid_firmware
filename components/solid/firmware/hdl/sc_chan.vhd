@@ -36,8 +36,6 @@ entity sc_chan is
 		clk280: in std_logic;
 		d_p: in std_logic;
 		d_n: in std_logic;
-		d_test: in std_logic_vector(13 downto 0);
-		q_test: out std_logic_vector(13 downto 0);
 		sync_ctrl: in std_logic_vector(3 downto 0);
 		zs_sel: in std_logic_vector(1 downto 0);
 		sctr: in std_logic_vector(47 downto 0);		
@@ -152,7 +150,7 @@ begin
 	
 	with ctrl_src select d_buf <=
 		d_in_i when "00",
-		d_test when "01",
+		(others => '0') when "01",
 		"00" & sctr_p when "10",
 		fake when others;
 		
@@ -202,7 +200,6 @@ begin
 			nzs_en => nzs_en,
 			cap_full => cap_full,
 			zs_thresh => zs_thresh,
-			q_test => q_test,
 			zs_en => zs_en,
 			buf_full => buf_full,
 			keep => keep_i,

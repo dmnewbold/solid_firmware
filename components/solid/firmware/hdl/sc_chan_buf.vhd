@@ -28,7 +28,6 @@ entity sc_chan_buf is
 		nzs_en: in std_logic; -- enable nzs buffer; clk40 dom
 		cap_full: out std_logic;
 		zs_thresh: in std_logic_vector(13 downto 0); -- ZS threshold; clk40 dom
-		q_test: out std_logic_vector(13 downto 0); -- test data output to adjacent channel; clk40 dom
 		zs_en: in std_logic; -- enable zs buffer; clk40 dom
 		buf_full: out std_logic; -- buffer err flag; clk40 dom
 		keep: in std_logic; -- block transfer cmd; clk40 dom
@@ -143,8 +142,6 @@ begin
 	cap_full <= cap_done;
 	
 -- Zero suppression
-
-	q_test <= q_ram(13 downto 0);
 		
 	z0 <= '1' when unsigned(q_ram(13 downto 0)) < unsigned(zs_thresh) and q_ram(15) = '0' else '0';
 
