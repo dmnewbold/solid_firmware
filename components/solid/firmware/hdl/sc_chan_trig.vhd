@@ -55,7 +55,7 @@ begin
 		);
 
 	dd <= d when rising_edge(clk40); -- pipeline register
-		
+			
 	trg0: entity work.sc_ctrig_thresh -- direct threshold trigger, delay = 1
 		generic map(
 			VAL_WIDTH => VAL_WIDTH,

@@ -31,6 +31,7 @@ entity sc_trig is
 		keep: out std_logic_vector(N_CHAN - 1 downto 0);
 		flush: out std_logic_vector(N_CHAN - 1 downto 0);
 		veto: in std_logic_vector(N_CHAN - 1 downto 0);
+		zs_sel: out std_logic_vector(1 downto 0);
 		trig: in sc_trig_array;
 		ro_d: out std_logic_vector(31 downto 0);
 		ro_blkend: out std_logic;
@@ -164,7 +165,11 @@ begin
 		);
 	
 	q <= lq;
-	q_valid <= lvalid;	
+	q_valid <= lvalid;
+	
+-- ZS threshold select
+
+	zs_sel <= "00";
 
 -- Readout sequencer
 

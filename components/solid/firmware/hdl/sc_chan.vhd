@@ -39,6 +39,7 @@ entity sc_chan is
 		d_test: in std_logic_vector(13 downto 0);
 		q_test: out std_logic_vector(13 downto 0);
 		sync_ctrl: in std_logic_vector(3 downto 0);
+		zs_sel: in std_logic_vector(1 downto 0);
 		sctr: in std_logic_vector(47 downto 0);		
 		fake: in std_logic_vector(13 downto 0);		
 		nzs_en: in std_logic;
@@ -70,6 +71,9 @@ architecture rtl of sc_chan is
 	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert: std_logic;
 	signal ctrl_mode, ctrl_src: std_logic_vector(1 downto 0);
 	signal cap_full, buf_full, dr_full, dr_warn: std_logic;
+	signal zs_thresh_v: ipb_reg_v(N_ZS_THRESH - 1 downto 0);
+	signal zs_sel: integer range 2 ** zs_sel'length - 1 downto 0 := 0;
+	signal zs_thresh: std_logic_vector(13 downto 0);
 	signal sctr_p: std_logic_vector(11 downto 0);
 	signal dr_d: std_logic_vector(31 downto 0);
 	signal ro_en, keep_i, flush_i, err_i, req, blkend, dr_blkend, dr_wen: std_logic;
@@ -161,6 +165,24 @@ begin
 	flush_i <= flush and ro_en;
 	veto <= dr_warn or not ro_en;
 	
+-- ZS thresholds
+
+	zs_thresh: entity work.ipbus_reg_v
+		generic map(
+			N_REG => N_ZS_THRESH
+		)
+		port map(
+			clk => clk,
+			reset => rst,
+			ipbus_in => ipbw(N_SLV_ZS_THRESH),
+			ipbus_out => ipbr(N_SLV_ZS_THRESH),
+			q => zs_thresh_v,
+			qmask => (others => X"00003fff")
+		);
+		
+	zs_sel_i <= to_integer(unsigned(zs_sel));
+	zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0) when zs_sel_i < N_SZ_THRESH else (others => '0');
+	
 -- Buffers
 	
 	blkend <= and_reduce(sctr(BLK_RADIX - 1 downto 0));
@@ -171,8 +193,6 @@ begin
 			rst => rst,
 			ipb_in => ipbw(N_SLV_BUF),
 			ipb_out => ipbr(N_SLV_BUF),
-			ipb_in_ptr => ipbw(N_SLV_PTRS),
-			ipb_out_ptr => ipbr(N_SLV_PTRS),
 			mode => ctrl_mode,
 			clk40 => clk40,
 			clk160 => clk160,
@@ -181,7 +201,7 @@ begin
 			blkend => blkend,	
 			nzs_en => nzs_en,
 			cap_full => cap_full,
-			zs_thresh => ctrl(0)(29 downto 16), -- CDC
+			zs_thresh => zs_thresh,
 			q_test => q_test,
 			zs_en => zs_en,
 			buf_full => buf_full,

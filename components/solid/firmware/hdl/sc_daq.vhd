@@ -8,6 +8,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 use work.ipbus.all;
+use work.ipbus_decode_sc_daq.all;
 
 use work.top_decl.all;
 
@@ -15,18 +16,8 @@ entity sc_daq is
 	port(
 		ipb_clk: in std_logic;
 		ipb_rst: in std_logic;
-		ipb_in_timing: in ipb_wbus;
-		ipb_out_timing: out ipb_rbus;
-		ipb_in_fake: in ipb_wbus;
-		ipb_out_fake: out ipb_rbus;
-		ipb_in_chan: in ipb_wbus;
-		ipb_out_chan: out ipb_rbus;
-		ipb_in_trig: in ipb_wbus;
-		ipb_out_trig: out ipb_rbus;
-		ipb_in_tlink: in ipb_wbus;
-		ipb_out_tlink: out ipb_rbus;		
-		ipb_in_roc: in ipb_wbus;
-		ipb_out_roc: out ipb_rbus;
+		ipb_in: in ipb_wbus;
+		ipb_out: out ipb_rbus;
 		rst_mmcm: in std_logic;
 		locked: out std_logic;
 		clk_in_p: in std_logic;
@@ -48,12 +39,16 @@ end sc_daq;
 
 architecture rtl of sc_daq is
 
+	signal ipbw: ipb_wbus_array(N_SLAVES - 1 downto 0);
+	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
 	signal clk40_i, rst40_i, clk160, clk280: std_logic;
 	signal sync_ctrl: std_logic_vector(3 downto 0);
 	signal sctr: std_logic_vector(47 downto 0);
 	signal trig_en, nzs_en, zs_en: std_logic;
 	signal trig_keep, trig_flush, trig_veto: std_logic_vector(N_CHAN - 1 downto 0);
 	signal fake: std_logic_vector(13 downto 0);
+	signal force_trig: std_logic;
+	signal zs_sel: std_logic_vector(1 downto 0);
 	signal chan_trig: sc_trig_array;
 	signal link_d, link_q: std_logic_vector(15 downto 0);
 	signal link_d_valid, link_q_valid, link_ack: std_logic;
@@ -64,14 +59,29 @@ architecture rtl of sc_daq is
 
 begin
 	
+-- ipbus address decode
+		
+	fabric: entity work.ipbus_fabric_sel
+    generic map(
+    	NSLV => N_SLAVES,
+    	SEL_WIDTH => IPBUS_SEL_WIDTH
+    )
+    port map(
+      ipb_in => ipb_in,
+      ipb_out => ipb_out,
+      sel => ipbus_sel_sc_daq(ipb_in.ipb_addr),
+      ipb_to_slaves => ipbw,
+      ipb_from_slaves => ipbr
+    );
+ 
 -- Timing
 
 	timing: entity work.sc_timing
 		port map(
 			clk => ipb_clk,
 			rst => ipb_rst,
-			ipb_in => ipb_in_timing,
-			ipb_out => ipb_out_timing,
+			ipb_in => ipbw(N_SLV_TIMING),
+			ipb_out => ipbr(N_SLV_TIMING),
 			rst_mmcm => rst_mmcm,
 			locked => locked,
 			clk_in_p => clk_in_p,
@@ -99,13 +109,29 @@ begin
 		port map(
 			clk => ipb_clk,
 			rst => ipb_rst,
-			ipb_in => ipb_in_fake,
-			ipb_out => ipb_out_fake,
+			ipb_in => ipbw(N_SLV_FAKE),
+			ipb_out => ipbr(N_SLV_FAKE),
 			clk40 => clk40_i,
 			rst40 => rst40_i,
 			rand => rand,
 			sctr => sctr(7 downto 0),
 			fake => fake
+		);
+		
+-- External / random trigger generator
+			
+	rtrig: entity work.sc_rtrig
+		port map(
+			clk => ipb_clk,
+			rst => ipb_rst,
+			ipb_in => ipbw(N_SLV_RTRIG),
+			ipb_out => ipbr(N_SLV_RTRIG),	
+			clk40 => clk40_i,
+			rst40 => rst40_i,
+			rand => rand,
+			sctr => sctr,
+			trig => force_trig,
+			trig_in => trig_in
 		);
 			
 -- Data channels
@@ -114,8 +140,8 @@ begin
 		port map(
 			clk => ipb_clk,
 			rst => ipb_rst,
-			ipb_in => ipb_in_chan,
-			ipb_out => ipb_out_chan,
+			ipb_in => ipbw(N_SLV_CHAN),
+			ipb_out => ipbr(N_SLV_CHAN),
 			chan => chan,
 			clk40 => clk40_i,
 			rst40 => rst40_i,
@@ -124,6 +150,7 @@ begin
 			d_p => d_p,
 			d_n => d_n,
 			sync_ctrl => sync_ctrl,
+			zs_sel => zs_sel,
 			sctr => sctr,
 			fake => fake,
 			nzs_en => nzs_en,
@@ -147,8 +174,8 @@ begin
 		port map(
 			clk => ipb_clk,
 			rst => ipb_rst,
-			ipb_in => ipb_in_trig,
-			ipb_out => ipb_out_trig,
+			ipb_in => ipbw(N_SLV_TRIG),
+			ipb_out => ipbr(N_SLV_TRIG),
 			clk40 => clk40_i,
 			rst40 => rst40_i,
 			clk160 => clk160,
@@ -159,7 +186,9 @@ begin
 			keep => trig_keep,
 			flush => trig_flush,
 			veto => trig_veto,
+			zs_sel => zs_sel,
 			trig => chan_trig,
+			force => force_trig,
 			ro_d => trig_d,
 			ro_blkend => trig_blkend,
 			ro_we => trig_we,
@@ -177,8 +206,8 @@ begin
 		port map(
 			clk => ipb_clk,
 			rst => ipb_rst,
-			ipb_in => ipb_in_tlink,
-			ipb_out => ipb_out_tlink,
+			ipb_in => ipbw(N_SLV_TLINK),
+			ipb_out => ipbr(N_SLV_TLINK),
 			clk125 => clk125,
 			rst125 => rst125,
 			clk40 => clk40_i,
@@ -196,8 +225,8 @@ begin
 		port map(
 			clk => ipb_clk,
 			rst => ipb_rst,
-			ipb_in => ipb_in_roc,
-			ipb_out => ipb_out_roc,
+			ipb_in => ipbw(N_SLV_ROC),
+			ipb_out => ipbr(N_SLV_ROC),
 			board_id => board_id,
 			clk40 => clk40_i,
 			rst40 => rst40_i,

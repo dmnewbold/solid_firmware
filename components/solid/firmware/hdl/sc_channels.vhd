@@ -30,6 +30,7 @@ entity sc_channels is
 		d_p: in std_logic_vector(N_CHAN - 1 downto 0);
 		d_n: in std_logic_vector(N_CHAN - 1 downto 0);
 		sync_ctrl: in std_logic_vector(3 downto 0);
+		zs_sel: in std_logic_vector(1 downto 0);
 		sctr: in std_logic_vector(47 downto 0);
 		fake: in std_logic_vector(13 downto 0);
 		nzs_en: in std_logic;
@@ -110,6 +111,7 @@ begin
 				d_test => q_test(p),
 				q_test => q_test(i),
 				sync_ctrl => sync_ctrl,
+				zs_sel => zs_sel,
 				sctr => sctr,
 				fake => fake,
 				nzs_en => nzs_en,

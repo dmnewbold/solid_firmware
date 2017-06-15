@@ -19,8 +19,6 @@ entity sc_chan_buf is
 		rst: in std_logic;
 		ipb_in: in ipb_wbus; -- clk dom
 		ipb_out: out ipb_rbus; -- clk dom
-		ipb_in_ptr: in ipb_wbus; -- clk dom
-		ipb_out_ptr: out ipb_rbus; -- clk dom
 		mode: in std_logic_vector(1 downto 0); -- buffer counter mode; clk dom
 		clk40: in std_logic;
 		clk160: in std_logic;
@@ -44,8 +42,8 @@ end sc_chan_buf;
 
 architecture rtl of sc_chan_buf is
 
-	constant NZS_LAST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX - 1;
-	constant ZS_FIRST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX;
+	constant NZS_LAST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX + ZS_DEL - 1;
+	constant ZS_FIRST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX + ZS_DEL;
 	constant ZS_LAST_ADDR: integer := 2 ** BUF_RADIX - 1;
 
 	signal norm_mode, pb_mode, cap_mode: std_logic;
@@ -109,13 +107,6 @@ begin
 		wenz when "11",
 		wez when "01",
 		'0' when others;
-
--- Pointer access
-
-	ipb_out_ptr.ipb_rdata <= X"0000" & (15 - BUF_RADIX downto 0 => '0') & std_logic_vector(pnz) when ipb_in_ptr.ipb_addr(0) = '0' else
-		(15 - BUF_RADIX downto 0 => '0') & std_logic_vector(pzw) & (15 - BUF_RADIX downto 0 => '0') & std_logic_vector(pzr);
-	ipb_out_ptr.ipb_ack <= ipb_in_ptr.ipb_strobe;
-	ipb_out_ptr.ipb_err <= '0';
 	
 -- NZS pointer control
 

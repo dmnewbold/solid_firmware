@@ -1,3 +1,6 @@
 src sc_daq.vhd
+src ipbus_decode_sc_daq.vhd
+addrtab -t sc_daq.xml
+src sc_rtrig.vhd
 include sc_timing_sim.dep sc_fake.dep sc_chan.dep sc_trig.dep sc_trig_link.dep sc_roc.dep
 src -c ipbus-firmware:components/ipbus_core ipbus_package.vhd
