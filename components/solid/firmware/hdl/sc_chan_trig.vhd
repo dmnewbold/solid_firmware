@@ -55,16 +55,13 @@ begin
 		);
 
 	dd <= d when rising_edge(clk40); -- pipeline register
-			
+	
 	trg0: entity work.sc_ctrig_thresh -- direct threshold trigger, delay = 1
 		generic map(
-			VAL_WIDTH => VAL_WIDTH,
-			DELAY => 2
+			VAL_WIDTH => VAL_WIDTH
 		)
 		port map(
 			clk => clk40,
-			rst => rst40,
-			clr => mark,
 			d => dd,
 			threshold => ctrl(0)(VAL_WIDTH - 1 downto 0),
 			trig => trig_i(0)
@@ -78,7 +75,6 @@ begin
 			clk => clk40,
 			rst => rst40,
 			clr => mark,
-			en => en,
 			d => dd,
 			cthresh => ctrl(1)(24 downto 16),
 			wsize => ctrl(1)(31 downto 28),
@@ -93,7 +89,6 @@ begin
 		port map(
 			clk => clk40,
 			rst => rst40,
-			clr => mark,
 			en => en,
 			d => dd,
 			cthresh => ctrl(2)(24 downto 16),

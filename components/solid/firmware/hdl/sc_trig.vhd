@@ -34,6 +34,7 @@ entity sc_trig is
 		zs_sel: out std_logic_vector(1 downto 0);
 		trig: in sc_trig_array;
 		force: in std_logic;
+		thresh_hit: out std_logic;
 		ro_d: out std_logic_vector(31 downto 0);
 		ro_blkend: out std_logic;
 		ro_we: out std_logic;
@@ -127,8 +128,8 @@ begin
 		port map(
 			clk => clk,
 			reset => rst,
-			ipbus_in => ipbw(N_SLV_MASKS),
-			ipbus_out => ipbr(N_SLV_MASKS),
+			ipbus_in => ipbw(N_SLV_CHAN_MASK),
+			ipbus_out => ipbr(N_SLV_CHAN_MASK),
 			q => masks
 		);
 		
@@ -145,8 +146,8 @@ begin
 		port map(
 			clk => clk,
 			rst => rst,
-			ipb_in => ipbw(N_SLV_LOC),
-			ipb_out => ipbr(N_SLV_LOC),
+			ipb_in => ipbw(N_SLV_LOC_MASK),
+			ipb_out => ipbr(N_SLV_LOC_MASK),
 			clk40 => clk40,
 			rst40 => rst40,
 			trig_en => trig_en,
@@ -157,6 +158,8 @@ begin
 			trig_q => lq,
 			trig_valid => lvalid,
 			trig_ack => lack,
+			force => force,
+			thresh_hit => thresh_hit,
 			ro_q => t_q,
 			ro_valid => t_valid,
 			ro_blkend => t_blkend,

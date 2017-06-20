@@ -51,13 +51,10 @@ begin
 
 	thresh: entity work.sc_ctrig_thresh
 		generic map(
-			VAL_WIDTH => cthresh'length,
-			DELAY => 2
+			VAL_WIDTH => cthresh'length
 		)
 		port map(
 			clk => clk,
-			rst => rsti,
-			clr => clr,
 			d => count,
 			threshold => cthresh,
 			trig => trig

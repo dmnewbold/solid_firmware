@@ -10,13 +10,10 @@ use ieee.numeric_std.all;
 
 entity sc_ctrig_thresh is
 	generic(
-		VAL_WIDTH: natural;
-		DELAY: positive := 1
+		VAL_WIDTH: natural
 	);
 	port(
 		clk: in std_logic;
-		rst: in std_logic;
-		clr: in std_logic;
 		d: in std_logic_vector(VAL_WIDTH - 1 downto 0);
 		threshold: in std_logic_vector(VAL_WIDTH - 1 downto 0);
 		trig: out std_logic
@@ -25,24 +22,12 @@ entity sc_ctrig_thresh is
 end sc_ctrig_thresh;
 
 architecture rtl of sc_ctrig_thresh is
-
-	signal cdel: std_logic_vector(DELAY - 1 downto 0);
 	
+	signal t: std_logic;
+
 begin
 
-	cdel <= cdel(DELAY - 2 downto 0) & clr when rising_edge(clk);
-
-	process(clk)
-	begin
-		if rising_edge(clk) then
-			if rst = '1' then
-				trig <= '0';
-			elsif unsigned(d) > unsigned(threshold) then
-				trig <= '1';
-			elsif cdel(DELAY - 1) = '1' then
-				trig <= '0';
-			end if;
-		end if;
-	end process;
-
+	t <= '1' when unsigned(d) > unsigned(threshold) else '0';
+	trig <= t when rising_edge(clk);
+	
 end rtl;

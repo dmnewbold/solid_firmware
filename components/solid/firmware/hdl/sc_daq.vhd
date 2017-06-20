@@ -26,6 +26,7 @@ entity sc_daq is
 		sync_in: in std_logic;
 		sync_out: out std_logic;
 		trig_in: in std_logic;
+		trig_out: out std_logic;
 		chan: in std_logic_vector(7 downto 0);
 		chan_err: out std_logic;
 		d_p: in std_logic_vector(N_CHAN - 1 downto 0);
@@ -47,7 +48,7 @@ architecture rtl of sc_daq is
 	signal trig_en, nzs_en, zs_en: std_logic;
 	signal trig_keep, trig_flush, trig_veto: std_logic_vector(N_CHAN - 1 downto 0);
 	signal fake: std_logic_vector(13 downto 0);
-	signal force_trig: std_logic;
+	signal force_trig, thresh_hit: std_logic;
 	signal zs_sel: std_logic_vector(1 downto 0);
 	signal chan_trig: sc_trig_array;
 	signal link_d, link_q: std_logic_vector(15 downto 0);
@@ -130,8 +131,10 @@ begin
 			rst40 => rst40_i,
 			rand => rand,
 			sctr => sctr,
-			trig => force_trig,
-			trig_in => trig_in
+			force => force_trig,
+			hit => thresh_hit,
+			trig_in => trig_in,
+			trig_out => trig_out
 		);
 			
 -- Data channels
@@ -189,6 +192,7 @@ begin
 			zs_sel => zs_sel,
 			trig => chan_trig,
 			force => force_trig,
+			thresh_hit => thresh_hit,
 			ro_d => trig_d,
 			ro_blkend => trig_blkend,
 			ro_we => trig_we,

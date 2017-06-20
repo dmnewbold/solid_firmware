@@ -33,6 +33,8 @@ entity sc_local_trig is
 		trig_q: out std_logic_vector(15 downto 0);
 		trig_valid: out std_logic;
 		trig_ack: in std_logic;
+		force: in std_logic;
+		thresh_hit: out std_logic;
 		ro_q: out std_logic_vector(31 downto 0);
 		ro_valid: out std_logic;
 		ro_blkend: out std_logic;
@@ -46,11 +48,7 @@ end sc_local_trig;
 architecture rtl of sc_local_trig is
 
 	signal ctrl: ipb_reg_v(0 downto 0);
-	signal stb: std_logic_vector(0 downto 0);
-	signal ctrl_trig_en: std_logic_vector(7 downto 0);
-	signal ctrl_rnd_mode: std_logic_vector(1 downto 0);
-	signal ctrl_trig_force: std_logic;
-	signal ctrl_rnd_div: std_logic_vector(5 downto 0);
+	signal ctrl_trig_en: std_logic_vector(N_TRG - 1 downto 0);
 	signal tv, te, ta, tc: std_logic_vector(N_TRG - 1 downto 0);
 	signal s: integer range N_TRG - 1 downto 0;
 	signal ch: integer range 2 ** ro_ctr'length - 1 downto 0;
@@ -63,45 +61,24 @@ begin
 
 -- Control register
 	
-	csr: entity work.ipbus_syncreg_v
+	csr: entity work.ipbus_reg_v
 		generic map(
-			N_CTRL => 1,
-			N_STAT => 0
+			N_REG => 1
 		)
 		port map(
 			clk => clk,
-			rst => rst,
-			ipb_in => ipb_in,
-			ipb_out => ipb_out,
-			slv_clk => clk40,
+			reset => rst,
+			ipbus_in => ipb_in,
+			ipbus_out => ipb_out,
 			q => ctrl,
-			stb => stb
+			qmask(0) => (N_TRIG - 1 downto 0 => '1', others => '0')
 		);
 
-	ctrl_trig_en <= ctrl(0)(7 downto 0);
-	ctrl_trig_force <= ctrl(0)(8);
-	ctrl_rnd_mode <= ctrl(0)(17 downto 16);
-	ctrl_rnd_div <= ctrl(0)(23 downto 18);
+	ctrl_trig_en <= ctrl(0)(N_TRG - 1 downto 0);
 	
--- Random trigger generator
-
-	tg0: entity work.sc_trig_gen_random
-		port map(
-			clk => clk40,
-			en => trig_en,
-			mode => ctrl_rnd_mode,
-			sctr => sctr(31 downto 0),
-			rand => rand,
-			div => ctrl_rnd_div,
-			mark => mark,
-			force => ctrl_trig_force,
-			valid => tv(0),
-			ack => ta(0)
-		);
-
 -- Threshold trigger generator
 
-	tg1: entity work.sc_trig_gen_or
+	tg0: entity work.sc_trig_gen_or
 		generic map(
 			TBIT => 0,
 			DELAY => 2
@@ -111,13 +88,14 @@ begin
 			en => trig_en,
 			mark => mark,
 			chan_trig => chan_trig,
-			valid => tv(1),
-			ack => ta(1)
+			hit => thresh_hit,
+			valid => tv(0),
+			ack => ta(0)
 		);
 		
 -- peaks-over-threshold trigger generator
 
-	tg2: entity work.sc_trig_gen_or
+	tg1: entity work.sc_trig_gen_or
 		generic map(
 			TBIT => 1,
 			DELAY => 3
@@ -127,13 +105,13 @@ begin
 			en => trig_en,
 			mark => mark,
 			chan_trig => chan_trig,
-			valid => tv(2),
-			ack => ta(2)
+			valid => tv(1),
+			ack => ta(1)
 		);
 	
 -- time-over-threshold trigger generator
 
-	tg3: entity work.sc_trig_gen_or
+	tg2: entity work.sc_trig_gen_or
 		generic map(
 			TBIT => 2,
 			DELAY => 2
@@ -143,6 +121,21 @@ begin
 			en => trig_en,
 			mark => mark,
 			chan_trig => chan_trig,
+			valid => tv(2),
+			ack => ta(2)
+		);
+		
+-- random / external trigger generator
+
+	tg3: entity work.sc_trig_gen
+		generic map(
+			DELAY => 2
+		)
+		port map(
+			clk => clk40,
+			en => trig_en,
+			mark => mark,
+			trig => force,
 			valid => tv(3),
 			ack => ta(3)
 		);

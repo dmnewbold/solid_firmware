@@ -1,7 +1,6 @@
--- sc_trig_gen_or
+-- sc_trig_gen
 --
--- Local trigger module for simple 'ored' threshold triggers
--- This trigger will fire if any channel has a high bit in a given block
+-- Local trigger module based on an incoming bit
 --
 -- Dave Newbold, August 2016
 
@@ -12,24 +11,23 @@ use ieee.std_logic_misc.all;
 
 use work.top_decl.all;
 
-entity sc_trig_gen_or is
+entity sc_trig_gen is
 	generic(
-		TBIT: natural := 0;
 		DELAY: positive := 1
 	);
 	port(
 		clk: in std_logic;
 		en: in std_logic;
 		mark: in std_logic;
-		chan_trig: in sc_trig_array;
+		trig: in std_logic;
 		hit: out std_logic;
 		valid: out std_logic;
 		ack: in std_logic
 	);
 
-end sc_trig_gen_or;
+end sc_trig_gen;
 
-architecture rtl of sc_trig_gen_or is
+architecture rtl of sc_trig_gen is
 
 	signal t, m, tc, v: std_logic;
 	signal mark_del: std_logic_vector(DELAY - 1 downto 0);
@@ -38,7 +36,7 @@ begin
 
 -- Define the trigger condition and block boundary
 
-	t <= or_reduce(chan_trig(TBIT));
+	t <= trig;
 	mark_del <= mark_del(DELAY - 2 downto 0) & mark when rising_edge(clk);
 	m <= mark_del(DELAY - 1);
 	

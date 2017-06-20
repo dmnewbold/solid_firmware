@@ -1,5 +1,5 @@
 src sc_trig.vhd sc_local_trig.vhd sc_trig_ro_block.vhd sc_deadtime_mon.vhd 
-src sc_trig_gen_random.vhd sc_trig_gen_or.vhd
+src sc_trig_gen.vhd sc_trig_gen_or.vhd
 include sc_seq.dep
 src ipbus_decode_sc_trig.vhd
 addrtab -t sc_trig.xml
