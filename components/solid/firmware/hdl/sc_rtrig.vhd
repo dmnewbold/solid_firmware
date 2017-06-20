@@ -20,7 +20,7 @@ entity sc_rtrig is
 		rand: in std_logic_vector(31 downto 0);
 		sctr: in std_logic_vector(47 downto 0);
 		force: out std_logic;
-		thresh_hit: in std_logic;
+		hit: in std_logic;
 		trig_in: in std_logic;
 		trig_out: out std_logic
 	);
