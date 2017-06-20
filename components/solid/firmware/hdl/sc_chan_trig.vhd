@@ -74,7 +74,7 @@ begin
 		port map(
 			clk => clk40,
 			rst => rst40,
-			clr => mark,
+			en => en,
 			d => dd,
 			cthresh => ctrl(1)(24 downto 16),
 			wsize => ctrl(1)(31 downto 28),
