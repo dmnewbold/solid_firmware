@@ -71,7 +71,7 @@ begin
 			ipbus_in => ipb_in,
 			ipbus_out => ipb_out,
 			q => ctrl,
-			qmask(0) => (N_TRIG - 1 downto 0 => '1', others => '0')
+			qmask(0) => (N_TRG - 1 downto 0 => '1', others => '0')
 		);
 
 	ctrl_trig_en <= ctrl(0)(N_TRG - 1 downto 0);
