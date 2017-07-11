@@ -56,9 +56,11 @@ architecture rtl of sc_trig is
 	signal stat: ipb_reg_v(1 downto 0);
 	signal ctrl_dtmon_en: std_logic;
 	signal masks: ipb_reg_v(N_CHAN_TRG * 2 - 1 downto 0);
+	signal trig_mask: std_logic_vector(N_TRG - 1 downto 0);
 	signal ctrig: sc_trig_array;
 	signal lq: std_logic_vector(15 downto 0);
 	signal rveto, lvalid, lack, mark, err: std_logic;
+	signal zs_cfg: std_logic_vector(31 downto 0);
 	signal veto_p, veto_i, keep_i, flush_i: std_logic_vector(N_CHAN - 1 downto 0);
 	signal b_q, t_q: std_logic_vector(31 downto 0);
 	signal b_go, t_go, b_valid, t_valid, b_blkend, t_blkend, blkend: std_logic;
@@ -142,15 +144,25 @@ begin
 		
 -- Local trigger logic
 
-	ltrig: entity work.sc_local_trig
+	ltrig_reg: entity work.ipbus_reg_v
+		generic map(
+			N_REG => 1
+		)
 		port map(
 			clk => clk,
-			rst => rst,
-			ipb_in => ipbw(N_SLV_LOC_MASK),
-			ipb_out => ipbr(N_SLV_LOC_MASK),
+			reset => rst,
+			ipbus_in => ipbw(N_SLV_LOC_MASK),
+			ipbus_out => ipbr(N_SLV_LOC_MASK),
+			q => trig_mask,
+			qmask(0) => (N_TRG - 1 downto 0 => '1', others => '0')
+		);
+
+	ltrig: entity work.sc_local_trig
+		port map(
 			clk40 => clk40,
 			rst40 => rst40,
-			trig_en => trig_en,
+			en => trig_en,
+			mask => trig_mask,
 			mark => mark,
 			sctr => sctr,
 			rand => rand,
@@ -173,7 +185,28 @@ begin
 	
 -- ZS threshold select
 
-	zs_sel <= "00";
+	zsreg: entity work.ipbus_reg_v
+		generic map(
+			N_REG => 1
+		)
+		port map(
+			clk => clk,
+			reset => rst,
+			ipbus_in => ipbw(N_SLV_ZS_CFG),
+			ipbus_out => ipbr(N_SLV_ZS_CFG),
+			q(0) => zs_cfg
+		);
+
+	zssel: entity work.sc_zs_sel
+		port map(
+			clk40 => clk40,
+			rst40 => rst40,
+			mark => mark,
+			zscfg => zs_cfg,
+			trig => lq,
+			trig_valid => lvalid,
+			sel => zs_sel
+		);
 
 -- Readout sequencer
 

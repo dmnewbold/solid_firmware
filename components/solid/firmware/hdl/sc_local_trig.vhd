@@ -12,20 +12,14 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 use ieee.std_logic_misc.all;
 
-use work.ipbus.all;
-use work.ipbus_reg_types.all;
-
 use work.top_decl.all;
 
 entity sc_local_trig is
 	port(
-		clk: in std_logic; -- ipbus clock (nominally ~30MHz) & reset
-		rst: in std_logic;
-		ipb_in: in ipb_wbus;
-		ipb_out: out ipb_rbus;
 		clk40: in std_logic;
 		rst40: in std_logic;
-		trig_en: in std_logic;
+		en: in std_logic;
+		mask: in std_logic(N_TRG - 1 downto 0);
 		mark: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
 		rand: in std_logic_vector(31 downto 0);
@@ -47,34 +41,16 @@ end sc_local_trig;
 
 architecture rtl of sc_local_trig is
 
-	signal ctrl: ipb_reg_v(0 downto 0);
-	signal ctrl_trig_en: std_logic_vector(N_TRG - 1 downto 0);
 	signal tv, te, ta, tc: std_logic_vector(N_TRG - 1 downto 0);
 	signal s: integer range N_TRG - 1 downto 0;
 	signal ch: integer range 2 ** ro_ctr'length - 1 downto 0;
 	signal ch_i: integer range N_CHAN - 1 downto 0 := 0;
+	signal cact: sc_ltrig_array;
 	signal go, blkend, rveto_d, last_gasp, hoorah: std_logic;
 	signal bi: std_logic_vector(63 downto 0);
 	signal b: std_logic_vector(31 downto 0);
 	
 begin
-
--- Control register
-	
-	csr: entity work.ipbus_reg_v
-		generic map(
-			N_REG => 1
-		)
-		port map(
-			clk => clk,
-			reset => rst,
-			ipbus_in => ipb_in,
-			ipbus_out => ipb_out,
-			q => ctrl,
-			qmask(0) => (N_TRG - 1 downto 0 => '1', others => '0')
-		);
-
-	ctrl_trig_en <= ctrl(0)(N_TRG - 1 downto 0);
 	
 -- Threshold trigger generator
 
@@ -85,10 +61,11 @@ begin
 		)
 		port map(
 			clk => clk40,
-			en => trig_en,
+			en => en,
 			mark => mark,
 			chan_trig => chan_trig,
 			hit => thresh_hit,
+			chan_act => cact(0),
 			valid => tv(0),
 			ack => ta(0)
 		);
@@ -102,9 +79,10 @@ begin
 		)
 		port map(
 			clk => clk40,
-			en => trig_en,
+			en => en,
 			mark => mark,
 			chan_trig => chan_trig,
+			chan_act => cact(1),
 			valid => tv(1),
 			ack => ta(1)
 		);
@@ -118,9 +96,10 @@ begin
 		)
 		port map(
 			clk => clk40,
-			en => trig_en,
+			en => en,
 			mark => mark,
 			chan_trig => chan_trig,
+			chan_act => cact(2),
 			valid => tv(2),
 			ack => ta(2)
 		);
@@ -133,18 +112,20 @@ begin
 		)
 		port map(
 			clk => clk40,
-			en => trig_en,
+			en => en,
 			mark => mark,
 			trig => force,
 			valid => tv(3),
 			ack => ta(3)
 		);
+		
+	cact(3) <= (others => '0');
 
 -- Add more trigger generators here...
 
 -- Priority encoder
 
-	te <= tv and ctrl_trig_en(tv'range);
+	te <= tv and mask;
 
 	process(te)
 	begin
@@ -173,7 +154,7 @@ begin
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
-			if trig_en = '0' or blkend = '1' then
+			if en = '0' or blkend = '1' then
 				tc <= (others => '0');
 			else
 				tc <= tc or ta;
@@ -183,20 +164,20 @@ begin
 	
 -- Last gasp message flag
 
-	rveto_d <= rveto and trig_en when rising_edge(clk40) and mark = '1';
+	rveto_d <= rveto and en when rising_edge(clk40) and mark = '1';
 	last_gasp <= rveto and not rveto_d;
 	hoorah <= rveto_d and not rveto;
 	
 -- Trigger data to readout
 
-	go <= (go or (ro_go and ((or_reduce(tc) and not rveto) or last_gasp or hoorah))) and not blkend and trig_en and not rst40 when rising_edge(clk40);
+	go <= (go or (ro_go and ((or_reduce(tc) and not rveto) or last_gasp or hoorah))) and not blkend and en and not rst40 when rising_edge(clk40);
 	blkend <= '1' when unsigned(ro_ctr) = 3 + 2 * N_CHAN_TRG else '0';
 	ro_valid <= go;
 	ro_blkend <= blkend;
 
 	ch <= to_integer(unsigned(ro_ctr(ro_ctr'length - 1 downto 1)));
 	ch_i <= ch - 2 when ch > 1 and ch < N_CHAN_TRG else 0;
-	bi <= (63 downto N_CHAN => '0') & chan_trig(ch_i);
+	bi <= (63 downto N_CHAN => '0') & cact(ch_i);
 	b <= bi(63 downto 32) when ro_ctr(0) = '1' else bi(31 downto 0);
 
 	with ro_ctr select ro_q <=

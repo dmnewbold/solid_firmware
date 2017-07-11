@@ -23,6 +23,7 @@ entity sc_trig_gen_or is
 		mark: in std_logic;
 		chan_trig: in sc_trig_array;
 		hit: out std_logic;
+		chan_act: out std_logic_vector(N_CHAN - 1 downto 0);
 		valid: out std_logic;
 		ack: in std_logic
 	);
@@ -33,6 +34,7 @@ architecture rtl of sc_trig_gen_or is
 
 	signal t, m, tc, v: std_logic;
 	signal mark_del: std_logic_vector(DELAY - 1 downto 0);
+	signal c: std_logic_vector(N_CHAN - 1 downto 0);
 
 begin
 
@@ -49,10 +51,17 @@ begin
 		if rising_edge(clk) then
 			if en = '0' then
 				tc <= '0';
+				c <= (others => '0');
 			elsif t = '1' then
 				tc <= '1';
+				if m = '0' then
+					c <= c or chan_trig(TBIT);
+				else
+					c <= chan_trig(TBIT);
+				end if;
 			elsif m = '1' then
 				tc <= '0';
+				c <= (others => '0')
 			end if;
 		end if;
 	end process;
@@ -62,5 +71,6 @@ begin
 	hit <= t;
 	v <= (v or (tc and m)) and not (mark or ack or not en) when rising_edge(clk);
 	valid <= v;
+	chan_act <= c when m = '1' and rising_edge(clk);
 	
 end rtl;

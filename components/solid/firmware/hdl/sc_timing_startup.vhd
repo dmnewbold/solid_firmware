@@ -1,4 +1,4 @@
--- sc_trig_timing
+-- sc_timing_startup
 --
 -- Controls various enables to set up data flow through buffers, etc
 --
