@@ -30,7 +30,7 @@ entity sc_timing_iobufs is
 		sync_o: in std_logic;
 		sync_o_p: out std_logic;
 		sync_o_n: out std_logic;
-		sync_i: in std_logic;
+		sync_i: out std_logic;
 		sync_i_p: in std_logic;
 		sync_i_n: in std_logic;
 		trig_sel: in std_logic;
@@ -51,7 +51,7 @@ entity sc_timing_iobufs is
 		busy_o: in std_logic;
 		busy_o_p: out std_logic;
 		busy_o_n: out std_logic;
-		busy_i: out std_logic;
+		busy_i: out std_logic_vector(9 downto 0);
 		busy_i_p: in std_logic_vector(9 downto 0);
 		busy_i_n: in std_logic_vector(9 downto 0)
 	);
@@ -82,21 +82,21 @@ begin
 			s => '0'
 		);
 		
-	obuf_clk_rstn: OBUFDS
+	obuf_clk_o: OBUFDS
 		port map(
 			i => clk_o,
 			o => clk_o_p,
 			ob => clk_o_n
 		);
 		
-	ibufg_in: IBUFGDS
+	ibufg_clk_i: IBUFGDS
 		port map(
 			i => clk_i_p,
 			ib => clk_i_n,
 			o => clk_i_u
 		);
 		
-	bufg_in: BUFG
+	bufg_clk_i: BUFG
 		port map(
 			i => clk_i_u,
 			o => clk_i

@@ -5,7 +5,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
 use work.ipbus.all;
-use work.ipbus_decode_top.all;
+-- use work.ipbus_decode_top.all;
 
 entity payload is
 	port(
@@ -100,7 +100,7 @@ begin
 			busy_o => '0',
 			busy_o_p => busy_o_p,
 			busy_o_n => busy_o_n,
-			busy_i => open
+			busy_i => open,
 			busy_i_p => busy_i_p,
 			busy_i_n => busy_i_n
 		);
