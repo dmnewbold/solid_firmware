@@ -1,6 +1,6 @@
 <node id="TOP">
 	<node id="csr" address="0x0" fwinfo="endpoint;width=1">
-		<node="ctrl" address="0x0">
+		<node id="ctrl" address="0x0">
 			<node id="soft_rst" mask="0x1"/>
 			<node id="nuke" mask="0x2"/>
 			<node id="rst_mmcm" mask="0x4"/>
@@ -10,7 +10,7 @@
 			<node id="sync_sel" mask="0x40"/>
 			<node id="busy" mask="0x80"/>
 		</node>
-		<node="stat" address="0x1">
+		<node id="stat" address="0x1">
 			<node id="mmcm_locked" mask="0x1"/>
 		</node>
 	</node>
