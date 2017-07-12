@@ -17,7 +17,7 @@ zeClock=si5344(clock_I2C)
 res= zeClock.getDeviceVersion()
 zeClock.setPage(0, True)
 zeClock.getPage()
-regCfgList=zeClock.parse_clk("Si5344.txt")
+regCfgList=zeClock.parse_clk("Si5344-02.txt")
 zeClock.writeConfiguration(regCfgList)
 
 hw.getNode("io.freq.ctrl.chan_sel").write(i);
