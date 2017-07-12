@@ -1,4 +1,19 @@
 <node id="TOP">
-    <node id="io" address="0x0" module="file://pdts_fmc_io.xml"/>
-    <node id="master" address="0x200" module="file://master.xml"/>
+	<node id="csr" address="0x0" fwinfo="endpoint;width=1">
+		<node="ctrl" address="0x0">
+			<node id="soft_rst" mask="0x1"/>
+			<node id="nuke" mask="0x2"/>
+			<node id="rst_mmcm" mask="0x4"/>
+			<node id="trig" mask="0x8"/>
+			<node id="sync" mask="0x10"/>
+			<node id="trig_sel" mask="0x20"/>
+			<node id="sync_sel" mask="0x40"/>
+			<node id="busy" mask="0x80"/>
+		</node>
+		<node="stat" address="0x1">
+			<node id="mmcm_locked" mask="0x1"/>
+		</node>
+	</node>
+	<node id="i2c" address="0x8" module="file://opencores_i2c.xml"/>
+	<node id="freq_ctr" address="0x10" module="file://freq_ctr.xml"/>
 </node>
