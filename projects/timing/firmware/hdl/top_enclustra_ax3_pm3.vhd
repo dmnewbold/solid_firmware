@@ -22,38 +22,34 @@ entity top is port(
 		rgmii_rx_ctl: in std_logic;
 		rgmii_rxc: in std_logic;
 		phy_rstn: out std_logic;
-		fmc_clk_p: in std_logic;
-		fmc_clk_n: in std_logic;
-		rec_clk_p: in std_logic;
-		rec_clk_n: in std_logic;
-		rec_d_p: in std_logic;
-		rec_d_n: in std_logic;
-		clk_out_p: out std_logic;
-		clk_out_n: out std_logic;
-		rj45_din_p: in std_logic;
-		rj45_din_n: in std_logic;
-		rj45_dout_p: out std_logic;
-		rj45_dout_n: out std_logic;
-		sfp_dout_p: out std_logic;
-		sfp_dout_n: out std_logic;
-		pll_rstn: out std_logic;
-		cdr_lol: in std_logic;
-		cdr_los: in std_logic;
-		sfp_los: in std_logic;
-		sfp_tx_dis: out std_logic;
-		sfp_flt: in std_logic;
-		uid_scl: out std_logic;
-		uid_sda: inout std_logic;
-		sfp_scl: out std_logic;
-		sfp_sda: inout std_logic;
-		pll_scl: out std_logic;
-		pll_sda: inout std_logic;
-		gpin_0_p: in std_logic;
-		gpin_0_n: in std_logic;
-		gpout_0_p: out std_logic;
-		gpout_0_n: out std_logic;
-		gpout_1_p: out std_logic;
-		gpout_1_n: out std_logic
+		clk_rstn_p: out std_logic;
+		clk_rstn_n: out std_logic;
+		clk_o_p: out std_logic;
+		clk_o_n: out std_logic;
+		clk_i_p: in std_logic;
+		clk_i_n: in std_logic;
+		trig_o_p: out std_logic;
+		trig_o_n: out std_logic;
+		trig_i_p: in std_logic;
+		trig_i_n: in std_logic;
+		sync_o_p: out std_logic;
+		sync_o_n: out std_logic;
+		sync_i_p: in std_logic;
+		sync_i_n: in std_logic;
+		trig_sel_p: out std_logic;
+		trig_sel_n: out std_logic;
+		sync_sel_p: out std_logic;
+		sync_sel_n: out std_logic;
+		scl_p: out std_logic;
+		scl_n: out std_logic;
+		sda_o_p: out std_logic;
+		sda_o_n: out std_logic;
+		sda_i_p: in std_logic;
+		sda_i_n: in std_logic;
+		busy_o_p: out std_logic;
+		busy_o_n: out std_logic;
+		busy_i_p: in std_logic_vector(9 downto 0);
+		busy_i_n: in std_logic_vector(9 downto 0)
 	);
 
 end top;
@@ -112,38 +108,34 @@ begin
 			soft_rst => soft_rst,
 			userled => userled,
 			clk125 => clk125,
-			fmc_clk_p => fmc_clk_p,
-			fmc_clk_n => fmc_clk_n,
-			rec_clk_p => rec_clk_p,
-			rec_clk_n => rec_clk_n,
-			rec_d_p => rec_d_p,
-			rec_d_n => rec_d_n,
-			clk_out_p => clk_out_p,
-			clk_out_n => clk_out_n,
-			rj45_din_p => rj45_din_p,
-			rj45_din_n => rj45_din_n,
-			rj45_dout_p => rj45_dout_p,
-			rj45_dout_n => rj45_dout_n,
-			sfp_dout_p => sfp_dout_p,
-			sfp_dout_n => sfp_dout_n,
-			cdr_lol => cdr_lol,
-			cdr_los => cdr_los,
-			sfp_los => sfp_los,
-			sfp_tx_dis => sfp_tx_dis,
-			sfp_flt => sfp_flt,
-			uid_scl => uid_scl,
-			uid_sda => uid_sda,
-			sfp_scl => sfp_scl,
-			sfp_sda => sfp_sda,
-			pll_scl => pll_scl,
-			pll_sda => pll_sda,
-			pll_rstn => pll_rstn,
-			gpin_0_p => gpin_0_p,
-			gpin_0_n => gpin_0_n,
-			gpout_0_p => gpout_0_p,
-			gpout_0_n => gpout_0_n,
-			gpout_1_p => gpout_1_p,
-			gpout_1_n => gpout_1_n
+			clk_rstn_p => clk_rstn_p,
+			clk_rstn_n => clk_rstn_n,
+			clk_o_p => clk_o_p,
+			clk_o_n => clk_o_n,
+			clk_i_p => clk_i_p,
+			clk_i_n => clk_i_n,
+			trig_o_p => trig_o_p,
+			trig_o_n => trig_o_n,
+			trig_i_p => trig_i_p,
+			trig_i_n => trig_i_n,
+			sync_o_p => sync_o_p,
+			sync_o_n => sync_o_n,
+			sync_i_p => sync_i_p,
+			sync_i_n => sync_i_n,
+			trig_sel_p => trig_sel_p,
+			trig_sel_n => trig_sel_n,
+			sync_sel_p => sync_sel_p,
+			sync_sel_n => sync_sel_n,
+			scl_p => scl_p,
+			scl_n => scl_n,
+			sda_o_p => sda_o_p,
+			sda_o_n => sda_o_n,
+			sda_i_p => sda_i_p,
+			sda_i_n => sda_i_n,
+			busy_o_p => busy_o_p,
+			busy_o_n => busy_o_n,
+			busy_i_p => busy_i_p,
+			busy_i_n => busy_i_n
 		);
 
 end rtl;
