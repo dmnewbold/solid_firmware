@@ -1,9 +1,10 @@
 #!/usr/bin/python
 
 import uhal
-from time import sleep
+import time
 import sys
-import collections
+from I2CuHal import I2CCore
+from si5344 import si5344
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
 hw = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.199:50001", "file://addrtab/top.xml")
