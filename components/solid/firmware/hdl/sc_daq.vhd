@@ -24,7 +24,6 @@ entity sc_daq is
 		clk_in_n: in std_logic;
 		clk40: out std_logic;
 		sync_in: in std_logic;
-		sync_out: out std_logic;
 		trig_in: in std_logic;
 		trig_out: out std_logic;
 		chan: in std_logic_vector(7 downto 0);
@@ -92,8 +91,7 @@ begin
 			clk160 => clk160,
 			clk280 => clk280,
 			sync_in => sync_in,
-			sync_out => sync_out,
-			ext_trig_in => trig_in,
+			trig_in => trig_in,
 			sctr => sctr,
 			chan_sync_ctrl => sync_ctrl,
 			trig_en => trig_en,
@@ -119,7 +117,7 @@ begin
 			fake => fake
 		);
 		
--- External / random trigger generator
+-- Random trigger generator
 			
 	rtrig: entity work.sc_rtrig
 		port map(
@@ -131,10 +129,7 @@ begin
 			rst40 => rst40_i,
 			rand => rand,
 			sctr => sctr,
-			force => force_trig,
-			hit => thresh_hit,
-			trig_in => trig_in,
-			trig_out => trig_out
+			force => force_trig
 		);
 			
 -- Data channels
@@ -192,7 +187,8 @@ begin
 			zs_sel => zs_sel,
 			trig => chan_trig,
 			force => force_trig,
-			thresh_hit => thresh_hit,
+			ext_trig_in => trig_in,
+			ext_trig_out => trig_out,
 			ro_d => trig_d,
 			ro_blkend => trig_blkend,
 			ro_we => trig_we,

@@ -100,12 +100,12 @@ set_property PACKAGE_PIN W11 [get_ports {clk40_p}]
 set_property PACKAGE_PIN W12 [get_ports {clk40_n}]
 
 set_property IOSTANDARD LVDS_25 [get_ports {sync_*}]
-set_property PACKAGE_PIN J15 [get_ports {sync_a_p}]
-set_property PACKAGE_PIN H15 [get_ports {sync_a_n}]
-set_property PACKAGE_PIN G17 [get_ports {sync_b_p}]
-set_property PACKAGE_PIN G18 [get_ports {sync_b_n}]
-#set_property PACKAGE_PIN H17 [get_ports {sync_c_p}]
-#set_property PACKAGE_PIN H18 [get_ports {sync_c_n}]
+set_property PACKAGE_PIN J15 [get_ports {trig_out_p}]
+set_property PACKAGE_PIN H15 [get_ports {trig_out_n}]
+set_property PACKAGE_PIN G17 [get_ports {trig_in_p}]
+set_property PACKAGE_PIN G18 [get_ports {trig_in_n}]
+set_property PACKAGE_PIN H17 [get_ports {sync_in_p}]
+set_property PACKAGE_PIN H18 [get_ports {sync_in_n}]
 false_path {sync_*} eth_refclk
 
 set_property IOSTANDARD LVDS_25 [get_ports {clk_pll_*}]

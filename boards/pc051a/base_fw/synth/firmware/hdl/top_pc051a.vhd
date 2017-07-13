@@ -45,12 +45,12 @@ entity top is port(
 		adc_d_n: in std_logic_vector(N_CHAN - 1 downto 0);
 		analog_scl: out std_logic;
 		analog_sda: inout std_logic;
-		sync_a_p: inout std_logic;
-		sync_a_n: inout std_logic;
-		sync_b_p: inout std_logic;
-		sync_b_n: inout std_logic;
---		sync_c_p: inout std_logic;
---		sync_c_n: inout std_logic;
+		sync_in_p: in std_logic;
+		sync_in_n: in std_logic;
+		trig_in_p: in std_logic;
+		trig_in_n: in std_logic;
+		trig_out_p: out std_logic;
+		trig_out_n: out std_logic;
 		clk_pll_p: out std_logic;
 		clk_pll_n: out std_logic
 	);
@@ -134,12 +134,12 @@ begin
 			analog_scl => analog_scl,
 			analog_sda_o => analog_sda_o,
 			analog_sda_i => analog_sda,
-			sync_a_p => sync_a_p,
-			sync_a_n => sync_a_n,
-			sync_b_p => sync_b_p,
-			sync_b_n => sync_b_n,
---			sync_c_p => sync_c_p,
---			sync_c_n => sync_c_n,
+			sync_in_p => sync_a_p,
+			sync_in_n => sync_a_n,
+			trig_in_p => sync_b_p,
+			trig_in_n => sync_b_n,
+			trig_out_p => sync_c_p,
+			trig_out_n => sync_c_n,
 			clk_pll_p => clk_pll_p,
 			clk_pll_n => clk_pll_n
 		);

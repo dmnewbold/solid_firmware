@@ -32,9 +32,9 @@ entity top is port(
 		clkgen_rstn: out std_logic; -- si5345 RST
 		clk_p: in std_logic; -- clk from si5345
 		clk_n: in std_logic;
-		t_sync: in std_logic; -- IO via timing interface
-		t_trig: in std_logic;
-		t_busy: out std_logic;
+		sync_in: in std_logic; -- IO via timing interface
+		trig_in: in std_logic;
+		trig_out: out std_logic;
 		adc_d_p: in std_logic_vector(63 downto 0); -- ADC serial input data
 		adc_d_n: in std_logic_vector(63 downto 0)
 	);
@@ -106,9 +106,9 @@ begin
 			clkgen_rstn => clkgen_rstn,
 			clk_p => clk_p,
 			clk_n => clk_n,
-			t_sync => t_sync,
-			t_trig => t_trig,
-			t_busy => t_busy,
+			sync_in => sync_in,
+			trig_in => trig_in,
+			trig_out => trig_out,
 			adc_d_p => adc_d_p,
 			adc_d_n => adc_d_n
 		);

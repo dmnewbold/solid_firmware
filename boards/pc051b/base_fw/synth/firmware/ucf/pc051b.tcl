@@ -100,15 +100,15 @@ set_property PACKAGE_PIN W11 [get_ports {clk_p}]
 set_property PACKAGE_PIN W12 [get_ports {clk_n}]
 
 # Bank 15, 2V5
-set_property IOSTANDARD LVCMOS25 [get_ports {t_sync t_trig}]
-set_property PACKAGE_PIN J16 [get_ports {t_sync}]
-set_property PACKAGE_PIN M17 [get_ports {t_trig}]
-false_path {t_sync t_trig} eth_refclk
+set_property IOSTANDARD LVCMOS25 [get_ports {sync_in trig_in}]
+set_property PACKAGE_PIN J16 [get_ports {sync_in}]
+set_property PACKAGE_PIN M17 [get_ports {trig_in}]
+false_path {sync_in trig_in} eth_refclk
 
 # Bank 14, 3V3
-set_property IOSTANDARD LVCMOS33 [get_ports t_busy]
-set_property PACKAGE_PIN Y19 [get_ports {t_busy}]
-false_path {t_busy} eth_refclk
+set_property IOSTANDARD LVCMOS33 [get_ports trig_out]
+set_property PACKAGE_PIN Y19 [get_ports {trig_out}]
+false_path {trig_out} eth_refclk
 
 # Bank 13,15,16, 2V5 / 14, 3V3 (bits 61, 63)
 set_property IOSTANDARD LVDS_25 [get_ports {adc_d_*}]

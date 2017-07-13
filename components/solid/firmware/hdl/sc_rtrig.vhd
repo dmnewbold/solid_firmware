@@ -19,10 +19,7 @@ entity sc_rtrig is
 		rst40: in std_logic;
 		rand: in std_logic_vector(31 downto 0);
 		sctr: in std_logic_vector(47 downto 0);
-		force: out std_logic;
-		hit: in std_logic;
-		trig_in: in std_logic;
-		trig_out: out std_logic
+		force: out std_logic
 	);
 
 end sc_rtrig;
@@ -33,6 +30,5 @@ begin
 
 	ipb_out <= IPB_RBUS_NULL;
 	force <= '0';
-	trig_out <= '0';
 
 end rtl;

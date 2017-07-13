@@ -28,7 +28,7 @@ entity sc_local_trig is
 		trig_valid: out std_logic;
 		trig_ack: in std_logic;
 		force: in std_logic;
-		thresh_hit: out std_logic;
+		ext_trig_in: in std_logic;
 		ro_q: out std_logic_vector(31 downto 0);
 		ro_valid: out std_logic;
 		ro_blkend: out std_logic;
@@ -64,7 +64,6 @@ begin
 			en => en,
 			mark => mark,
 			chan_trig => chan_trig,
-			hit => thresh_hit,
 			chan_act => cact(0),
 			valid => tv(0),
 			ack => ta(0)

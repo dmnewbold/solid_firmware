@@ -34,7 +34,8 @@ entity sc_trig is
 		zs_sel: out std_logic_vector(1 downto 0);
 		trig: in sc_trig_array;
 		force: in std_logic;
-		thresh_hit: out std_logic;
+		ext_trig_in: in std_logic;
+		ext_trig_out: out std_logic;
 		ro_d: out std_logic_vector(31 downto 0);
 		ro_blkend: out std_logic;
 		ro_we: out std_logic;
@@ -54,7 +55,8 @@ architecture rtl of sc_trig is
 	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(1 downto 0);
-	signal ctrl_dtmon_en: std_logic;
+	signal stb: std_logic_vector(0 downto 0);
+	signal ctrl_dtmon_en, ctrl_trig_in_en, ctrl_trig_out_force: std_logic;
 	signal masks: ipb_reg_v(N_CHAN_TRG * 2 - 1 downto 0);
 	signal trig_mask: std_logic_vector(N_TRG - 1 downto 0);
 	signal ctrig: sc_trig_array;
@@ -98,10 +100,13 @@ begin
 			ipb_out => ipbr(N_SLV_CSR),
 			slv_clk => clk40,
 			d => stat,
-			q => ctrl
+			q => ctrl,
+			stb => stb
 		);
 
 	ctrl_dtmon_en <= ctrl(0)(0);
+	ctrl_trig_in_en <= ctrl(0)(1);
+	ctrl_trig_out_force <= ctrl(0)(2) and stb(0);
 	stat(0) <= X"0" & tctr;
 	stat(1) <= X"0000000" & "00" & rveto & err;
 
@@ -171,7 +176,7 @@ begin
 			trig_valid => lvalid,
 			trig_ack => lack,
 			force => force,
-			thresh_hit => thresh_hit,
+			ext_trig_in => ext_trig_in,
 			ro_q => t_q,
 			ro_valid => t_valid,
 			ro_blkend => t_blkend,
@@ -306,5 +311,10 @@ begin
 			keep => keep_i,
 			veto => veto_i
 		);
+		
+-- Ext trigger
+
+	trig_in <= ext_trig_in when rising_edge(clk40); -- Should be IOB reg
+	ext_trig_out <= trig_out or ctrl_trig_out_force when falling_edge(clk40); -- Should be IOB reg
 
 end rtl;

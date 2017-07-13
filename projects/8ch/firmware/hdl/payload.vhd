@@ -50,10 +50,12 @@ entity payload is
 		analog_scl: out std_logic;
 		analog_sda_i: in std_logic;
 		analog_sda_o: out std_logic;
-		sync_a_p: inout std_logic;
-		sync_a_n: inout std_logic;
-		sync_b_p: inout std_logic;
-		sync_b_n: inout std_logic;
+		sync_in_p: in std_logic;
+		sync_in_n: in std_logic;
+		trig_in_p: in std_logic;
+		trig_in_n: in std_logic;
+		trig_out_p: out std_logic;
+		trig_out_n: out std_logic;		
 		clk_pll_p: out std_logic;
 		clk_pll_n: out std_logic
 	);
@@ -67,7 +69,7 @@ architecture rtl of payload is
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(1 downto 0);
 	signal clk40: std_logic;
-	signal sync_in, sync_out: std_logic;
+	signal sync_in, trig_in, trig_out: std_logic;
 	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl, ctrl_sync_mode: std_logic;
 	signal ctrl_chan: std_logic_vector(7 downto 0);
 	signal ctrl_board_id: std_logic_vector(7 downto 0);
@@ -157,7 +159,37 @@ begin
 			analog_sda_o => analog_sda_o,
 			analog_sda_i => analog_sda_i
 		);
-	
+
+-- iobufs
+
+	ibuf_sync_in: IBUFDS
+		port map(
+			i => sync_in_p,
+			ib => sync_in_n,
+			o => sync_in
+		);
+		
+	ibuf_trig_in: IBUFDS
+		port map(
+			i => trig_in_p,
+			ib => trig_in_n,
+			o => trig_in
+		);
+		
+	obuf_trig_out: OBUFDS
+		port map(
+			i => trig_out,
+			o => trig_out_p,
+			ob => trig_out_n
+		);
+		
+	obuf_clk_pll: OBUFDS
+		port map(
+			i => '0',
+			o => clk_pll_p,
+			ob => clk_pll_n
+		);
+
 -- DAQ core
 
 	daq: entity work.sc_daq
@@ -172,8 +204,8 @@ begin
 			clk_in_n => clk40_n,
 			clk40 => clk40,
 			sync_in => sync_in,
-			sync_out => sync_out,
-			trig_in => '0',
+			trig_in => trig_in,
+			trig_out => trig_out,
 			chan => ctrl_chan,
 			chan_err => chan_err,
 			d_p => adc_d_p,
@@ -181,22 +213,6 @@ begin
 			clk125 => clk125,
 			rst125 => rst125,
 			board_id => ctrl_board_id
-		);
-	
--- Clocks n stuff
-
-	switch: entity work.sync_routing
-		port map(
-			clk40 => clk40,
-			ctrl => ctrl_sync_mode,
-			sync_out => sync_out,
-			sync_in => sync_in,
-			sync_a_p => sync_a_p,
-			sync_a_n => sync_a_n,
-			sync_b_p => sync_b_p,
-			sync_b_n => sync_b_n,
-			clk_pll_p => clk_pll_p,
-			clk_pll_n => clk_pll_n
 		);
 			
 end rtl;

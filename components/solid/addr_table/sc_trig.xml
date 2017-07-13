@@ -2,6 +2,8 @@
 	<node id="csr" address="0x0" description="ctrl/stat reg" fwinfo="endpoint;width=2">
 		<node id="ctrl" address="0x0">
 			<node id="dtmon_en" mask="0x1"/>
+			<node id="trig_in_en" mask="0x2"/>
+			<node id="trig_out_force" mask="0x4"/>
 		</node>
 		<node id="evt_ctr" address="0x2"/>
 		<node id="stat" address="0x3">

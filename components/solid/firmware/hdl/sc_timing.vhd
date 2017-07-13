@@ -29,8 +29,7 @@ entity sc_timing is
 		clk160: out std_logic; -- chip 160MHz clock
 		clk280: out std_logic; -- chip 280MHz clock
 		sync_in: in std_logic; -- external sync signal in
-		sync_out: out std_logic; -- external sync signal out
-		ext_trig_in: in std_logic;
+		trig_in: in std_logic; -- external trigger in
 		sctr: out std_logic_vector(47 downto 0); -- sample counter
 		chan_sync_ctrl: out std_logic_vector(3 downto 0); -- Timing signals to channels
 		trig_en: out std_logic;
@@ -51,8 +50,8 @@ architecture rtl of sc_timing is
 	signal rst_ctr: unsigned(3 downto 0);
 	signal ctrl_rst_ctr, ctrl_cap_ctr, ctrl_en_sync, ctrl_force_sync, ctrl_pipeline_en, ctrl_send_sync: std_logic;
 	signal ctrl_chan_slip, ctrl_chan_rst_buf, ctrl_chan_cap, ctrl_chan_inc: std_logic;
-	signal frst, sync, wait_sync, sync_err, io_err: std_logic;
-	signal sync_in_r, trig_in_r: std_logic;
+	signal frst, sync, sync_f, wait_sync, sync_err, io_err: std_logic;
+	signal sync_in_r, trig_in_r, trig_in_r_d: std_logic;
 	signal sync_ctr, trig_ctr: unsigned(31 downto 0);
 
 begin
@@ -113,9 +112,33 @@ begin
 	stat(3) <= std_logic_vector(sync_ctr);
 	stat(4) <= std_logic_vector(trig_ctr);
 	
--- Sync signals (need external sync here soon)
+-- External timing signals
 
-	sync <= ctrl_force_sync and stb(0) and wait_sync;
+	sync_in_r <= sync_in when rising_edge(clk40_i); -- Should be IOB reg
+	trig_in_r <= trig_in when rising_edge(clk40_i); -- Should be IOB reg
+	trig_in_r_d <= trig_in_r when rising_dege(clk40_i);
+	
+	process(clk40_i)
+	begin
+		if rising_edge(clk40_i) then
+			if rst40_i = '1' then
+				sync_ctr <= (others => '0');
+				trig_ctr <= (others => '0');
+			else
+				if sync_in_r = '1' then
+					sync_ctr <= sync_ctr + 1;
+				end if;
+				if trig_in_r = '1' and trig_in_r_d = '0' then
+					trig_ctr <= trig_ctr + 1;
+				end if;
+			end if;
+		end if;
+	end process;
+	
+-- Sync signals
+	
+	sync <= (sync_in_r and ctrl_en_sync) or (ctrl_force_sync and stb(0));
+	sync_f <= sync and wait_sync;
 
 	process(clk40_i)
 	begin
@@ -141,7 +164,7 @@ begin
 	process(clk40_i)
 	begin
 		if rising_edge(clk40_i) then
-			if rst40_i = '1' or sync = '1' then
+			if rst40_i = '1' or sync_f = '1' then
 				sctr_i <= (others => '0');
 			else
 				sctr_i <= sctr_i + 1;
@@ -170,7 +193,7 @@ begin
 			clk40 => clk40_i,
 			rst40 => rst40_i,
 			en => ctrl_pipeline_en,
-			sync => sync,
+			sync => sync_f,
 			sctr => sctr_i,
 			nzs_en => nzs_en,
 			zs_en => zs_en,
@@ -196,28 +219,5 @@ begin
 	chan_sync_ctrl(1) <= frst; -- reset channel
 	chan_sync_ctrl(2) <= ctrl_chan_cap and stb(0); -- cap start
 	chan_sync_ctrl(3) <= ctrl_chan_inc and stb(0); -- cap start
-	
--- External timing interface
-	
-	sync_out <= ctrl_send_sync and stb(0) when falling_edge(clk40_i);
-	sync_in_r <= sync_in when rising_edge(clk40_i);
-	trig_in_r <= ext_trig_in when rising_edge(clk40_i);
-	
-	process(clk40_i)
-	begin
-		if rising_edge(clk40_i) then
-			if rst40_i = '1' then
-				sync_ctr <= (others => '0');
-				trig_ctr <= (others => '0');
-			else
-				if sync_in_r = '1' then
-					sync_ctr <= sync_ctr + 1;
-				end if;
-				if trig_in_r = '1' then
-					trig_ctr <= trig_ctr + 1;
-				end if;
-			end if;
-		end if;
-	end process;
 	
 end rtl;

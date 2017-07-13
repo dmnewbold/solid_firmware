@@ -40,9 +40,9 @@ entity payload is
 		clkgen_rstn: out std_logic;
 		clk_p: in std_logic;
 		clk_n: in std_logic;
-		t_sync: in std_logic;
-		t_trig: in std_logic;
-		t_busy: out std_logic;
+		sync_in: in std_logic;
+		trig_in: in std_logic;
+		trig_out: out std_logic;
 		adc_d_p: in std_logic_vector(63 downto 0);
 		adc_d_n: in std_logic_vector(63 downto 0)
 	);
@@ -146,9 +146,9 @@ begin
 			clk_in_p => clk_p,
 			clk_in_n => clk_n,
 			clk40 => clk40,
-			sync_in => t_sync,
-			sync_out => t_busy,
-			trig_in => t_trig,
+			sync_in => sync_in,
+			trig_in => trig_in,
+			trig_out => trig_out,
 			chan => ctrl_chan,
 			chan_err => chan_err,
 			d_p => adc_d_p,
