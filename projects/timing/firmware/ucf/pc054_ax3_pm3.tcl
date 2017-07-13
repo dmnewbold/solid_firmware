@@ -3,7 +3,7 @@ set_property BITSTREAM.CONFIG.CONFIGRATE 33 [current_design]
 
 create_clock -period 25.0 -name clk_i [get_ports clk_i_p]
 
-set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks fmc_clk] -group [get_clocks -include_generated_clocks rec_clk] -group [get_clocks -include_generated_clocks -of_obj [get_pins -of_obj [get_cells infra/clocks/mmcm] -filter {NAME =~ *CLKOUT*}]]
+set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks clk_i]
 
 set_property IOSTANDARD LVDS_25 [get_port {clk_rstn_* clk_o_* clk_i_* trig_o_* trig_i_* sync_o_* sync_i_* trig_sel_* sync_sel_* scl_* sda_* busy_o_* busy_i_*}]
 set_property DIFF_TERM TRUE [get_port {clk_rstn_* clk_o_* clk_i_* trig_o_* trig_i_* sync_o_* sync_i_* trig_sel_* sync_sel_* scl_* sda_* busy_o_* busy_i_*}]

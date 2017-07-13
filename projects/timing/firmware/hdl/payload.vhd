@@ -5,7 +5,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
 use work.ipbus.all;
- use work.ipbus_decode_top.all;
+use work.ipbus_decode_top.all;
+use work.ipbus_reg_types.all;
 
 entity payload is
 	port(
@@ -54,9 +55,10 @@ architecture rtl of payload is
 	signal ipbw: ipb_wbus_array(N_SLAVES - 1 downto 0);
 	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
 	signal ctrl, stat: ipb_reg_v(0 downto 0);
-	signal scl, sda_i, sda_o: std_logic;
+	signal rst, scl, sda_i, sda_o: std_logic;
 	signal ctrl_trig, ctrl_sync, ctrl_trig_sel, ctrl_sync_sel, ctrl_busy: std_logic;
-	signal clki, clkdiv: std_logic;
+	signal clki: std_logic;
+	signal clkdiv: std_logic_vector(0 downto 0);
 
 --	attribute IOB: string;
 --	attribute IOB of sfp_dout: signal is "TRUE";
@@ -83,7 +85,7 @@ begin
 	csr: entity work.ipbus_ctrlreg_v
 		generic map(
 			N_CTRL => 1,
-			N_STAT => 5
+			N_STAT => 1
 		)
 		port map(
 			clk => ipb_clk,
@@ -133,13 +135,13 @@ begin
 			clk_i => clki,
 			clk_i_p => clk_i_p,
 			clk_i_n => clk_i_n,
-			trig_o => ctrl_trig_o,
+			trig_o => ctrl_trig,
 			trig_o_p => trig_o_p,
 			trig_o_n => trig_o_n,
 			trig_i => open,
 			trig_i_p => trig_i_p,
 			trig_i_n => trig_i_n,
-			sync_o => ctrl_sync_o,
+			sync_o => ctrl_sync,
 			sync_o_p => sync_o_p,
 			sync_o_n => sync_o_n,
 			sync_i => open,
@@ -160,7 +162,7 @@ begin
 			sda_i => sda_i,
 			sda_i_p => sda_i_p,
 			sda_i_n => sda_i_n,
-			busy_o => ctrl_busy_o,
+			busy_o => ctrl_busy,
 			busy_o_p => busy_o_p,
 			busy_o_n => busy_o_n,
 			busy_i => open,
@@ -178,8 +180,8 @@ begin
 		
 	ctr: entity work.freq_ctr
 		port map(
-			clk => clk,
-			rst => rst,
+			clk => ipb_clk,
+			rst => ipb_rst,
 			ipb_in => ipbw(N_SLV_FREQ_CTR),
 			ipb_out => ipbr(N_SLV_FREQ_CTR),
 			clkdiv => clkdiv
