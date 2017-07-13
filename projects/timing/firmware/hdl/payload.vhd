@@ -6,7 +6,8 @@ use ieee.numeric_std.all;
 use ieee.std_logic_misc.all;
 
 use work.ipbus.all;
- use work.ipbus_decode_top.all;
+use work.ipbus_decode_top.all;
+use work.ipbus_reg_types.all;
 
 entity payload is
 	port(
@@ -204,6 +205,7 @@ begin
 			sda_i_p => sda_i_p,
 			sda_i_n => sda_i_n,
 			busy_o => trig_out_us,
+			busy_o => ctrl_busy,
 			busy_o_p => busy_o_p,
 			busy_o_n => busy_o_n,
 			busy_i => trig_in_ds,
@@ -221,8 +223,8 @@ begin
 		
 	ctr: entity work.freq_ctr
 		port map(
-			clk => clk,
-			rst => rst,
+			clk => ipb_clk,
+			rst => ipb_rst,
 			ipb_in => ipbw(N_SLV_FREQ_CTR),
 			ipb_out => ipbr(N_SLV_FREQ_CTR),
 			clkdiv => clkdiv

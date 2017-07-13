@@ -61,6 +61,7 @@ end sc_timing_iobufs;
 architecture rtl of sc_timing_iobufs is
 
 	signal clk_o, clk_i_u: std_logic;
+	signal sda_i_inv: std_logic;
 	
 begin
 
@@ -162,8 +163,10 @@ begin
 		port map(
 			i => sda_i_p,
 			ib => sda_i_n,
-			o => sda_i
+			o => sda_i_inv
 		);
+		
+	sda_i <= not sda_i_inv;
 
 	obuf_busy_o: OBUFDS
 		port map(
