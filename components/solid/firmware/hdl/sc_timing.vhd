@@ -116,7 +116,7 @@ begin
 
 	sync_in_r <= sync_in when rising_edge(clk40_i); -- Should be IOB reg
 	trig_in_r <= trig_in when rising_edge(clk40_i); -- Should be IOB reg
-	trig_in_r_d <= trig_in_r when rising_dege(clk40_i);
+	trig_in_r_d <= trig_in_r when rising_edge(clk40_i);
 	
 	process(clk40_i)
 	begin

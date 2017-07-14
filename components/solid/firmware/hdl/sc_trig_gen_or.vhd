@@ -61,7 +61,7 @@ begin
 				end if;
 			elsif m = '1' then
 				tc <= '0';
-				c <= (others => '0')
+				c <= (others => '0');
 			end if;
 		end if;
 	end process;

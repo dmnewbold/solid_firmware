@@ -19,7 +19,7 @@ entity sc_local_trig is
 		clk40: in std_logic;
 		rst40: in std_logic;
 		en: in std_logic;
-		mask: in std_logic(N_TRG - 1 downto 0);
+		mask: in std_logic_vector(N_TRG - 1 downto 0);
 		mark: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
 		rand: in std_logic_vector(31 downto 0);

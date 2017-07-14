@@ -99,7 +99,7 @@ set_property IOSTANDARD LVDS_25 [get_ports {clk40_*}]
 set_property PACKAGE_PIN W11 [get_ports {clk40_p}]
 set_property PACKAGE_PIN W12 [get_ports {clk40_n}]
 
-set_property IOSTANDARD LVDS_25 [get_ports {sync_*}]
+set_property IOSTANDARD LVDS_25 [get_ports {trig_out_* trig_in_* sync_in_*}]
 set_property PACKAGE_PIN J15 [get_ports {trig_out_p}]
 set_property PACKAGE_PIN H15 [get_ports {trig_out_n}]
 set_property PACKAGE_PIN G17 [get_ports {trig_in_p}]

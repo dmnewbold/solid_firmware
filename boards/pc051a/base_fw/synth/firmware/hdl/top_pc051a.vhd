@@ -134,12 +134,12 @@ begin
 			analog_scl => analog_scl,
 			analog_sda_o => analog_sda_o,
 			analog_sda_i => analog_sda,
-			sync_in_p => sync_a_p,
-			sync_in_n => sync_a_n,
-			trig_in_p => sync_b_p,
-			trig_in_n => sync_b_n,
-			trig_out_p => sync_c_p,
-			trig_out_n => sync_c_n,
+			sync_in_p => sync_in_p,
+			sync_in_n => sync_in_n,
+			trig_in_p => trig_in_p,
+			trig_in_n => trig_in_n,
+			trig_out_p => trig_out_p,
+			trig_out_n => trig_out_n,
 			clk_pll_p => clk_pll_p,
 			clk_pll_n => clk_pll_n
 		);

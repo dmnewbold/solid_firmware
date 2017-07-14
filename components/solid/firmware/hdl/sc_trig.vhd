@@ -53,7 +53,7 @@ architecture rtl of sc_trig is
 
 	signal ipbw: ipb_wbus_array(N_SLAVES - 1 downto 0);
 	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
-	signal ctrl: ipb_reg_v(0 downto 0);
+	signal ctrl, ctrl_mask: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(1 downto 0);
 	signal stb: std_logic_vector(0 downto 0);
 	signal ctrl_dtmon_en, ctrl_trig_in_en, ctrl_trig_out_force: std_logic;
@@ -68,6 +68,7 @@ architecture rtl of sc_trig is
 	signal b_go, t_go, b_valid, t_valid, b_blkend, t_blkend, blkend: std_logic;
 	signal tctr: std_logic_vector(27 downto 0);
 	signal ro_ctr: std_logic_vector(7 downto 0);
+	signal trig_in, trig_out: std_logic;
 
 begin
 
@@ -158,9 +159,11 @@ begin
 			reset => rst,
 			ipbus_in => ipbw(N_SLV_LOC_MASK),
 			ipbus_out => ipbr(N_SLV_LOC_MASK),
-			q => trig_mask,
+			q => ctrl_mask,
 			qmask(0) => (N_TRG - 1 downto 0 => '1', others => '0')
 		);
+		
+    trig_mask <= ctrl_mask(0)(N_TRG - 1 downto 0);
 
 	ltrig: entity work.sc_local_trig
 		port map(
@@ -315,6 +318,7 @@ begin
 -- Ext trigger
 
 	trig_in <= ext_trig_in when rising_edge(clk40); -- Should be IOB reg
+	trig_out <= '0';
 	ext_trig_out <= trig_out or ctrl_trig_out_force when falling_edge(clk40); -- Should be IOB reg
 
 end rtl;
