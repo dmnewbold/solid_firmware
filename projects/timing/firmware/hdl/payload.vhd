@@ -162,7 +162,7 @@ begin
 	sync_out_ds <= ctrl_en_sync and not or_reduce(std_logic_vector(ctr)) when falling_edge(clki); -- Sync out downstream
 	trig_i <= trig_in_ds when rising_edge(clki); -- Should be IOB reg
 	trig_out_ds <= or_reduce(trig_i and ctrl_trig_in_mask) and ctrl_en_trig_out when falling_edge(clki); -- Trig out downstream
-	trig_out_us <= or_reduce(trig_i and ctrl_trig_in_mask) when falling_edge(clki); -- Trig out upstream
+	trig_out_us <= or_reduce(trig_i and ctrl_trig_in_mask) and ctrl_en_trig_out when falling_edge(clki); -- Trig out upstream
 
 -- Cable IO
 
