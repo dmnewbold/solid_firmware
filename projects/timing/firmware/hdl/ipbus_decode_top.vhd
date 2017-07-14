@@ -17,11 +17,12 @@ package ipbus_decode_top is
   subtype ipbus_sel_t is std_logic_vector(IPBUS_SEL_WIDTH - 1 downto 0);
   function ipbus_sel_top(addr : in std_logic_vector(31 downto 0)) return ipbus_sel_t;
 
--- START automatically  generated VHDL the Wed Jul 12 14:14:22 2017 
+-- START automatically  generated VHDL the Fri Jul 14 11:59:48 2017 
   constant N_SLV_CSR: integer := 0;
-  constant N_SLV_I2C: integer := 1;
-  constant N_SLV_FREQ_CTR: integer := 2;
-  constant N_SLAVES: integer := 3;
+  constant N_SLV_SYNC_CTRL: integer := 1;
+  constant N_SLV_I2C: integer := 2;
+  constant N_SLV_FREQ_CTR: integer := 3;
+  constant N_SLAVES: integer := 4;
 -- END automatically generated VHDL
 
     
@@ -33,13 +34,15 @@ package body ipbus_decode_top is
     variable sel: ipbus_sel_t;
   begin
 
--- START automatically  generated VHDL the Wed Jul 12 14:14:22 2017 
-    if    std_match(addr, "---------------------------00---") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_CSR, IPBUS_SEL_WIDTH)); -- csr / base 0x00000000 / mask 0x00000018
+-- START automatically  generated VHDL the Fri Jul 14 11:59:48 2017 
+    if    std_match(addr, "---------------------------00-0-") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_CSR, IPBUS_SEL_WIDTH)); -- csr / base 0x00000000 / mask 0x0000001a
+    elsif std_match(addr, "---------------------------00-1-") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_SYNC_CTRL, IPBUS_SEL_WIDTH)); -- sync_ctrl / base 0x00000002 / mask 0x0000001a
     elsif std_match(addr, "---------------------------01---") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_I2C, IPBUS_SEL_WIDTH)); -- i2c / base 0x00000008 / mask 0x00000018
-    elsif std_match(addr, "---------------------------10---") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_FREQ_CTR, IPBUS_SEL_WIDTH)); -- freq_ctr / base 0x00000010 / mask 0x00000018
+    elsif std_match(addr, "---------------------------10-0-") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_FREQ_CTR, IPBUS_SEL_WIDTH)); -- freq_ctr / base 0x00000010 / mask 0x0000001a
 -- END automatically generated VHDL
 
     else
