@@ -26,6 +26,7 @@ entity sc_daq is
 		sync_in: in std_logic;
 		trig_in: in std_logic;
 		trig_out: out std_logic;
+		led_out: out std_logic;
 		chan: in std_logic_vector(7 downto 0);
 		chan_err: out std_logic;
 		d_p: in std_logic_vector(N_CHAN - 1 downto 0);
@@ -92,6 +93,7 @@ begin
 			clk280 => clk280,
 			sync_in => sync_in,
 			trig_in => trig_in,
+			led_out => led_out,
 			sctr => sctr,
 			chan_sync_ctrl => sync_ctrl,
 			trig_en => trig_en,
