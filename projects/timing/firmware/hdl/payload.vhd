@@ -66,6 +66,7 @@ architecture rtl of payload is
 	signal clkdiv: std_logic_vector(0 downto 0);
 	signal sync_sel, trig_sel, sync_in_us, sync_out_ds, trig_in_us, trig_out_ds, trig_out_us: std_logic;
 	signal trig_in_ds, trig_i: std_logic_vector(9 downto 0);
+	signal trig_ir: std_logic;
 	signal ctr: unsigned(BLK_RADIX - 1 downto 0);
 	
 begin
@@ -150,7 +151,7 @@ begin
 	process(clki)
 	begin
 		if rising_edge(clki) then
-			if ctrl_en_sync = '1' then
+			if ctrl_en_sync = '0' then
 				ctr <= (others => '0');
 			else
 				ctr <= ctr + 1;
@@ -162,8 +163,9 @@ begin
 	trig_sel <= not ctrl_layer; -- From FPGA for layer 0, from upstream input for layer 1
 	sync_out_ds <= ctrl_en_sync and not or_reduce(std_logic_vector(ctr)) when falling_edge(clki); -- Sync out downstream
 	trig_i <= trig_in_ds when rising_edge(clki); -- Should be IOB reg
-	trig_out_ds <= or_reduce(trig_i and ctrl_trig_in_mask) and ctrl_en_trig_out when falling_edge(clki); -- Trig out downstream
-	trig_out_us <= or_reduce(trig_i and ctrl_trig_in_mask) and ctrl_en_trig_out when falling_edge(clki); -- Trig out upstream
+	trig_ir <= (or_reduce(trig_i and ctrl_trig_in_mask) or ctrl_force_trig_out) and ctrl_en_trig_out;
+	trig_out_ds <= trig_ir when falling_edge(clki); -- Trig out downstream
+	trig_out_us <= trig_ir when falling_edge(clki); -- Trig out upstream
 
 -- Cable IO
 
