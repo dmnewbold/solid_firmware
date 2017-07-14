@@ -4,7 +4,7 @@
 			<node id="soft_rst" mask="0x1"/>
 			<node id="nuke" mask="0x2"/>
 			<node id="pll_rst" mask="0x4"/>
-			<node id="rst" mask="0x8"/)
+			<node id="rst" mask="0x8"/>
 			<node id="layer" mask="0x10"/>
 			<node id="trig_in_mask" mask="0x3ff00"/>
 		</node>
