@@ -3,6 +3,7 @@ src ipbus_decode_top.vhd
 addrtab -t top.xml
 src -c ipbus-firmware:components/ipbus_core ipbus_fabric_sel.vhd
 src -c ipbus-firmware:components/ipbus_slaves ipbus_ctrlreg_v.vhd
+include -c ipbus-firmware:components/ipbus_slaves syncreg_v.dep
 include -c ipbus-firmware:components/opencores_i2c
 src sc_timing_iobufs.vhd
 src -c components/mp7_ttc freq_ctr.vhd freq_ctr_div.vhd
