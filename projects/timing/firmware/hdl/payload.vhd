@@ -62,7 +62,8 @@ architecture rtl of payload is
 	signal scl, sda_i, sda_o: std_logic;
 	signal ctrl_layer, ctrl_pll_rstn, ctrl_rst, ctrl_en_sync, ctrl_en_trig_out, ctrl_force_trig_out: std_logic;
 	signal ctrl_trig_in_mask: std_logic_vector(9 downto 0);
-	signal clki, clkdiv: std_logic;
+	signal clki: std_logic;
+	signal clkdiv: std_logic_vector(0 downto 0);
 	signal sync_sel, trig_sel, sync_in_us, sync_out_ds, trig_in_us, trig_out_ds, trig_out_us: std_logic;
 	signal trig_in_ds, trig_i: std_logic_vector(9 downto 0);
 	signal ctr: unsigned(BLK_RADIX - 1 downto 0);
@@ -168,7 +169,7 @@ begin
 
 	bufs: entity work.sc_timing_iobufs
 		port map(
-			clk_rstn => ctrl_clk_rstn,
+			clk_rstn => ctrl_pll_rstn,
 			clk_rstn_p => clk_rstn_p,
 			clk_rstn_n => clk_rstn_n,
 			clk => '0',
@@ -205,7 +206,6 @@ begin
 			sda_i_p => sda_i_p,
 			sda_i_n => sda_i_n,
 			busy_o => trig_out_us,
-			busy_o => ctrl_busy,
 			busy_o_p => busy_o_p,
 			busy_o_n => busy_o_n,
 			busy_i => trig_in_ds,
@@ -221,7 +221,7 @@ begin
 			clkdiv => clkdiv
 		);
 		
-	ctr: entity work.freq_ctr
+	cctr: entity work.freq_ctr
 		port map(
 			clk => ipb_clk,
 			rst => ipb_rst,
