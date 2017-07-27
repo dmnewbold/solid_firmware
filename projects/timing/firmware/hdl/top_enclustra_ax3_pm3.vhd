@@ -8,13 +8,14 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_misc.all;
 
 use work.ipbus.ALL;
 
 entity top is port(
 		sysclk: in std_logic;
 		leds: out std_logic_vector(3 downto 0); -- status LEDs
---		cfg: in std_logic_vector(3 downto 0); -- switches
+		cfg: in std_logic_vector(3 downto 0); -- switches
 		rgmii_txd: out std_logic_vector(3 downto 0);
 		rgmii_tx_ctl: out std_logic;
 		rgmii_txc: out std_logic;
@@ -89,7 +90,7 @@ begin
 			ipb_out => ipb_out
 		);
 		
-	leds <= not ('0' & userled & inf_leds);
+	leds <= not (or_reduce(cfg) & userled & inf_leds);
 	phy_rstn <= not phy_rst_e;
 		
 	mac_addr <= X"020ddba1ebc7"; -- Careful here, arbitrary addresses do not always work
