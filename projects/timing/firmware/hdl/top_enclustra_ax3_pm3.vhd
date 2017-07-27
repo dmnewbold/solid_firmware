@@ -49,8 +49,8 @@ entity top is port(
 		sda_i_n: in std_logic;
 		busy_o_p: out std_logic;
 		busy_o_n: out std_logic;
-		busy_i_p: in std_logic_vector(9 downto 0);
-		busy_i_n: in std_logic_vector(9 downto 0)
+		busy_i_p: in std_logic_vector(7 downto 0);
+		busy_i_n: in std_logic_vector(7 downto 0)
 	);
 
 end top;

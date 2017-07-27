@@ -45,8 +45,8 @@ entity payload is
 		sda_i_n: in std_logic;
 		busy_o_p: out std_logic;
 		busy_o_n: out std_logic;
-		busy_i_p: in std_logic_vector(9 downto 0);
-		busy_i_n: in std_logic_vector(9 downto 0)
+		busy_i_p: in std_logic_vector(7 downto 0);
+		busy_i_n: in std_logic_vector(7 downto 0)
 	);
 
 end payload;
@@ -61,11 +61,11 @@ architecture rtl of payload is
 	signal stb: std_logic_vector(0 downto 0);
 	signal scl, sda_i, sda_o: std_logic;
 	signal ctrl_layer, ctrl_pll_rstn, ctrl_rst, ctrl_en_sync, ctrl_en_trig_out, ctrl_force_trig_out: std_logic;
-	signal ctrl_trig_in_mask: std_logic_vector(9 downto 0);
+	signal ctrl_trig_in_mask: std_logic_vector(7 downto 0);
 	signal clki: std_logic;
 	signal clkdiv: std_logic_vector(0 downto 0);
 	signal sync_sel, trig_sel, sync_in_us, sync_out_ds, trig_in_us, trig_out_ds, trig_out_us: std_logic;
-	signal trig_in_ds, trig_i: std_logic_vector(9 downto 0);
+	signal trig_in_ds, trig_i: std_logic_vector(7 downto 0);
 	signal trig_ir: std_logic;
 	signal ctr: unsigned(BLK_RADIX - 1 downto 0);
 	
@@ -106,7 +106,7 @@ begin
 	ctrl_pll_rstn <= not ctrl(0)(2);
 	ctrl_rst <= ctrl(0)(3);
 	ctrl_layer <= ctrl(0)(4);
-	ctrl_trig_in_mask <= ctrl(0)(17 downto 8);
+	ctrl_trig_in_mask <= ctrl(0)(15 downto 8);
 
 -- Sync ctrl
 
