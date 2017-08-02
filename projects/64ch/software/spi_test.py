@@ -6,7 +6,7 @@ import sys
 from I2CuHal import I2CCore
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-hw = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.199:50001", "file://addrtab/top.xml")
+hw = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
 
 hw.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
 hw.dispatch()
