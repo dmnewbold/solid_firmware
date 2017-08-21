@@ -19,7 +19,7 @@ spi.getNode("ctrl").write(0x2410) # 16b transfer length, auto CSN
 spi.getNode("ss").write(0x1) # Enable SPI slave 0
 hw.dispatch()
 
-for i in range(256):
+for i in range(0x10000):
 	
 	di = random.randint(0x00,0xff)
 	
@@ -39,4 +39,6 @@ for i in range(256):
 	d = spi.getNode("d0").read()
 	c = spi.getNode("ctrl").read()
 	hw.dispatch()
-	print hex(di), hex(d & 0xff), hex(c)
+	
+	if di != (d & 0xff) or (c & 0x100) != 0:
+		print "Error":, hex(i), hex(di), hex(d), hex(c)
