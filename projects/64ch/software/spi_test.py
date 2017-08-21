@@ -15,6 +15,7 @@ hw.getNode("csr.ctrl.io_sel").write(6) # Talk via CPLD to ADC #3 Bank A SPI
 spi = hw.getNode("io.spi")
 spi.getNode("divider").write(0xf) # Divide 31.25MHz ipbus clock by 32
 spi.getNode("ctrl").write(0x2410) # 16b transfer length, auto CSN
+spi.getNode("ss").write(0x1) # Enable SPI slave 0
 hw.dispatch()
 
 spi.getNode("d0").write(0x04a5) # Write 0xa5 into register 0x4
