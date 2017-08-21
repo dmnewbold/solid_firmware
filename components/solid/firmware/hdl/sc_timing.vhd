@@ -177,7 +177,7 @@ begin
 	end process;
 		
 	sctr <= std_logic_vector(sctr_i);
-	led_out <= sctr(LED_BLK_RADIX + BLK_RADIX - 1);
+	led_out <= sctr_i(LED_BLK_RADIX + BLK_RADIX - 1);
 	
 -- Random number gen
 
