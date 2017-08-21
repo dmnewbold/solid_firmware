@@ -21,11 +21,11 @@ zeClock.getPage()
 regCfgList=zeClock.parse_clk("Si5345-internal.txt")
 zeClock.writeConfiguration(regCfgList)
 
-hw.getNode("io.freq.ctrl.chan_sel").write(0);
-hw.getNode("io.freq.ctrl.en_crap_mode").write(0);
+hw.getNode("io.freq_ctr.ctrl.chan_sel").write(0);
+hw.getNode("io.freq_ctr.ctrl.en_crap_mode").write(0);
 hw.dispatch()
 time.sleep(2)
-fq = hw.getNode("io.freq.freq.count").read();
-fv = hw.getNode("io.freq.freq.valid").read();
+fq = hw.getNode("io.freq_ctr.freq.count").read();
+fv = hw.getNode("io.freq_ctr.freq.valid").read();
 hw.dispatch()
 print "Freq:", int(fv), int(fq) * 119.20928 / 1000000;
