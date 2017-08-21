@@ -12,12 +12,12 @@ hw = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.199:50001", "file://add
 hw.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
 hw.dispatch()
 
-clock_I2C = I2CCore(hw, 10, 5, "i2c", None)
+clock_I2C = I2CCore(hw, 10, 5, "io.i2c", None)
 zeClock=si5344(clock_I2C)
 res= zeClock.getDeviceVersion()
 zeClock.setPage(0, True)
 zeClock.getPage()
-regCfgList=zeClock.parse_clk("Si5344-02.txt")
+regCfgList=zeClock.parse_clk("Si5345-internal.txt")
 zeClock.writeConfiguration(regCfgList)
 
 hw.getNode("io.freq.ctrl.chan_sel").write(i);
