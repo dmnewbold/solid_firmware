@@ -12,7 +12,6 @@ hw = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addr
 #hw.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
 #hw.dispatch()
 
-hw.getNode("csr.ctrl.io_sel").write(6) # Talk via CPLD to ADC #3 Bank A SPI
 spi = hw.getNode("io.spi")
 spi.getNode("divider").write(0xf) # Divide 31.25MHz ipbus clock by 32
 spi.getNode("ctrl").write(0x2410) # 16b transfer length, auto CSN
@@ -21,8 +20,10 @@ hw.dispatch()
 
 for i in range(0x10000):
 	
+	ci = random.randint(0x0, 0xf)
 	di = random.randint(0x00,0xff)
 	
+	hw.getNode("csr.ctrl.io_sel").write(ci) # Select ADC bank to talk to
 	spi.getNode("d0").write(0x0400 + di) # Write 0xa5 into register 0x4
 	spi.getNode("ctrl").write(0x2510) # Do it
 	hw.dispatch()
@@ -41,4 +42,4 @@ for i in range(0x10000):
 	hw.dispatch()
 	
 	if di != (d & 0xff) or (c & 0x100) != 0:
-		print "Error":, hex(i), hex(di), hex(d), hex(c)
+		print "Error:", hex(i), hex(ci), hex(di), hex(d), hex(c)
