@@ -14,11 +14,11 @@ hw = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addr
 hw.getNode("csr.ctrl.io_sel").write(6) # Talk via CPLD to ADC #3 Bank A SPI
 spi = hw.getNode("io.spi")
 spi.getNode("divider").write(0xf) # Divide 31.25MHz ipbus clock by 32
-spi.getNode("ctrl").write(0x10) # 16b transfer length
+spi.getNode("ctrl").write(0x2010) # 16b transfer length, auto CSN
 hw.dispatch()
 
 spi.getNode("d0").write(0x8000) # Write 0x00 into register 0x00
-spi.getNode("ctrl").write(0x100) # Do it
+spi.getNode("ctrl").write(0x2110) # Do it
 hw.dispatch()
 
 d = spi.getNode("d0").read()
