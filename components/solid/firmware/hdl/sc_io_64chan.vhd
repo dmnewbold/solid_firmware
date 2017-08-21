@@ -39,7 +39,6 @@ architecture rtl of sc_io_64chan is
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(0 downto 0);
 	signal clkdiv: std_logic_vector(0 downto 0);
-	signal ss: std_logic_vector(0 downto 0);
 
 begin
 
@@ -102,13 +101,11 @@ begin
 			rst => rst,
 			ipb_in => ipbw(N_SLV_SPI),
 			ipb_out => ipbr(N_SLV_SPI),
-			ss => ss,
+			ss(0) => spi_csn,
 			mosi => spi_mosi,
 			miso => spi_miso, 
 			sclk => spi_sclk 
 		);
-
-	spi_csn <= not ss(0);
 	
 -- Clock frequency counter
 	
