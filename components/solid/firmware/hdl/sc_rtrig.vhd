@@ -6,6 +6,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
 use ieee.std_logic_misc.all;
 
 use work.ipbus.all;
@@ -38,9 +39,9 @@ architecture rtl of sc_rtrig is
 
 begin
 
-	mask: entity work.ipbus_reg_v
+	reg: entity work.ipbus_reg_v
 		generic map(
-			N_REG => N_CHAN_TRG * 2
+			N_REG => 1
 		)
 		port map(
 			clk => clk,

@@ -17,13 +17,13 @@ package ipbus_decode_sc_trig is
   subtype ipbus_sel_t is std_logic_vector(IPBUS_SEL_WIDTH - 1 downto 0);
   function ipbus_sel_sc_trig(addr : in std_logic_vector(31 downto 0)) return ipbus_sel_t;
 
--- START automatically  generated VHDL the Fri Jul 14 14:14:53 2017 
+-- START automatically  generated VHDL the Wed Aug 23 15:54:14 2017 
   constant N_SLV_CSR: integer := 0;
   constant N_SLV_LOC_MASK: integer := 1;
   constant N_SLV_ZS_CFG: integer := 2;
   constant N_SLV_DTMON: integer := 3;
   constant N_SLV_SEQ: integer := 4;
-  constant N_SLV_CHAN_MASK: integer := 5;
+  constant N_SLV_MASKS: integer := 5;
   constant N_SLAVES: integer := 6;
 -- END automatically generated VHDL
 
@@ -36,7 +36,7 @@ package body ipbus_decode_sc_trig is
     variable sel: ipbus_sel_t;
   begin
 
--- START automatically  generated VHDL the Fri Jul 14 14:14:53 2017 
+-- START automatically  generated VHDL the Wed Aug 23 15:54:14 2017 
     if    std_match(addr, "---------------------------000--") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_CSR, IPBUS_SEL_WIDTH)); -- csr / base 0x00000000 / mask 0x0000001c
     elsif std_match(addr, "---------------------------00100") then
@@ -48,7 +48,7 @@ package body ipbus_decode_sc_trig is
     elsif std_match(addr, "---------------------------01---") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_SEQ, IPBUS_SEL_WIDTH)); -- seq / base 0x00000008 / mask 0x00000018
     elsif std_match(addr, "---------------------------1----") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_CHAN_MASK, IPBUS_SEL_WIDTH)); -- chan_mask / base 0x00000010 / mask 0x00000010
+      sel := ipbus_sel_t(to_unsigned(N_SLV_MASKS, IPBUS_SEL_WIDTH)); -- masks / base 0x00000010 / mask 0x00000010
 -- END automatically generated VHDL
 
     else
