@@ -6,8 +6,12 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_misc.all;
 
 use work.ipbus.all;
+use work.ipbus_reg_types.all;
+
+use work.top_decl.all;
 
 entity sc_rtrig is
 	port(
@@ -26,9 +30,37 @@ end sc_rtrig;
 
 architecture rtl of sc_rtrig is
 
+	signal q: ipb_reg_v(0 downto 0);
+	signal ctrl_en, ctrl_mode: std_logic;
+	signal ctrl_div: std_logic_vector(5 downto 0);
+	signal mask: std_logic_vector(23 downto 0);
+	signal t: std_logic;
+
 begin
 
-	ipb_out <= IPB_RBUS_NULL;
-	force <= '0';
+	mask: entity work.ipbus_reg_v
+		generic map(
+			N_REG => N_CHAN_TRG * 2
+		)
+		port map(
+			clk => clk,
+			reset => rst,
+			ipbus_in => ipb_in,
+			ipbus_out => ipb_out,
+			q => q
+		);
+
+	ctrl_en <= q(0)(0);
+	ctrl_mode <= q(0)(1);
+	ctrl_div <= q(0)(13 downto 8);
+	
+	mgen: for i in mask'range generate
+		mask(i) <= '0' when i > to_integer(unsigned(ctrl_div)) else '1';
+	end generate;
+
+	t <= ((not ctrl_mode and not or_reduce(rand(mask'range) and mask)) or
+		(ctrl_mode and not or_reduce(sctr(BLK_RADIX + mask'left downto BLK_RADIX) and mask))) and ctrl_en;
+		
+	force <= t;
 
 end rtl;

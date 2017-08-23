@@ -1,0 +1,6 @@
+<node id="rtrig" description="Random / external trigger generator" fwinfo="endpoint; width=0">
+	<node id="en" mask="0x1"/>
+	<node id="dist" mask="0x2"/>
+	<node id="div" mask="0x3f00"/>
+</node>
+

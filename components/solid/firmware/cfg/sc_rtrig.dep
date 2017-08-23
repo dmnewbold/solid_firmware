@@ -1,0 +1,4 @@
+src sc_rtrig.vhd
+addrtab sc_rtrig.xml
+src -c ipbus-firmware:components/ipbus_slaves ipbus_reg_v.vhd
+src -c ipbus-firmware:components/ipbus_slaves ipbus_reg_types.vhd
