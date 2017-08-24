@@ -110,7 +110,7 @@ begin
 	
 -- NZS pointer control
 
-	cap_run <= (cap_run or cap) and not (cap_done or buf_rst) and cap_mode;
+	cap_run <= (cap_run or cap) and not (cap_done or buf_rst) and cap_mode when rising_edge(clk40);
 	nzen <= nzs_en or cap_run;
 	
 	process(clk40)
