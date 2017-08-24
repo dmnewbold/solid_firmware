@@ -52,7 +52,7 @@ chans = range(0x8)
 adcs = range(0xf)
 patt = 0x07f
 
-spi = hw.getNode("io.spi")
+spi = board.getNode("io.spi")
 spi_config(spi, 0xf, 0x2410, 0x1) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
 
 for i in adcs:
