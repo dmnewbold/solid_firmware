@@ -136,8 +136,8 @@ begin
 		port map(
 			clk => clk,
 			reset => rst,
-			ipbus_in => ipbw(N_SLV_CHAN_MASK),
-			ipbus_out => ipbr(N_SLV_CHAN_MASK),
+			ipbus_in => ipbw(N_SLV_MASKS),
+			ipbus_out => ipbr(N_SLV_MASKS),
 			q => masks
 		);
 		
