@@ -55,7 +55,7 @@ architecture rtl of sc_chan_buf is
 	signal cap_done: std_logic;
 	signal zctr: unsigned(BLK_RADIX - 1 downto 0);
 	signal z0, z1: std_logic;
-	signal zs_en_d, zs_en_dd, nzen, nzen_d, wenz, wez, rez, wez_d: std_logic;
+	signal zs_en_d, zs_en_dd, cap_run, nzen, nzen_d, wenz, wez, rez, wez_d: std_logic;
 	signal go, zs_run, zs_keep, buf_full_i, p, q_blkend_i: std_logic;
 	
 begin
