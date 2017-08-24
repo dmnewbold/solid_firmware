@@ -81,6 +81,7 @@ for i_chan in chans:
 			board.getNode("daq.timing.csr.ctrl.chan_rst_buf").write(0x1) # Clear buffer
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.dispatch()
+			time.sleep(0.1)
 			r = board.getNode("daq.chan.csr.stat").read()
 			board.dispatch()
 			print hex(r)
