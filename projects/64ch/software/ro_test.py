@@ -41,16 +41,12 @@ board.dispatch()
 
 sleep(1)
 
-board.getNode("csr.ctrl.chan").write(0x0) # Talk to channel 0
-board.getNode("daq.chan.csr.ctrl.mode").write(0x0) # Set to normal DAQ mode
-board.getNode("daq.chan.csr.ctrl.src").write(0x3) # Set source to random number generator
-board.getNode("daq.chan.csr.ctrl.zs_thresh").write(0x2fff) # Set ZS threshold
-board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
-board.getNode("csr.ctrl.chan").write(0x1) # Talk to channel 1
-board.getNode("daq.chan.csr.ctrl.mode").write(0x0)
-board.getNode("daq.chan.csr.ctrl.src").write(0x3)
-board.getNode("daq.chan.csr.ctrl.zs_thresh").write(0x1fff)
-board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1)
+for i in range(8):
+        board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
+        board.getNode("daq.chan.csr.ctrl.mode").write(0x0) # Set to normal DAQ mode
+        board.getNode("daq.chan.csr.ctrl.src").write(0x0) # Set source to random number generator
+        board.getNode("daq.chan.csr.ctrl.zs_thresh").write(0x3fff) # Set ZS threshold
+        board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
 
 board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
 board.getNode("daq.rtrig.ctrl.div").write(0xa) # Set random trigger rate to 40MHz / 2^11 = 20kHz
@@ -67,7 +63,7 @@ sleep(1)
 
 r = list()
 evts = 0
-max_evts = 100000
+max_evts = 8
 n_trig = 3
 
 while True:
