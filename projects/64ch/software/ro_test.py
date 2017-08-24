@@ -35,11 +35,9 @@ print hex(v)
 
 board.getNode("daq.timing.csr.ctrl.rst").write(1) # Hold clk40 domain in reset
 board.dispatch()
-board.getNode("daq.timing.csr.ctrl.rst").write(0) # Hold clk40 domain in reset
-board.dispatch()
 
-#board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
-#board.dispatch()
+board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
+board.dispatch()
 
 sleep(1)
 
