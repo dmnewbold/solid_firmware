@@ -35,9 +35,11 @@ print hex(v)
 
 board.getNode("daq.timing.csr.ctrl.rst").write(1) # Hold clk40 domain in reset
 board.dispatch()
-
-board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
+board.getNode("daq.timing.csr.ctrl.rst").write(0) # Hold clk40 domain in reset
 board.dispatch()
+
+#board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
+#board.dispatch()
 
 sleep(1)
 
@@ -55,9 +57,10 @@ board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1)
 board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
 board.getNode("daq.rtrig.ctrl.div").write(0xa) # Set random trigger rate to 40MHz / 2^11 = 20kHz
 board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
-board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 0 (random trigger)
-board.getNode("daq.trig.seq.conf.addr").write(0x0) # Set sequencer table to entry 0 (trigger type 0) 
+board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
+board.getNode("daq.trig.seq.conf.addr").write(0x3) # Set sequencer table to entry 0 (trigger type 0) 
 board.getNode("daq.trig.seq.conf.data").write(0x00010000) # Set offet = 0, block count = 1 for trigger type 0
+board.getNode("daq.roc.csr.ctrl.en").write(0x1) # Enable readout buffer
 board.getNode("daq.timing.csr.ctrl.pipeline_en").write(1) # Enable front-end pipeline
 board.getNode("daq.timing.csr.ctrl.force_sync").write(1) # And... go.
 board.dispatch()
