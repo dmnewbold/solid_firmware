@@ -57,8 +57,8 @@ spi_config(spi, 0xf, 0x2410, 0x1) # Divide 31.25MHz ipbus clock by 32; 16b trans
 
 for i in adcs:
 	print "Set ADC bank:", hex(i)
-	hw.getNode("csr.ctrl.io_sel").write(i) # Select ADC bank to talk to
-	hw.dispatch()
+	board.getNode("csr.ctrl.io_sel").write(i) # Select ADC bank to talk to
+	board.dispatch()
 	spi_write(spi, 0x0, 0x80) # Reset ADC
 	spi_write(spi, 0x2, 0x05) # 14b 1 lane mode
 	spi_write(spi, 0x3, 0x80 + (patt >> 8)) # Test pattern
