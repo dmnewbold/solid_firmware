@@ -65,7 +65,7 @@ architecture rtl of sc_chan is
 	signal norm_mode, pb_mode, cap_mode: std_logic;
 	signal d_in, d_in_i, d_buf: std_logic_vector(13 downto 0);
 	signal d_c: std_logic_vector(1 downto 0);
-	signal slip, chan_rst, buf_we, inc: std_logic;
+	signal slip, chan_rst, cap, inc: std_logic;
 	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert: std_logic;
 	signal ctrl_mode, ctrl_src: std_logic_vector(1 downto 0);
 	signal cap_full, buf_full, dr_full, dr_warn: std_logic;
@@ -117,7 +117,7 @@ begin
 	
 	slip <= sync_ctrl(0) and ctrl_en_sync; -- CDC
 	chan_rst <= (sync_ctrl(1) and ctrl_en_sync) or rst40; -- CDC
-	buf_we <= sync_ctrl(2) and ctrl_en_sync; -- CDC
+	cap <= sync_ctrl(2) and ctrl_en_sync; -- CDC
 	inc <= sync_ctrl(3) and ctrl_en_sync; -- CDC
 	
 	stat(0) <= X"000000" & "000" & err_i & dr_warn & dr_full & buf_full & cap_full; -- CDC
@@ -198,6 +198,7 @@ begin
 			d => d_buf,
 			blkend => blkend,	
 			nzs_en => nzs_en,
+			cap => cap,
 			cap_full => cap_full,
 			zs_thresh => zs_thresh,
 			zs_en => zs_en,

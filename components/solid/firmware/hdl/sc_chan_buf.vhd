@@ -26,6 +26,7 @@ entity sc_chan_buf is
 		d: in std_logic_vector(13 downto 0); -- data in; clk40 dom
 		blkend: in std_logic;
 		nzs_en: in std_logic; -- enable nzs buffer; clk40 dom
+		cap: in std_logic;
 		cap_full: out std_logic;
 		zs_thresh: in std_logic_vector(13 downto 0); -- ZS threshold; clk40 dom
 		zs_en: in std_logic; -- enable zs buffer; clk40 dom
@@ -54,7 +55,7 @@ architecture rtl of sc_chan_buf is
 	signal cap_done: std_logic;
 	signal zctr: unsigned(BLK_RADIX - 1 downto 0);
 	signal z0, z1: std_logic;
-	signal zs_en_d, zs_en_dd, nzs_en_d, wenz, wez, rez, wez_d: std_logic;
+	signal zs_en_d, zs_en_dd, nzen, nzen_d, wenz, wez, rez, wez_d: std_logic;
 	signal go, zs_run, zs_keep, buf_full_i, p, q_blkend_i: std_logic;
 	
 begin
@@ -109,10 +110,13 @@ begin
 	
 -- NZS pointer control
 
+	cap_run <= (cap_run or cap) and not (cap_done or buf_rst) and cap_mode;
+	nzen <= nzs_en or cap_run;
+	
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
-			nzs_en_d <= nzs_en;
+			nzen_d <= nzen;
 			zs_en_d <= zs_en;
 			zs_en_dd <= zs_en_d;
 		end if;
@@ -121,7 +125,7 @@ begin
 	process(clk40)
 	begin
 		if falling_edge(clk40) then
-			if (pb_mode = '1' and nzs_en = '0') or (pb_mode = '0' and nzs_en_d = '0') then
+			if (pb_mode = '1' and nzen = '0') or (pb_mode = '0' and nzen_d = '0') then
 				pnz <= to_unsigned(0, pnz'length);
 				cap_done <= '0';
 			else
@@ -137,7 +141,7 @@ begin
 		end if;
 	end process;
 	
-	wenz <= (norm_mode or cap_mode) and nzs_en and not cap_done;
+	wenz <= (norm_mode or cap_mode) and nzen and not cap_done;
 	d_nzs <= blkend & '0' & d;
 	cap_full <= cap_done;
 	
