@@ -68,6 +68,7 @@ sleep(1)
 r = list()
 evts = 0
 max_evts = 100000
+n_trig = 3
 
 while True:
 
@@ -87,7 +88,7 @@ while True:
 	while len(r) > 0:
 
 		m = int(r.pop(0))
-		if (m >> 16) != 0xaa00:
+		if (m >> 24) != 0xaa:
 			print "Bad news: event header incorrect"
 			dump()
 			print "%08x" % m
@@ -97,6 +98,7 @@ while True:
 		l = m & 0xffff
 		if len(r) >= l:
 			w0  = int(r.pop(0))
+                        print hex(w0)
 			rtype = (w0 >> 28)
 			print "Readout type %d Len %04x" % (rtype, l)
 			if rtype == 0: # A data block
@@ -144,8 +146,8 @@ while True:
 			elif rtype == 1: # A trigger block
 				ttype = w0 & 0x3ffff
 				tstamp = int(r.pop(0)) | (int(r.pop(0)) << 32)
-				for _ in range(5):
-					r.pop(0)
+				for _ in range(2 * n_trig + 1):
+					print hex(r.pop(0))
 				print "\tTbits %08x Time %012x" % (ttype, tstamp)
 			else:
 				print "Unknown readout type"
