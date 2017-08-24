@@ -170,12 +170,12 @@ begin
 -- Trigger data to readout
 
 	go <= (go or (ro_go and ((or_reduce(tc) and not rveto) or last_gasp or hoorah))) and not blkend and en and not rst40 when rising_edge(clk40);
-	blkend <= '1' when unsigned(ro_ctr) = 3 + 2 * N_CHAN_TRG else '0';
+	blkend <= '1' when unsigned(ro_ctr) = 3 + 2 * N_TRG else '0';
 	ro_valid <= go;
 	ro_blkend <= blkend;
 
 	ch <= to_integer(unsigned(ro_ctr(ro_ctr'length - 1 downto 1)));
-	ch_i <= ch - 2 when ch > 1 and ch < N_CHAN_TRG else 0;
+	ch_i <= ch - 2 when ch > 1 and ch < N_TRG else 0;
 	bi <= (63 downto N_CHAN => '0') & cact(ch_i);
 	b <= bi(63 downto 32) when ro_ctr(0) = '1' else bi(31 downto 0);
 

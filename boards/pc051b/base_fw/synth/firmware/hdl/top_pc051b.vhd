@@ -93,7 +93,7 @@ begin
 			nuke => nuke,
 			soft_rst => soft_rst,
 			userleds => leds_c,
-			addr => addr,
+			addr => addrn,
 			sel => sel,
 			i2c_scl => i2c_scl,
 			i2c_sda_i => i2c_sda_i,
