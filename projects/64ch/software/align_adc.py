@@ -79,6 +79,7 @@ for i_chan in chans:
 		for i_tap in range(32):
 			print "Testing slip, tap:", hex(i_slip), hex(i_tap)
 			board.getNode("daq.timing.csr.ctrl.chan_rst_buf").write(0x1) # Clear buffer
+			board.getNode("daq.timing.csr.ctrl.chan_rst_buf").write(0x0) # Clear buffer
 			board.dispatch()
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.dispatch()
