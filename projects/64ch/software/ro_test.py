@@ -58,7 +58,7 @@ board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
 board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 0 (random trigger)
 board.getNode("daq.trig.seq.conf.addr").write(0x0) # Set sequencer table to entry 0 (trigger type 0) 
 board.getNode("daq.trig.seq.conf.data").write(0x00010000) # Set offet = 0, block count = 1 for trigger type 0
-board.getNode("timing.csr.ctrl.pipeline_en").write(1) # Enable front-end pipeline
+board.getNode("daq.timing.csr.ctrl.pipeline_en").write(1) # Enable front-end pipeline
 board.getNode("daq.timing.csr.ctrl.force_sync").write(1) # And... go.
 board.dispatch()
 
