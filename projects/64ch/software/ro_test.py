@@ -52,9 +52,9 @@ board.getNode("daq.chan.csr.ctrl.src").write(0x3)
 board.getNode("daq.chan.csr.ctrl.zs_thresh").write(0x1fff)
 board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1)
 
-board.getNode("daq.rtrig.dist").write(0x1) # Set random trigger generator to interval mode
-board.getNode("daq.rtrig.div").write(0xa) # Set random trigger rate to 40MHz / 2^11 = 20kHz
-board.getNode("daq.rtrig.en").write(0x1) # Enable random trigger generator
+board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
+board.getNode("daq.rtrig.ctrl.div").write(0xa) # Set random trigger rate to 40MHz / 2^11 = 20kHz
+board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
 board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 0 (random trigger)
 board.getNode("daq.trig.seq.conf.addr").write(0x0) # Set sequencer table to entry 0 (trigger type 0) 
 board.getNode("daq.trig.seq.conf.data").write(0x00010000) # Set offet = 0, block count = 1 for trigger type 0
