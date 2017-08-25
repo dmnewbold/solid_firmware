@@ -123,7 +123,7 @@ begin
 			if (mode = '1' and nzen = '0') or nzen_d = '0' then
 				pnz <= to_unsigned(0, pnz'length);
 			else
-				if (mode = '1' and pnz = ZS_LAST_ADDR) or pnz = NZS_LAST_ADDR then
+				if (mode = '0' and pnz = NZS_LAST_ADDR) or pnz = ZS_LAST_ADDR then
 					pnz <= (others => '0');
 				else
 					pnz <= pnz + 1;
