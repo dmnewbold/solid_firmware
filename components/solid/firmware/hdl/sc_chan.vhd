@@ -189,7 +189,7 @@ begin
 			mode => ctrl_mode,
 			clk40 => clk40,
 			clk160 => clk160,
-			buf_rst => rst40
+			buf_rst => rst40,
 			d => d_buf,
 			blkend => blkend,	
 			nzs_en => nzs_en,
