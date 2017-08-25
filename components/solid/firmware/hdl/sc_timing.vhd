@@ -30,7 +30,7 @@ entity sc_timing is
 		clk280: out std_logic; -- chip 280MHz clock
 		sync_in: in std_logic; -- external sync signal in
 		trig_in: in std_logic; -- external trigger in
-		led_out: out std_logic; -- LED flash out
+		led: out std_logic; -- LED flash out
 		sctr: out std_logic_vector(47 downto 0); -- sample counter
 		chan_sync_ctrl: out std_logic_vector(3 downto 0); -- Timing signals to channels
 		trig_en: out std_logic;
@@ -177,7 +177,7 @@ begin
 	end process;
 		
 	sctr <= std_logic_vector(sctr_i);
-	led_out <= sctr_i(LED_BLK_RADIX + BLK_RADIX - 1);
+	led <= sctr_i(LED_BLK_RADIX + BLK_RADIX - 1) and not (wait_sync or sync_err);
 	
 -- Random number gen
 

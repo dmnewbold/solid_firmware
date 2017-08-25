@@ -81,9 +81,9 @@ begin
 			q => led_p
 		);
 
-	leds <= ('0', onehz);
+	leds <= (led_p(0), onehz);
 	
-	debug <= sfp_los & '0' & led_p(0) & (locked and onehz);
+	debug <= (others => '0');
 	
 -- Ethernet MAC core and PHY interface
 	

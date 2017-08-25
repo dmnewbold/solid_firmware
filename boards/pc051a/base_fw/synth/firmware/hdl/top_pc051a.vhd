@@ -85,7 +85,7 @@ begin
 			clk200 => clk200,
 			nuke => nuke,
 			soft_rst => soft_rst,
-			leds => leds(1 downto 0),
+			leds => leds,
 			debug => open,
 			mac_addr(47 downto 4) => MAC_ADDR(47 downto 4),
 			mac_addr(3 downto 0) => dip_sw,

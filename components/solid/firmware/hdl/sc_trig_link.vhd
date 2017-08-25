@@ -17,6 +17,7 @@ entity sc_trig_link is
 		ipb_out: out ipb_rbus;
 		clk125: in std_logic;
 		rst125: in std_logic;
+		link_ok: out std_logic;
 		clk40: in std_logic;
 		rst40: in std_logic;
 		d: in std_logic_vector(15 downto 0);
@@ -35,5 +36,6 @@ begin
 	ipb_out <= IPB_RBUS_NULL;
 	q <= (others => '0');
 	q_valid <= '0';
+	link_ok <= '0';
 
 end rtl;

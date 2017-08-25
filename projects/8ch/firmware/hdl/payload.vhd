@@ -119,7 +119,7 @@ begin
 	ctrl_chan <= ctrl(0)(15 downto 8);
 	ctrl_board_id <= ctrl(0)(23 downto 16);
 	
-	userleds <= "000" & led;
+	userleds(3) <= '0';
 	
 -- Required for timing alignment at inputs
 
@@ -206,7 +206,7 @@ begin
 			sync_in => sync_in,
 			trig_in => trig_in,
 			trig_out => trig_out,
-			led_out => led,
+			led_out => userleds(2 downto 0),
 			chan => ctrl_chan,
 			chan_err => chan_err,
 			d_p => adc_d_p,

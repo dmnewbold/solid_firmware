@@ -102,7 +102,6 @@ begin
 	ctrl_rst_idelayctrl <= ctrl(0)(3);
 	ctrl_chan <= ctrl(0)(15 downto 8);
 	sel <= ctrl(0)(28 downto 24);
-	userleds <= ctrl(0)(31 downto 29);
 	
 -- Required for timing alignment at inputs
 
@@ -149,6 +148,7 @@ begin
 			sync_in => sync_in,
 			trig_in => trig_in,
 			trig_out => trig_out,
+			led_out => userleds,
 			chan => ctrl_chan,
 			chan_err => chan_err,
 			d_p => adc_d_p,

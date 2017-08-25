@@ -26,7 +26,7 @@ entity sc_daq is
 		sync_in: in std_logic;
 		trig_in: in std_logic;
 		trig_out: out std_logic;
-		led_out: out std_logic;
+		led_out: out std_logic_vector(2 downto 0);
 		chan: in std_logic_vector(7 downto 0);
 		chan_err: out std_logic;
 		d_p: in std_logic_vector(N_CHAN - 1 downto 0);
@@ -52,7 +52,7 @@ architecture rtl of sc_daq is
 	signal zs_sel: std_logic_vector(1 downto 0);
 	signal chan_trig: sc_trig_array;
 	signal link_d, link_q: std_logic_vector(15 downto 0);
-	signal link_d_valid, link_q_valid, link_ack: std_logic;
+	signal link_d_valid, link_q_valid, link_ack, link_ok: std_logic;
 	signal ro_chan: std_logic_vector(7 downto 0);
 	signal ro_d, trig_d: std_logic_vector(31 downto 0);
 	signal ro_blkend, ro_empty, ro_ren, trig_sync, trig_blkend, trig_we, trig_roc_veto: std_logic;
@@ -93,7 +93,7 @@ begin
 			clk280 => clk280,
 			sync_in => sync_in,
 			trig_in => trig_in,
-			led_out => led_out,
+			led => led_out(0),
 			sctr => sctr,
 			chan_sync_ctrl => sync_ctrl,
 			trig_en => trig_en,
@@ -212,6 +212,7 @@ begin
 			ipb_out => ipbr(N_SLV_TLINK),
 			clk125 => clk125,
 			rst125 => rst125,
+			link_ok => link_ok,
 			clk40 => clk40_i,
 			rst40 => rst40_i,
 			d => link_d,
@@ -243,5 +244,18 @@ begin
 			empty => ro_empty,
 			ren => ro_ren
 		);
-			
+		
+-- LED
+
+	stretch: entity work.led_stretcher
+		generic map(
+			WIDTH => 2
+		)
+		port map(
+			clk => clk125,
+			d(0) => link_d_valid,
+			d(1) => link_ok,
+			q => led_out(2 downto 1)
+		);
+	
 end rtl;

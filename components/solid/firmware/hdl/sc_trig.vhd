@@ -163,7 +163,7 @@ begin
 			qmask(0) => (N_TRG - 1 downto 0 => '1', others => '0')
 		);
 		
-    trig_mask <= ctrl_mask(0)(N_TRG - 1 downto 0);
+	trig_mask <= ctrl_mask(0)(N_TRG - 1 downto 0);
 
 	ltrig: entity work.sc_local_trig
 		port map(
