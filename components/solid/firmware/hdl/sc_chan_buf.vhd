@@ -19,7 +19,7 @@ entity sc_chan_buf is
 		rst: in std_logic;
 		ipb_in: in ipb_wbus; -- clk dom
 		ipb_out: out ipb_rbus; -- clk dom
-		mode: in std_logic_vector(1 downto 0); -- buffer counter mode; clk dom
+		mode: in std_logic; -- buffer counter mode; clk dom
 		clk40: in std_logic;
 		clk160: in std_logic;
 		buf_rst: in std_logic; -- general reset; clk40 dom
@@ -46,23 +46,18 @@ architecture rtl of sc_chan_buf is
 	constant ZS_FIRST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX + ZS_DEL;
 	constant ZS_LAST_ADDR: integer := 2 ** BUF_RADIX - 1;
 
-	signal norm_mode, pb_mode, cap_mode: std_logic;
 	signal c: unsigned(1 downto 0);
 	signal we: std_logic;
 	signal d_ram, q_ram, d_nzs, q_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
 	signal a_ram: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr: unsigned(BUF_RADIX - 1 downto 0);
-	signal cap_done: std_logic;
+	signal cap_run, cap_done: std_logic;
 	signal zctr: unsigned(BLK_RADIX - 1 downto 0);
 	signal z0, z1: std_logic;
-	signal zs_en_d, zs_en_dd, cap_run, nzen, nzen_d, wenz, wez, rez, wez_d: std_logic;
+	signal zs_en_d, zs_en_dd, nzen, nzen_d, wenz, wez, rez, wez_d: std_logic;
 	signal go, zs_run, zs_keep, buf_full_i, p, q_blkend_i: std_logic;
 	
 begin
-
-	norm_mode <= '1' when mode = "00" else '0';
-	pb_mode <= '1' when mode = "01" else '0';
-	cap_mode <= '1' when mode = "10" else '0';
 
 -- NZS / ZS buffer
 
@@ -110,7 +105,7 @@ begin
 	
 -- NZS pointer control
 
-	cap_run <= (cap_run or cap) and not (cap_done or buf_rst) and cap_mode when rising_edge(clk40);
+	cap_run <= (cap_run or cap) and not (cap_done or buf_rst) when rising_edge(clk40);
 	nzen <= nzs_en or cap_run;
 	
 	process(clk40)
@@ -125,15 +120,11 @@ begin
 	process(clk40)
 	begin
 		if falling_edge(clk40) then
-			if (pb_mode = '1' and nzen = '0') or (pb_mode = '0' and nzen_d = '0') then
+			if (mode = '1' and nzen = '0') or nzen_d = '0' then
 				pnz <= to_unsigned(0, pnz'length);
-				cap_done <= '0';
 			else
-				if (norm_mode = '1' and pnz = NZS_LAST_ADDR) or pnz = ZS_LAST_ADDR then
+				if (mode = '1' and pnz = ZS_LAST_ADDR) or pnz = NZS_LAST_ADDR then
 					pnz <= (others => '0');
-					if cap_mode = '1' then
-						cap_done <= '1';
-					end if;
 				else
 					pnz <= pnz + 1;
 				end if;
@@ -141,9 +132,10 @@ begin
 		end if;
 	end process;
 	
-	wenz <= (norm_mode or cap_mode) and nzen and not cap_done;
+	cap_done <= '1' when pnz = ZS_LAST_ADDR else '0';
+	wenz <= (nzs_en and not mode) or cap_run;
 	d_nzs <= blkend & '0' & d;
-	cap_full <= cap_done;
+	cap_full <= not nzen;
 	
 -- Zero suppression
 		
@@ -163,7 +155,7 @@ begin
 					zctr <= zctr + 1;
 				end if;
 			end if;
-			wez <= (not (z0 and z1)) and zs_en_dd and norm_mode and not buf_full_i;
+			wez <= (not (z0 and z1)) and zs_en_dd and not mode and not buf_full_i;
 			if z1 = '1' and zctr /= 1 then
 				d_zs <= "01" & (13 - BLK_RADIX downto 0 => '0') & std_logic_vector(zctr);
 			else
@@ -177,7 +169,7 @@ begin
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
-			if zs_en = '0' or norm_mode = '0' then
+			if zs_en = '0' then
 				pzw <= to_unsigned(ZS_FIRST_ADDR, pzw'length);
 				pzr <= to_unsigned(ZS_FIRST_ADDR, pzr'length);
 			elsif buf_full_i = '0' then

@@ -2,7 +2,7 @@
 --
 -- All the stuff belonging to one input channel
 --
--- ctrl_mode: 0 normal; 1 playback; 2 capture; 3 reserved
+-- ctrl_mode: 0 normal; 1 playback / capture
 -- ctrl_src: 0 external; 1 playback buffer; 2 counter; 3 fake data
 --
 -- Dave Newbold, February 2016
@@ -62,12 +62,12 @@ architecture rtl of sc_chan is
 	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(0 downto 0);		
-	signal norm_mode, pb_mode, cap_mode: std_logic;
 	signal d_in, d_in_i, d_buf: std_logic_vector(13 downto 0);
 	signal d_c: std_logic_vector(1 downto 0);
 	signal slip, chan_rst, cap, inc: std_logic;
 	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert: std_logic;
-	signal ctrl_mode, ctrl_src: std_logic_vector(1 downto 0);
+	signal ctrl_mode: std_logic;
+	signal ctrl_src: std_logic_vector(1 downto 0);
 	signal cap_full, buf_full, dr_full, dr_warn: std_logic;
 	signal zs_thresh_v: ipb_reg_v(N_ZS_THRESH - 1 downto 0);
 	signal zs_sel_i: integer range 2 ** zs_sel'length - 1 downto 0 := 0;
@@ -112,19 +112,14 @@ begin
 	ctrl_en_sync <= ctrl(0)(0);
 	ctrl_en_buf <= ctrl(0)(1);
 	ctrl_invert <= ctrl(0)(2);
-	ctrl_mode <= ctrl(0)(5 downto 4);
+	ctrl_mode <= ctrl(0)(4);
 	ctrl_src <= ctrl(0)(7 downto 6);
 	
 	slip <= sync_ctrl(0) and ctrl_en_sync; -- CDC
-	chan_rst <= (sync_ctrl(1) and ctrl_en_sync) or rst40; -- CDC (this might go away soon)
 	cap <= sync_ctrl(2) and ctrl_en_sync; -- CDC
 	inc <= sync_ctrl(3) and ctrl_en_sync; -- CDC
 	
 	stat(0) <= X"000000" & "000" & err_i & dr_warn & dr_full & buf_full & cap_full; -- CDC
-
-	norm_mode <= '1' when ctrl_mode = "00" else '0';
-	pb_mode <= '1' when ctrl_mode = "01" else '0';
-	cap_mode <= '1' when ctrl_mode = "10" else '0';
 
 -- Input logic
 	
@@ -158,7 +153,7 @@ begin
 
 	err_i <= buf_full or dr_full;
 	err <= err_i;
-	ro_en <= not (pb_mode or cap_mode or err_i) and ctrl_en_buf;
+	ro_en <= not (ctrl_mode or err_i) and ctrl_en_buf;
 	keep_i <= keep and ro_en;
 	flush_i <= flush and ro_en;
 	veto <= dr_warn or not ro_en;
@@ -194,7 +189,7 @@ begin
 			mode => ctrl_mode,
 			clk40 => clk40,
 			clk160 => clk160,
-			buf_rst => chan_rst,
+			buf_rst => rst40
 			d => d_buf,
 			blkend => blkend,	
 			nzs_en => nzs_en,
@@ -240,7 +235,7 @@ begin
 			ipb_in => ipbw(N_SLV_TRIG_THRESH),
 			ipb_out => ipbr(N_SLV_TRIG_THRESH),
 			clk40 => clk40,
-			rst40 => chan_rst,
+			rst40 => rst40,
 			mark => blkend,
 			en => nzs_en,
 			d => d_buf,
