@@ -116,7 +116,7 @@ begin
 	ctrl_src <= ctrl(0)(7 downto 6);
 	
 	slip <= sync_ctrl(0) and ctrl_en_sync; -- CDC
-	chan_rst <= (sync_ctrl(1) and ctrl_en_sync) or rst40; -- CDC
+	chan_rst <= (sync_ctrl(1) and ctrl_en_sync) or rst40; -- CDC (this might go away soon)
 	cap <= sync_ctrl(2) and ctrl_en_sync; -- CDC
 	inc <= sync_ctrl(3) and ctrl_en_sync; -- CDC
 	
