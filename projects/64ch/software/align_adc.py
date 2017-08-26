@@ -76,7 +76,7 @@ for i_chan in chans:
 	board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
 	board.dispatch()
 	
-	res = False * (15 * taps_per_slip)
+	res = [False] * (15 * taps_per_slip)
 	for i_slip in range(14):
 		tr = []
 		for i_tap in range(32):
