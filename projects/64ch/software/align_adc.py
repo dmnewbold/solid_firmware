@@ -110,14 +110,29 @@ for i_chan in chans:
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0)
 		board.dispatch()
 		
-	print "Chan, OK slips", hex(i_chan), tr
 	trp = ""
-	for i in res:
-		if i == None:
+	min = 0
+	max = 0
+	non_cont = False
+	for i in range(len(res) - 1):
+		if res[i + 1] and not res[i]:
+			if min = 0:
+				min = i + 1
+			else:
+				non_cont = True
+		elif res[i] and not res[i + 1]:
+			if max = 0:
+				max = i
+			else:
+				non_cont = True
+		if res[i] == None:
 			trp += "_"
-		elif i:
+		elif res[i]:
 			trp += "+"
 		else:
 			trp += "."
-	print "Chan, res:", hex(i_chan), trp
+	a = int((min + max) / 2)
+	d_slip = a mod taps_per_slip
+	d_tap = a % taps_per_slip
+	print "Chan, min, max, rec_slip, rec_tap:", hex(i_chan), hex(min), hex(max), hex(d_slip), hex(d_tap)
 
