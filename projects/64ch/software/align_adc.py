@@ -51,7 +51,7 @@ board.dispatch()
 time.sleep(1)
 
 chans = range(0x38, 0x40)
-adcs = range(0xf)
+adcs = range(0x10)
 patt = 0x07f
 cap_len = 0x80
 taps_per_slip = 22
