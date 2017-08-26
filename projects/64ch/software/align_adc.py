@@ -67,7 +67,6 @@ for i in adcs:
 	spi_write(spi, 0x3, 0x80 + (patt >> 8)) # Test pattern
 	spi_write(spi, 0x4, patt & 0xff) # Test pattern
 
-mask = [True] * (15 * taps_per_slip)
 for i_chan in chans:
 
 	board.getNode("csr.ctrl.chan").write(i_chan) # Talk to channel 0
@@ -78,8 +77,8 @@ for i_chan in chans:
 	board.dispatch()
 	
 	res = [False] * (15 * taps_per_slip)
+	tr = []
 	for i_slip in range(14):
-		tr = []
 		for i_tap in range(32):
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
@@ -95,23 +94,21 @@ for i_chan in chans:
 			for w in d:
 				if int(w) & 0x3ff == patt:
 					c += 1
-			tr.append(c == cap_len)
 			res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len) 
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
 			board.dispatch()
 			
-		trp = ""
 		f = False
 		for i in tr:
-			trp += ("+" if i else ".")
 			f = f or i
 		if f:
-			print "Chan, slip, res:", hex(i_chan), hex(i_slip), trp
+			tr.append[i_slip]
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0)
 		board.dispatch()
 		
+	print "Chan, OK slips", hex(i_chan), tr
 	trp = ""
 	for i in res:
 		if i == None:
@@ -121,13 +118,4 @@ for i_chan in chans:
 		else:
 			trp += "."
 	print "Chan, res:", hex(i_chan), trp
-	for i in len(mask):
-		mask[i] = mask[i] and res[i]
 
-trp=""
-for i in mask:
-	if i:
-		trp += "+"
-	else:
-		trp += "."
-print "Mask:", trp
