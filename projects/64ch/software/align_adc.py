@@ -114,7 +114,7 @@ for i_chan in chans:
 	for i in res:
 		if i == None:
 			trp += "_"
-		elsif i:
+		elif i:
 			trp += "+"
 		else:
 			trp += "."
