@@ -85,7 +85,7 @@ for i_chan in chans:
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.dispatch()
 			r = board.getNode("daq.chan.csr.stat").read()
-			board,getNode("daq.chan.buf.addr").write(0x0)
+			board.getNode("daq.chan.buf.addr").write(0x0)
 			d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
 			board.dispatch()
 			print hex(r)
@@ -94,7 +94,7 @@ for i_chan in chans:
 				sys.exit()
 			c = 0
 			for w in d:
-				print hex(w)
-				
-			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap	
-                board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
+				print hex(w),
+			print
+			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
+		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
