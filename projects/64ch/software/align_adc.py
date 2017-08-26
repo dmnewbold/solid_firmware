@@ -48,7 +48,7 @@ board.dispatch()
 
 time.sleep(1)
 
-chans = range(0x8)
+chans = range(0x1)
 adcs = range(0xf)
 patt = 0x07f
 cap_len = 0x800
@@ -78,10 +78,6 @@ for i_chan in chans:
 	
 	for i_slip in range(14):
 		for i_tap in range(32):
-			print "Testing slip, tap:", hex(i_slip), hex(i_tap)
-#			board.getNode("daq.timing.csr.ctrl.chan_rst_buf").write(0x1) # Clear buffer
-#			board.getNode("daq.timing.csr.ctrl.chan_rst_buf").write(0x0) # Clear buffer
-#			board.dispatch()
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.dispatch()
 			r = board.getNode("daq.chan.csr.stat").read()
@@ -94,7 +90,8 @@ for i_chan in chans:
 				sys.exit()
 			c = 0
 			for w in d:
-				print hex(w),
-			print
+				if int(d) & 0x3ff == patt:
+					c += 1
+			print "Slip, tap, n_corr:", hex(i_slip), hex(i_tap), hex(c)
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
