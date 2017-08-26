@@ -137,5 +137,4 @@ for i_chan in chans:
 	if not non_cont:
 		print "Chan, min, max, rec_slip, rec_tap:", hex(i_chan), hex(min), hex(max), hex(d_slip), hex(d_tap)
 	else:
-		print "Chan, NON CONTINUOUS RANGE", hex(i_chan)
-	print trp
+		print "Chan, NON CONTINUOUS RANGE", hex(i_chan), trp
