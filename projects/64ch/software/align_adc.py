@@ -80,11 +80,9 @@ for i_chan in chans:
 	for i_slip in range(14):
 		tr = []
 		for i_tap in range(32):
-			board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0) # Turn off increment tap
-			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0) # Turn off increment slip
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
+			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
 			board.dispatch()
-			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0) # Turn off capture
 			r = board.getNode("daq.chan.csr.stat").read()
 			board.getNode("daq.chan.buf.addr").write(0x0)
 			d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
@@ -99,7 +97,9 @@ for i_chan in chans:
 			tr.append(c == cap_len)
 			res[offsets[i_slip] * taps_per_slip + i_tap] = (c == cap_len) 
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
+			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
 			board.dispatch()
+			
 		trp = ""
 		f = False
 		for i in tr:
@@ -108,6 +108,7 @@ for i_chan in chans:
 		if f:
 			print "Chan, slip, res:", hex(i_chan), hex(i_slip), trp
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
+		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0)
 		board.dispatch()
 		
 	trp = ""
