@@ -79,6 +79,7 @@ for i_chan in chans:
 	res = [False] * (15 * taps_per_slip)
 	tr = []
 	for i_slip in range(14):
+		ok = False
 		for i_tap in range(32):
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
@@ -94,15 +95,13 @@ for i_chan in chans:
 			for w in d:
 				if int(w) & 0x3ff == patt:
 					c += 1
-			res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len) 
+			res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len)
+			ok = (c == cap_len) or ok
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
 			board.dispatch()
 			
-		f = False
-		for i in tr:
-			f = f or i
-		if f:
+		if ok:
 			tr.append[i_slip]
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0)
