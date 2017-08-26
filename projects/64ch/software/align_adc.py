@@ -95,4 +95,5 @@ for i_chan in chans:
 			print
 			print "Slip, tap, n_corr:", hex(i_slip), hex(i_tap), hex(c)
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
+			time.sleep(0.1)
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
