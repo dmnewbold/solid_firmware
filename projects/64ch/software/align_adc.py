@@ -100,6 +100,9 @@ for i_chan in chans:
 			tr.append(c == cap_len)
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.dispatch()
-		print "Chan, slip, res:", hex(i_chan), hex(i_slip), tr
+		trp = ""
+		for i in tr:
+			trp += ("+" if i else ".")
+		print "Chan, slip, res:", hex(i_chan), hex(i_slip), trp
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
 		board.dispatch()
