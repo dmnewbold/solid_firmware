@@ -51,7 +51,7 @@ time.sleep(1)
 chans = range(0x1)
 adcs = range(0xf)
 patt = 0x07f
-cap_len = 0x800
+cap_len = 0x80
 
 spi = board.getNode("io.spi")
 spi_config(spi, 0xf, 0x2410, 0x1) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
@@ -84,14 +84,15 @@ for i_chan in chans:
 			board.getNode("daq.chan.buf.addr").write(0x0)
 			d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
 			board.dispatch()
-			print hex(r)
 			if r & 0x1 != 1:
 				print "Crap no capture"
 				sys.exit()
 			c = 0
 			for w in d:
+				print hex(w),
 				if int(w) & 0x3ff == patt:
 					c += 1
+			print
 			print "Slip, tap, n_corr:", hex(i_slip), hex(i_tap), hex(c)
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
