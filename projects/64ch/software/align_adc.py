@@ -50,7 +50,7 @@ board.dispatch()
 
 time.sleep(1)
 
-chans = range(0x8)
+chans = range(0x40)
 adcs = range(0xf)
 patt = 0x07f
 cap_len = 0x80
