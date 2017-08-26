@@ -52,6 +52,7 @@ chans = range(0x8)
 adcs = range(0xf)
 patt = 0x07f
 cap_len = 0x80
+taps_per_slip = 22
 
 spi = board.getNode("io.spi")
 spi_config(spi, 0xf, 0x2410, 0x1) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
@@ -73,6 +74,7 @@ for i_chan in chans:
 	board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
 	board.dispatch()
 	
+	res = []
 	for i_slip in range(14):
 		tr = []
 		for i_tap in range(32):
@@ -93,6 +95,7 @@ for i_chan in chans:
 				if int(w) & 0x3ff == patt:
 					c += 1
 			tr.append(c == cap_len)
+			res[i_slip * taps_per_slip + i_tap] = (c == cap_len) 
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.dispatch()
 		trp = ""
@@ -104,3 +107,8 @@ for i_chan in chans:
 			print "Chan, slip, res:", hex(i_chan), hex(i_slip), trp
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
 		board.dispatch()
+		
+	trp = ""
+	for i in res:
+		trp += ("+" if i else ".")
+	print "Chan, res:", hex(i_chan), trp
