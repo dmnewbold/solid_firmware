@@ -67,6 +67,7 @@ for i in adcs:
 	spi_write(spi, 0x3, 0x80 + (patt >> 8)) # Test pattern
 	spi_write(spi, 0x4, patt & 0xff) # Test pattern
 
+mask = [True] * (15 * taps_per_slip)
 for i_chan in chans:
 
 	board.getNode("csr.ctrl.chan").write(i_chan) # Talk to channel 0
@@ -120,3 +121,13 @@ for i_chan in chans:
 		else:
 			trp += "."
 	print "Chan, res:", hex(i_chan), trp
+	for i in len(mask):
+		mask[i] = mask[i] and res[i]
+
+trp=""
+for i in mask:
+	if i:
+		trp += "+"
+	else:
+		trp += "."
+print "Mask:", trp
