@@ -102,7 +102,7 @@ for i_chan in chans:
 			board.dispatch()
 			
 		if ok:
-			tr.append[i_slip]
+			tr.append(i_slip)
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0)
 		board.dispatch()
