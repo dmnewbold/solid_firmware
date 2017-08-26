@@ -48,7 +48,7 @@ board.dispatch()
 
 time.sleep(1)
 
-chans = range(0x1)
+chans = range(0x8)
 adcs = range(0xf)
 patt = 0x07f
 cap_len = 0x80
@@ -57,18 +57,15 @@ spi = board.getNode("io.spi")
 spi_config(spi, 0xf, 0x2410, 0x1) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
 
 for i in adcs:
-	print "Set ADC bank:", hex(i)
 	board.getNode("csr.ctrl.io_sel").write(i) # Select ADC bank to talk to
 	board.dispatch()
 	spi_write(spi, 0x0, 0x80) # Reset ADC
 	spi_write(spi, 0x2, 0x05) # 14b 1 lane mode
 	spi_write(spi, 0x3, 0x80 + (patt >> 8)) # Test pattern
 	spi_write(spi, 0x4, patt & 0xff) # Test pattern
-	print hex(spi_read(spi, 0x2)), hex(spi_read(spi, 0x3)), hex(spi_read(spi, 0x4))
 
 for i_chan in chans:
 
-	print "Channel:", hex(i_chan)
 	board.getNode("csr.ctrl.chan").write(i_chan) # Talk to channel 0
 	board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
 	board.getNode("daq.chan.csr.ctrl.src").write(0x0) # Set source to ADC
