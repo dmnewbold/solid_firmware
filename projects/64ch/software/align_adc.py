@@ -79,7 +79,7 @@ for i_chan in chans:
 	for i_slip in range(14):
 		for i_tap in range(32):
 			board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0) # Turn off increment tap
-			board.getNode("daq.timing.csr.ctrl.chan_tap").write(0x0) # Turn off increment slip
+			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0) # Turn off increment slip
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.dispatch()
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0) # Turn off capture
