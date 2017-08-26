@@ -92,17 +92,18 @@ for i_chan in chans:
 				print "Crap no capture"
 				sys.exit()
 			c = 0
-			j = 0
 			for w in d:
 				if int(w) & 0x3ff == patt:
 					c += 1
-				j += 1
 			tr.append(c == cap_len)
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.dispatch()
 		trp = ""
+		f = False
 		for i in tr:
 			trp += ("+" if i else ".")
-		print "Chan, slip, res:", hex(i_chan), hex(i_slip), trp
+			f = f or i
+		if f:
+			print "Chan, slip, res:", hex(i_chan), hex(i_slip), trp
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
 		board.dispatch()
