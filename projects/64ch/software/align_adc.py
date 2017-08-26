@@ -77,6 +77,7 @@ for i_chan in chans:
 	board.dispatch()
 	
 	for i_slip in range(14):
+		tr = []
 		for i_tap in range(32):
 			board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0) # Turn off increment tap
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0) # Turn off increment slip
@@ -93,13 +94,12 @@ for i_chan in chans:
 			c = 0
 			j = 0
 			for w in d:
-				print hex(j), hex(w)
 				if int(w) & 0x3ff == patt:
 					c += 1
 				j += 1
-			print
-			print "Slip, tap, n_corr:", hex(i_slip), hex(i_tap), hex(c)
+			tr.append(c == cap_len)
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.dispatch()
+		print "Chan, slip, res:", hex(i_chan), hex(i_slip), tr
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
 		board.dispatch()
