@@ -69,7 +69,7 @@ for i_chan in chans:
 
 	print "Channel:", hex(i_chan)
 	board.getNode("csr.ctrl.chan").write(i_chan) # Talk to channel 0
-	board.getNode("daq.chan.csr.ctrl.mode").write(0x2) # Set to capture mode
+	board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
 	board.getNode("daq.chan.csr.ctrl.src").write(0x0) # Set source to ADC
 	board.getNode("daq.chan.csr.ctrl.en_sync").write(0x1) # Enable sync commands for this channel
 	board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
@@ -78,9 +78,9 @@ for i_chan in chans:
 	for i_slip in range(14):
 		for i_tap in range(32):
 			print "Testing slip, tap:", hex(i_slip), hex(i_tap)
-			board.getNode("daq.timing.csr.ctrl.chan_rst_buf").write(0x1) # Clear buffer
-			board.getNode("daq.timing.csr.ctrl.chan_rst_buf").write(0x0) # Clear buffer
-			board.dispatch()
+#			board.getNode("daq.timing.csr.ctrl.chan_rst_buf").write(0x1) # Clear buffer
+#			board.getNode("daq.timing.csr.ctrl.chan_rst_buf").write(0x0) # Clear buffer
+#			board.dispatch()
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.dispatch()
 			time.sleep(0.1)
@@ -91,4 +91,4 @@ for i_chan in chans:
 				print "Crap"
 				sys.exit()
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap	
-		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
+                board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip

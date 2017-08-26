@@ -64,7 +64,7 @@ sleep(1)
 r = list()
 evts = 0
 max_evts = 8
-n_trig = 3
+n_trig = 4
 
 while True:
 
