@@ -132,7 +132,7 @@ for i_chan in chans:
 		else:
 			trp += "."
 	a = int((min + max) / 2)	
-	d_slip = offsets.index(a mod taps_per_slip)
+	d_slip = offsets.index(a // taps_per_slip)
 	d_tap = a % taps_per_slip
 	if not non_cont:
 		print "Chan, min, max, rec_slip, rec_tap:", hex(i_chan), hex(min), hex(max), hex(d_slip), hex(d_tap)
