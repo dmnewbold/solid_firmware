@@ -116,12 +116,12 @@ for i_chan in chans:
 	non_cont = False
 	for i in range(len(res) - 1):
 		if res[i + 1] and not res[i]:
-			if min = 0:
+			if min == 0:
 				min = i + 1
 			else:
 				non_cont = True
 		elif res[i] and not res[i + 1]:
-			if max = 0:
+			if max == 0:
 				max = i
 			else:
 				non_cont = True
@@ -131,8 +131,11 @@ for i_chan in chans:
 			trp += "+"
 		else:
 			trp += "."
-	a = int((min + max) / 2)
-	d_slip = a mod taps_per_slip
+	a = int((min + max) / 2)	
+	d_slip = offsets.index(a mod taps_per_slip)
 	d_tap = a % taps_per_slip
-	print "Chan, min, max, rec_slip, rec_tap:", hex(i_chan), hex(min), hex(max), hex(d_slip), hex(d_tap)
-
+	if not non_cont:
+		print "Chan, min, max, rec_slip, rec_tap:", hex(i_chan), hex(min), hex(max), hex(d_slip), hex(d_tap)
+	else:
+		print "Chan, NON CONTINUOUS RANGE", hex(i_chan)
+	print trp
