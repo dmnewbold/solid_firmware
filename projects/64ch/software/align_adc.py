@@ -95,7 +95,7 @@ for i_chan in chans:
 				if int(w) & 0x3ff == patt:
 					c += 1
 			tr.append(c == cap_len)
-			res[offsets[i_slip] * taps_per_slip + i_tap] = (c == cap_len) 
+			res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len) 
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
 			board.dispatch()
