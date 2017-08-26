@@ -41,7 +41,6 @@ board.getClient().setTimeoutPeriod(10000)
 
 v = board.getNode("csr.id").read()
 board.dispatch()
-print hex(v)
 
 board.getNode("daq.timing.csr.ctrl.rst").write(1) # Hold clk40 domain in reset
 board.dispatch()
@@ -135,6 +134,6 @@ for i_chan in chans:
 	d_slip = offsets.index(a // taps_per_slip)
 	d_tap = a % taps_per_slip
 	if not non_cont:
-		print "Chan, min, max, rec_slip, rec_tap:", hex(i_chan), hex(min), hex(max), hex(d_slip), hex(d_tap)
+		print "Chan, rec_slip, rec_tap:", hex(i_chan), hex(d_slip), hex(d_tap)
 	else:
 		print "Chan, NON CONTINUOUS RANGE", hex(i_chan), trp
