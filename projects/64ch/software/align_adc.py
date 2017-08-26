@@ -80,7 +80,7 @@ for i_chan in chans:
 		for i_tap in range(32):
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.dispatch()
-			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Turn off capture
+			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0) # Turn off capture
 			r = board.getNode("daq.chan.csr.stat").read()
 			board.getNode("daq.chan.buf.addr").write(0x0)
 			d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
