@@ -89,11 +89,13 @@ for i_chan in chans:
 				print "Crap no capture"
 				sys.exit()
 			c = 0
+			j = 0
 			for w in d:
-#				print hex(w),
+				print hex(j), hex(w)
 				if int(w) & 0x3ff == patt:
 					c += 1
-#			print
+				j += 1
+			print
 			print "Slip, tap, n_corr:", hex(i_slip), hex(i_tap), hex(c)
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			time.sleep(0.1)
