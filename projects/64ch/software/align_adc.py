@@ -31,6 +31,8 @@ def spi_read(spi, addr):
 		print "SPI read error", hex(addr)
 	return d & 0xffff
 
+offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
+
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
 board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
 #board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.16:50001", "file://addrtab/top_sim.xml")
@@ -74,7 +76,7 @@ for i_chan in chans:
 	board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
 	board.dispatch()
 	
-	res = []
+	res = False * (15 * taps_per_slip)
 	for i_slip in range(14):
 		tr = []
 		for i_tap in range(32):
@@ -95,7 +97,7 @@ for i_chan in chans:
 				if int(w) & 0x3ff == patt:
 					c += 1
 			tr.append(c == cap_len)
-			res[i_slip * taps_per_slip + i_tap] = (c == cap_len) 
+			res[offsets[i_slip] * taps_per_slip + i_tap] = (c == cap_len) 
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.dispatch()
 		trp = ""
@@ -110,5 +112,10 @@ for i_chan in chans:
 		
 	trp = ""
 	for i in res:
-		trp += ("+" if i else ".")
+		if i == None:
+			trp += "_"
+		elsif i:
+			trp += "+"
+		else:
+			trp += "."
 	print "Chan, res:", hex(i_chan), trp
