@@ -133,7 +133,7 @@ begin
 	end process;
 	
 	cap_done <= '1' when pnz = ZS_LAST_ADDR else '0';
-	wenz <= (nzs_en and not mode) or cap_run;
+	wenz <= (nzs_en and not mode) or cap_run or cap;
 	d_nzs <= blkend & '0' & d;
 	cap_full <= not nzen;
 	
