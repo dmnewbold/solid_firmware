@@ -20,7 +20,7 @@ class si5344:
         return self.i2c.read(self.slaveaddr, nwords)
 
     def writeRegister(self, myaddr, data):
-        myaddr = myaddr & 0xFFFF
+        myaddr = int(myaddr) & 0xFFFF
         currentPg = self.getPage()
         requirePg = (myaddr & 0xFF00) >> 8
         if currentPg[0] != requirePg:
