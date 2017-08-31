@@ -55,8 +55,8 @@ class si5344:
 
     def writeConfiguration(self, regSettingList):
         for item in regSettingList:
-            self.writeRegister(int(item[0]), [int(item[1])])
+            self.writeRegister(int(item[0], 16), [int(item[1], 16)])
         for item in regSettingList:
-            d = self.readRegister(int(item[0]))
-            if int(item[1]) != int(d):
-                print "Config error", hex(item[0]), hex(item[1]), hex(d)
+            d = self.readRegister(int(item[0], 16))
+            if int(item[1], 16) != int(d):
+                print "Config error", item[0], item[1], hex(d)
