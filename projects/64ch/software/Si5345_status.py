@@ -19,4 +19,4 @@ res= zeClock.getDeviceVersion()
 for ipage in range(10):
 	zeClock.setPage(0, True)
 	for ireg in range(0x100):
-		print hex(ipage), hex(ireg), hex(zeClock.readRegister(ireg, 1))
+		print hex(ipage), hex(ireg), hex(zeClock.readRegister(ireg, 1)[0])
