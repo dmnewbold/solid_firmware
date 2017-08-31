@@ -118,19 +118,14 @@ class si5344:
 
         return regSettingList
 
-    def writeConfiguration(self, regSettingList):
-        print "\tWrite configuration:"
-        #regSettingList= list(regSettingCsv)
-        counter=0
-        for item in regSettingList:
-            regAddr= int(item[0], 16)
-            regData=[0]
-            regData[0]= int(item[1], 16)
-#            print "\t  ", counter, "Reg:", hex(regAddr), "Data:", regData
-            counter += 1
-            self.writeRegister(regAddr, regData)
-       for item in regSettingList:
-       	   d = self.readRegister(int(item[0], 16))
-       	   if int(item[1], 16) != int(d):
+	def writeConfiguration(self, regSettingList):
+		print "\tWrite configuration:"
+		for item in regSettingList:
+			regAddr= int(item[0], 16)
+			regData[0]= int(item[1], 16)
+			self.writeRegister(regAddr, regData)
+		for item in regSettingList:
+			d = self.readRegister(int(item[0], 16))
+			if int(item[1], 16) != int(d):
        	   	   print "Config error", hex(item[0]), hex(item[1]), hex(d)
        	   	   
