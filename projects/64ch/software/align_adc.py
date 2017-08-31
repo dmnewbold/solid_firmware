@@ -50,7 +50,7 @@ board.dispatch()
 
 time.sleep(1)
 
-chans = range(0x40)
+chans = range(0x1)
 adcs = range(0x10)
 patt = 0x0ff
 cap_len = 0x80
@@ -80,29 +80,32 @@ for i_chan in chans:
 	
 	res = [False] * (15 * taps_per_slip)
 	tr = []
-	for i_slip in range(14):
+	for i_slip in range(1):
 		ok = False
 		for i_tap in range(32):
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
 			board.dispatch()
-			r = board.getNode("daq.chan.csr.stat").read()
-			board.getNode("daq.chan.buf.addr").write(0x0)
-			d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
-			board.dispatch()
-			if r & 0x1 != 1:
-				print "Crap no capture"
-				sys.exit()
+                        time.sleep(0.01)
+                        while True:
+                                r = board.getNode("daq.chan.csr.stat").read()
+#                                board.getNode("daq.chan.buf.addr").write(0x0)
+#                                d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
+                                board.dispatch()
+                                if r & 0x1 == 1:
+                                        break
+                                print "Crap no capture", hex(i_chan), hex(i_slip), hex(i_tap), hex(r), time.clock()
 			c = 0
-			for w in d:
-				if int(w) & 0x3ff == patt:
-					c += 1
-			res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len)
+#			for w in d:
+#				if int(w) & 0x3ff == patt:
+#					c += 1
+#                                print hex(w),
+#                        print hex(i_chan), hex(i_slip), hex(i_tap), c
+                        res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len)
 			ok = (c == cap_len) or ok
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
 			board.dispatch()
-			
 		if ok:
 			tr.append(i_slip)
 		board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
@@ -133,6 +136,7 @@ for i_chan in chans:
 	a = int((min + max) / 2)	
 	d_slip = offsets.index(a // taps_per_slip)
 	d_tap = a % taps_per_slip
+        print trp
 	if not non_cont:
 		print "Chan, rec_slip, rec_tap:", hex(i_chan), hex(d_slip), hex(d_tap)
 	else:
