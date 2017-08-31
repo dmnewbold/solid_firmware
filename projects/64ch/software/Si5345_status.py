@@ -17,6 +17,5 @@ clock_I2C = I2CCore(hw, 10, 5, "io.i2c", None)
 zeClock=si5344(clock_I2C)
 res= zeClock.getDeviceVersion()
 for ipage in range(10):
-	zeClock.setPage(ipage, True)
 	for ireg in range(0x100):
-		print hex(ipage), hex(ireg), hex(zeClock.readRegister(ireg, 1)[0])
+		print hex(ipage), hex(ireg), hex(zeClock.readRegister((ipage << 8) + ireg, 1)[0])
