@@ -18,4 +18,5 @@ zeClock=si5344(clock_I2C)
 res= zeClock.getDeviceVersion()
 for ipage in range(10):
 	for ireg in range(0x100):
-		print hex(ipage), hex(ireg), hex(zeClock.readRegister((ipage << 8) + ireg, 1)[0])
+		addr = (ipage << 8) + ireg
+		print hex(addr), hex(zeClock.readRegister(addr, 1)[0])
