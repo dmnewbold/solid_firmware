@@ -129,3 +129,8 @@ class si5344:
 #            print "\t  ", counter, "Reg:", hex(regAddr), "Data:", regData
             counter += 1
             self.writeRegister(regAddr, regData)
+       for item in regSettingList:
+       	   d = self.readRegister(int(item[0], 16))
+       	   if int(item[1], 16) != int(d):
+       	   	   print "Config error", hex(item[0]), hex(item[1]), hex(d)
+       	   	   
