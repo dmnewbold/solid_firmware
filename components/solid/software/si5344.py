@@ -59,5 +59,5 @@ class si5344:
             print item[0], item[1]
         for item in regSettingList:
             d = self.readRegister(int(item[0], 16), 1)
-            if int(item[1], 16) != int(d):
+            if int(item[1], 16) != int(d[0]):
                 print "Config error", item[0], item[1], hex(d)
