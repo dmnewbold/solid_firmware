@@ -36,9 +36,9 @@ class si5344:
 		return self.i2c.read(self.slaveaddr, 1)
 		
 	def getDeviceVersion(self):
-        self.setPage(0)
-        self.i2c.write(self.slaveaddr, [0x02], False)
-        return self.i2c.read( self.slaveaddr, 2)
+		self.setPage(0)
+		self.i2c.write(self.slaveaddr, [0x02], False)
+		return self.i2c.read( self.slaveaddr, 2)
 
 	def parse_clk(self, filename):
     	deletedcomments=""""""
