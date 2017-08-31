@@ -41,16 +41,16 @@ class si5344:
 		return self.i2c.read( self.slaveaddr, 2)
 
 	def parse_clk(self, filename):
-    	deletedcomments=""""""
-    	with open(filename, 'rb') as configfile:
-    		for i, line in enumerate(configfile):
-    			if not line.startswith('#'):
-    				if not line.startswith('Address'):
-    					deletedcomments+=line
-    	csvfile = StringIO.StringIO(deletedcomments)
-    	cvr= csv.reader(csvfile, delimiter=',', quotechar='|')
-    	regSettingList= list(cvr)
-    	return regSettingList
+		deletedcomments=""""""
+		with open(filename, 'rb') as configfile:
+			for i, line in enumerate(configfile):
+				if not line.startswith('#'):
+					if not line.startswith('Address'):
+						deletedcomments+=line
+		csvfile = StringIO.StringIO(deletedcomments)
+		cvr= csv.reader(csvfile, delimiter=',', quotechar='|')
+		regSettingList= list(cvr)
+		return regSettingList
     	
 	def writeConfiguration(self, regSettingList):
 		for item in regSettingList:
