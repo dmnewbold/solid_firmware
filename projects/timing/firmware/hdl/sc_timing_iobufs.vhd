@@ -51,9 +51,9 @@ entity sc_timing_iobufs is
 		busy_o: in std_logic;
 		busy_o_p: out std_logic;
 		busy_o_n: out std_logic;
-		busy_i: out std_logic_vector(7 downto 0);
-		busy_i_p: in std_logic_vector(7 downto 0);
-		busy_i_n: in std_logic_vector(7 downto 0)
+		busy_i: out std_logic_vector(9 downto 0);
+		busy_i_p: in std_logic_vector(9 downto 0);
+		busy_i_n: in std_logic_vector(9 downto 0)
 	);
 
 end sc_timing_iobufs;
@@ -175,7 +175,7 @@ begin
 			ob => busy_o_n
 		);
 
-	busy_i_gen: for i in 7 downto 0 generate
+	busy_i_gen: for i in 9 downto 0 generate
 	
 		ibuf_sda_i: IBUFDS
 			port map(

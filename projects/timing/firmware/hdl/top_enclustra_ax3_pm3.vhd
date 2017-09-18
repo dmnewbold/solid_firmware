@@ -15,7 +15,7 @@ use work.ipbus.ALL;
 entity top is port(
 		sysclk: in std_logic;
 		leds: out std_logic_vector(3 downto 0); -- status LEDs
-		cfg: in std_logic_vector(3 downto 0); -- switches
+--		cfg: in std_logic_vector(3 downto 0); -- switches
 		rgmii_txd: out std_logic_vector(3 downto 0);
 		rgmii_tx_ctl: out std_logic;
 		rgmii_txc: out std_logic;
@@ -49,8 +49,8 @@ entity top is port(
 		sda_i_n: in std_logic;
 		busy_o_p: out std_logic;
 		busy_o_n: out std_logic;
-		busy_i_p: in std_logic_vector(7 downto 0);
-		busy_i_n: in std_logic_vector(7 downto 0)
+		busy_i_p: in std_logic_vector(9 downto 0);
+		busy_i_n: in std_logic_vector(9 downto 0)
 	);
 
 end top;
@@ -90,7 +90,7 @@ begin
 			ipb_out => ipb_out
 		);
 		
-	leds <= not (or_reduce(cfg) & userled & inf_leds);
+	leds <= not ('0' & userled & inf_leds);
 	phy_rstn <= not phy_rst_e;
 		
 	mac_addr <= X"020ddba1ebc7"; -- Careful here, arbitrary addresses do not always work
