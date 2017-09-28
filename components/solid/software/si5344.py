@@ -26,7 +26,7 @@ class si5344:
         if currentPg[0] != requirePg:
             self.setPage(requirePg)
         data.insert(0, myaddr)
-        self.i2c.write(self.slaveaddr, [myaddr])
+        self.i2c.write(self.slaveaddr, data)
 
     def setPage(self, page):
         myaddr = [0x01, page]
