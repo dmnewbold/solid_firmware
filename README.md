@@ -27,3 +27,6 @@ operating system (e.g. Centos7) is required.
 * Dave Newbold (dave.newbold@cern.ch)
 * Nick Ryder (nick.ryder@physics.ox.ac.uk)
 * David Cussans (david.cussans@bristol.ac.uk)
+
+# UHAL install
+See http://ipbus.web.cern.ch/ipbus/doc/user/html/software/installation.html
