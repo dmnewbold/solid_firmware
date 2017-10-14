@@ -13,7 +13,6 @@
 		<node id="trig_out_ctr" address="0x6"/>
 		<node id="trig_in_ctr" address="0x7"/>
 	</node>
-
 	<node id="sync_ctrl" address="0x8" fwinfo="endpoint;width=0">
 		<node id="en_sync" mask="0x1"/>
 		<node id="en_trig_out" mask="0x2"/>
