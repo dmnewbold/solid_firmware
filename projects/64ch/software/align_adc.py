@@ -1,4 +1,7 @@
 #!/usr/bin/python
+# Author: Dave N & Dan S
+# Usage: python align_adc.py [IP] <-saveoutput>
+# Notes: the -saveoutput flag saves the recommeneded taps and slips to file.
 
 import uhal
 import time
