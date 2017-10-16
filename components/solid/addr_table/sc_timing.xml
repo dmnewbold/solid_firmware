@@ -1,5 +1,5 @@
 <node id="timing" description="Sample clock domain control" fwinfo="endpoint">
-	<node id="csr" address="0x0" description="ctrl/status register" fwinfo="endpoint;width=3">
+	<node id="csr" address="0x0" description="ctrl/status register" fwinfo="endpoint;width=4">
 		<node id="ctrl" address="0x0">
 			<node id="rst" mask="0x1"/>
 			<node id="rst_ctr" mask="0x2"/>
