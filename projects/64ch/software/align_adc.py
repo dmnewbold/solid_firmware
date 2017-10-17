@@ -35,7 +35,7 @@ offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
+board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.86:50001", "file://addrtab/top.xml")
 #board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.16:50001", "file://addrtab/top_sim.xml")
 board.getClient().setTimeoutPeriod(10000)
 
@@ -50,7 +50,7 @@ board.dispatch()
 
 time.sleep(1)
 
-chans = range(0x1)
+chans = range(0x64)
 adcs = range(0x10)
 patt = 0x0ff
 cap_len = 0x80
@@ -89,18 +89,18 @@ for i_chan in chans:
                         time.sleep(0.01)
                         while True:
                                 r = board.getNode("daq.chan.csr.stat").read()
-#                                board.getNode("daq.chan.buf.addr").write(0x0)
-#                                d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
+                                board.getNode("daq.chan.buf.addr").write(0x0)
+                                d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
                                 board.dispatch()
                                 if r & 0x1 == 1:
                                         break
                                 print "Crap no capture", hex(i_chan), hex(i_slip), hex(i_tap), hex(r), time.clock()
 			c = 0
-#			for w in d:
-#				if int(w) & 0x3ff == patt:
-#					c += 1
-#                                print hex(w),
-#                        print hex(i_chan), hex(i_slip), hex(i_tap), c
+			for w in d:
+				if int(w) & 0x3ff == patt:
+					c += 1
+                                #print hex(w),
+                        #print hex(i_chan), hex(i_slip), hex(i_tap), c
                         res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len)
 			ok = (c == cap_len) or ok
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
