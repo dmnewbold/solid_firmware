@@ -16,7 +16,6 @@ package top_decl is
 	constant N_CHAN: integer := 64;
 	constant BLK_RADIX: integer := 8; -- 256 sample blocks
 	constant SUPERBLK_RADIX: integer := 16; -- Superblock is 64k blocks
-	constant LED_BLK_RADIX: integer := 18; -- Divisor for blocks-per-led-flash
 	constant BUF_RADIX: integer := 11; -- One BRAM for NZS / ZS buffer
 	constant NZS_BLKS: integer := 2; -- Reserve two blocks of space for NZS buffer
 	constant ZS_BLKS: integer := 2; -- Time window for ZS buffer

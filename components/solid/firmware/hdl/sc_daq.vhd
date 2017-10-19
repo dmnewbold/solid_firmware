@@ -26,7 +26,7 @@ entity sc_daq is
 		sync_in: in std_logic;
 		trig_in: in std_logic;
 		trig_out: out std_logic;
-		led_out: out std_logic_vector(2 downto 0);
+		led_out: out std_logic;
 		chan: in std_logic_vector(7 downto 0);
 		chan_err: out std_logic;
 		d_p: in std_logic_vector(N_CHAN - 1 downto 0);
@@ -93,7 +93,7 @@ begin
 			clk280 => clk280,
 			sync_in => sync_in,
 			trig_in => trig_in,
-			led => led_out(0),
+			led => led_out,
 			sctr => sctr,
 			chan_sync_ctrl => sync_ctrl,
 			trig_en => trig_en,
@@ -243,19 +243,6 @@ begin
 			blkend => ro_blkend,
 			empty => ro_empty,
 			ren => ro_ren
-		);
-		
--- LED
-
-	stretch: entity work.led_stretcher
-		generic map(
-			WIDTH => 2
-		)
-		port map(
-			clk => clk125,
-			d(0) => link_d_valid,
-			d(1) => link_ok,
-			q => led_out(2 downto 1)
 		);
 	
 end rtl;

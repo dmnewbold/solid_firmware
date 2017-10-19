@@ -123,7 +123,7 @@ begin
 	ctrl_board_id <= ctrl(0)(23 downto 16);
 	
 	stealth_mode <= ctrl_stealth_mode;
-	userleds <= '0' & daq_leds when ctrl_stealth_mode = '0' else (others => '0');
+	userleds <= "0000" & daq_led when ctrl_stealth_mode = '0' else (others => '0');
 
 -- Required for timing alignment at inputs
 
@@ -210,7 +210,7 @@ begin
 			sync_in => sync_in,
 			trig_in => trig_in,
 			trig_out => trig_out,
-			led_out => daq_leds(2 downto 0),
+			led_out => daq_leds(2),
 			chan => ctrl_chan,
 			chan_err => chan_err,
 			d_p => adc_d_p,
