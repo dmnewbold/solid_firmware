@@ -45,11 +45,9 @@ set_property PACKAGE_PIN U22 [get_ports {leds[1]}]
 false_path {leds[*]} eth_refclk
 
 # Bank 14, 3V3
-set_property IOSTANDARD LVCMOS33 [get_ports {leds_c[*]}]
-set_property PACKAGE_PIN W19 [get_ports {leds_c[0]}]
-set_property PACKAGE_PIN Y18 [get_ports {leds_c[1]}]
-set_property PACKAGE_PIN W20 [get_ports {leds_c[2]}]
-false_path {leds_c[*]} eth_refclk
+set_property IOSTANDARD LVCMOS33 [get_ports led]
+set_property PACKAGE_PIN W20 [get_ports led]
+false_path led eth_refclk
 
 # Bank 14, 3V3
 set_property IOSTANDARD LVCMOS33 [get_ports {addr[*]}]

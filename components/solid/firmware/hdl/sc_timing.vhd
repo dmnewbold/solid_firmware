@@ -159,6 +159,7 @@ begin
 	end process;
 	
 	io_err <= '1';
+	led <= not (wait_sync or sync_err);
 	
 -- Sample counter
 	
@@ -166,7 +167,7 @@ begin
 	begin
 		if rising_edge(clk40_i) then
 			if rst40_i = '1' or sync_f = '1' then
-				sctr_i <= (others => '0');
+				sctr_i <= X"000000000001";
 			else
 				sctr_i <= sctr_i + 1;
 			end if;
@@ -177,7 +178,6 @@ begin
 	end process;
 		
 	sctr <= std_logic_vector(sctr_i);
-	led <= sctr_i(LED_BLK_RADIX + BLK_RADIX - 1) and not (wait_sync or sync_err);
 	
 -- Random number gen
 

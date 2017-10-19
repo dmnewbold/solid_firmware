@@ -18,7 +18,7 @@ entity top is port(
 		eth_tx_p: out std_logic; -- Ethernet MGT output
 		eth_tx_n: out std_logic;
 		leds: out std_logic_vector(1 downto 0); -- TE712 LEDs
-		leds_c: out std_logic_vector(2 downto 0); -- carrier LEDs
+		led: out std_logic; -- carrier LEDs
 		addr: in std_logic_vector(7 downto 0); -- carrier switches
 		sel: out std_logic_vector(4 downto 0); -- bus select lines to CPLD
 		i2c_scl: out std_logic; -- I2C bus via CPLD
@@ -96,7 +96,7 @@ begin
 			nuke => nuke,
 			soft_rst => soft_rst,
 			stealth_mode => stealth_mode,
-			userleds => leds_c,
+			userled => led,
 			addr => addrn,
 			sel => sel,
 			i2c_scl => i2c_scl,
