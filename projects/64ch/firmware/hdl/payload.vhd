@@ -107,7 +107,7 @@ begin
 	sel <= ctrl(0)(28 downto 24);
 	
 	stealth_mode <= ctrl_stealth_mode;
-	userled <= daq_led and not stealth_mode;
+	userled <= daq_led and not ctrl_stealth_mode;
 	
 -- Required for timing alignment at inputs
 
