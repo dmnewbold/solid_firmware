@@ -27,7 +27,7 @@ entity payload is
 		nuke: out std_logic;
 		soft_rst: out std_logic;
 		stealth_mode: out std_logic;
-		userleds: out std_logic_vector(2 downto 0);
+		userled: out std_logic;
 		addr: in std_logic_vector(7 downto 0);
 		sel: out std_logic_vector(4 downto 0);
 		i2c_scl: out std_logic; -- I2C bus via CPLD
