@@ -5,9 +5,9 @@
 		<node id="rst_mmcm" mask="0x4"/>
 		<node id="rst_idelayctrl" mask="0x8"/>
 		<node id="sync_mode" mask="0x10"/>
+		<node id="stealth_mode" mask="0x20"/>
 		<node id="chan" mask="0xff00"/>
 		<node id="io_sel" mask="0x1f000000"/>
-		<node id="leds" mask="0xe0000000"/>
 	</node>
 	<node id="id" address="0x2"/>
 	<node id="stat" address="0x3">

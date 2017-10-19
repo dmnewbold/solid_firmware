@@ -26,6 +26,7 @@ entity payload is
 		clk200: in std_logic;
 		nuke: out std_logic;
 		soft_rst: out std_logic;
+		stealth_mode: out std_logic;
 		userleds: out std_logic_vector(3 downto 0);
 		si5326_scl: out std_logic;
 		si5326_sda_o: out std_logic;
@@ -70,10 +71,11 @@ architecture rtl of payload is
 	signal stat: ipb_reg_v(1 downto 0);
 	signal clk40: std_logic;
 	signal sync_in, trig_in, trig_out: std_logic;
-	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl, ctrl_sync_mode: std_logic;
+	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl, ctrl_sync_mode, ctrl_stealth_mode: std_logic;
 	signal ctrl_chan: std_logic_vector(7 downto 0);
 	signal ctrl_board_id: std_logic_vector(7 downto 0);
 	signal chan_err, led: std_logic;
+	signal daq_leds: std_logic_vector(2 downto 0);
 
 begin
 
@@ -116,11 +118,13 @@ begin
 	ctrl_rst_mmcm <= ctrl(0)(2);
 	ctrl_rst_idelayctrl <= ctrl(0)(3);
 	ctrl_sync_mode <= ctrl(0)(4);
+	ctrl_stealth_mode <= ctrl(0)(5);
 	ctrl_chan <= ctrl(0)(15 downto 8);
 	ctrl_board_id <= ctrl(0)(23 downto 16);
 	
-	userleds(3) <= '0';
-	
+	stealth_mode <= ctrl_stealth_mode;
+	userleds <= '0' & daq_leds when ctrl_stealth_mode = '0' else (others => '0');
+
 -- Required for timing alignment at inputs
 
 	idelctrl: IDELAYCTRL -- Docs claim this should be replicated as necessary
@@ -206,7 +210,7 @@ begin
 			sync_in => sync_in,
 			trig_in => trig_in,
 			trig_out => trig_out,
-			led_out => userleds(2 downto 0),
+			led_out => daq_leds(2 downto 0),
 			chan => ctrl_chan,
 			chan_err => chan_err,
 			d_p => adc_d_p,

@@ -26,6 +26,7 @@ entity payload is
 		clk200: in std_logic;
 		nuke: out std_logic;
 		soft_rst: out std_logic;
+		stealth_mode: out std_logic;
 		userleds: out std_logic_vector(2 downto 0);
 		addr: in std_logic_vector(7 downto 0);
 		sel: out std_logic_vector(4 downto 0);
@@ -56,9 +57,10 @@ architecture rtl of payload is
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(1 downto 0);
 	signal clk40: std_logic;
-	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl: std_logic;
+	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl , ctrl_stealth_mode: std_logic;
 	signal ctrl_chan: std_logic_vector(7 downto 0);
 	signal chan_err: std_logic;
+	signal daq_leds: std_logic_vector(2 downto 0);
 
 begin
 
@@ -100,8 +102,12 @@ begin
 	nuke <= ctrl(0)(1);
 	ctrl_rst_mmcm <= ctrl(0)(2);
 	ctrl_rst_idelayctrl <= ctrl(0)(3);
+	ctrl_stealth_mode <= ctrl(0)(5);
 	ctrl_chan <= ctrl(0)(15 downto 8);
 	sel <= ctrl(0)(28 downto 24);
+	
+	stealth_mode <= ctrl_stealth_mode;
+	userleds <= daq_leds when ctrl_stealth_mode = '0' else (others => '0');
 	
 -- Required for timing alignment at inputs
 
@@ -148,7 +154,7 @@ begin
 			sync_in => sync_in,
 			trig_in => trig_in,
 			trig_out => trig_out,
-			led_out => userleds,
+			led_out => daq_leds,
 			chan => ctrl_chan,
 			chan_err => chan_err,
 			d_p => adc_d_p,

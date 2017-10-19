@@ -59,11 +59,12 @@ end top;
 
 architecture rtl of top is
 
-	signal clk_ipb, rst_ipb, clk125, rst125, nuke, soft_rst, userled, clk200: std_logic;
+	signal clk_ipb, rst_ipb, clk125, rst125, nuke, soft_rst, userled, clk200, stealth_mode: std_logic;
 	signal ipb_out: ipb_wbus;
 	signal ipb_in: ipb_rbus;
 	signal debug: std_logic_vector(3 downto 0);
 	signal si5326_sda_o, analog_sda_o: std_logic;
+	signal infra_leds: std_logic_vector(1 downto 0);
 	
 begin
 
@@ -85,7 +86,7 @@ begin
 			clk200 => clk200,
 			nuke => nuke,
 			soft_rst => soft_rst,
-			leds => leds,
+			leds => iinfra_leds,
 			debug => open,
 			mac_addr(47 downto 4) => MAC_ADDR(47 downto 4),
 			mac_addr(3 downto 0) => dip_sw,
@@ -94,6 +95,8 @@ begin
 			ipb_in => ipb_in,
 			ipb_out => ipb_out
 		);
+		
+	leds <= infra_leds when stealth_mode = '0' else "00";
 	
 	sfp_tx_disable <= '0';
 	sfp_scl <= '1';
@@ -110,6 +113,7 @@ begin
 			clk200 => clk200,
 			nuke => nuke,
 			soft_rst => soft_rst,
+			stealth_mode => stealth_mode,
 			userleds => leds_c,
 			si5326_scl => si5326_scl,
 			si5326_sda_o => si5326_sda_o,

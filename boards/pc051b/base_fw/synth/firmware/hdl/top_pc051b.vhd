@@ -43,11 +43,12 @@ end top;
 
 architecture rtl of top is
 
-	signal clk_ipb, rst_ipb, clk125, rst125, nuke, soft_rst, userled, clk200: std_logic;
+	signal clk_ipb, rst_ipb, clk125, rst125, nuke, soft_rst, userled, clk200, stealth_mode: std_logic;
 	signal ipb_out: ipb_wbus;
 	signal ipb_in: ipb_rbus;
 	signal debug: std_logic_vector(3 downto 0);
 	signal addrn: std_logic_vector(7 downto 0);
+	signal infra_leds: std_logic_vector(1 downto 0);
 	
 begin
 
@@ -71,7 +72,7 @@ begin
 			clk200 => clk200,
 			nuke => nuke,
 			soft_rst => soft_rst,
-			leds => leds(1 downto 0),
+			leds => infra_leds,
 			debug => open,
 			mac_addr(47 downto 8) => MAC_ADDR(47 downto 8),
 			mac_addr(7 downto 0) => addrn,
@@ -80,6 +81,8 @@ begin
 			ipb_in => ipb_in,
 			ipb_out => ipb_out
 		);
+		
+	leds <= infra_leds when stealth_mode = '0' else "00";
 		
 	payload: entity work.payload
 		port map(
@@ -92,6 +95,7 @@ begin
 			clk200 => clk200,
 			nuke => nuke,
 			soft_rst => soft_rst,
+			stealth_mode => stealth_mode,
 			userleds => leds_c,
 			addr => addrn,
 			sel => sel,

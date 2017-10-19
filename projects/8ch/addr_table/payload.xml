@@ -5,6 +5,7 @@
 		<node id="rst_mmcm" mask="0x4"/>
 		<node id="rst_idelayctrl" mask="0x8"/>
 		<node id="sync_mode" mask="0x10"/>
+		<node id="stealth_mode" mask="0x20"/>
 		<node id="chan" mask="0xff00"/>
 		<node id="board_id" mask="0xff0000"/>
 	</node>
