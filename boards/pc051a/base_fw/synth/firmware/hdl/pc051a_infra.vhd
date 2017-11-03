@@ -81,7 +81,7 @@ begin
 			q => led_p
 		);
 
-	leds <= (led_p(0), locked & onehz);
+	leds <= (led_p(0), locked and onehz);
 	
 	debug <= (others => '0');
 	

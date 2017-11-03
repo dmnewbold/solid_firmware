@@ -74,8 +74,7 @@ architecture rtl of payload is
 	signal ctrl_rst_mmcm, locked, idelayctrl_rdy, ctrl_rst_idelayctrl, ctrl_sync_mode, ctrl_stealth_mode: std_logic;
 	signal ctrl_chan: std_logic_vector(7 downto 0);
 	signal ctrl_board_id: std_logic_vector(7 downto 0);
-	signal chan_err, led: std_logic;
-	signal daq_leds: std_logic_vector(2 downto 0);
+	signal chan_err, led, daq_led: std_logic;
 
 begin
 
@@ -123,7 +122,7 @@ begin
 	ctrl_board_id <= ctrl(0)(23 downto 16);
 	
 	stealth_mode <= ctrl_stealth_mode;
-	userleds <= "0000" & daq_led when ctrl_stealth_mode = '0' else (others => '0');
+	userleds <= "000" & daq_led when ctrl_stealth_mode = '0' else (others => '0');
 
 -- Required for timing alignment at inputs
 
@@ -210,7 +209,7 @@ begin
 			sync_in => sync_in,
 			trig_in => trig_in,
 			trig_out => trig_out,
-			led_out => daq_leds(2),
+			led_out => daq_led,
 			chan => ctrl_chan,
 			chan_err => chan_err,
 			d_p => adc_d_p,
