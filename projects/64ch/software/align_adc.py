@@ -68,7 +68,8 @@ for i in adcs:
 	spi_write(spi, 0x4, patt & 0xff) # Test pattern
 
 for i_chan in chans:
-    board.getNode("csr.ctrl.chan").write(i_chan) # Talk to channel 0
+
+	board.getNode("csr.ctrl.chan").write(i_chan) # Talk to channel 0
 	board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
 	board.getNode("daq.chan.csr.ctrl.src").write(0x0) # Set source to ADC
 	board.getNode("daq.chan.csr.ctrl.en_sync").write(0x1) # Enable sync commands
@@ -98,9 +99,9 @@ for i_chan in chans:
 			for w in d:
 				if int(w) & 0x3ff == patt:
 					c += 1
-                    print hex(w),
-                    print hex(i_chan), hex(i_slip), hex(i_tap), c
-                    res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len)
+#                                print hex(w),
+#                        print hex(i_chan), hex(i_slip), hex(i_tap), c
+                        res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len)
 			ok = (c == cap_len) or ok
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
