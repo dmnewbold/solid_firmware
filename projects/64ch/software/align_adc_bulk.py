@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import dataset
 import uhal
 import time
 import sys
@@ -8,37 +7,34 @@ import collections
 sys.path.append('/home/dsaunder/workspace/go_projects/src/bitbucket.org/solidexperiment/readout-software/scripts/')
 import detector_config_tools
 
-
 def spi_config(spi, div, ctrl, ss):
-	spi.getNode("divider").write(0xf) # Divide 31.25MHz ipbus clock by 32
-	spi.getNode("ctrl").write(0x2410) # 16b transfer length, auto CSN
-	spi.getNode("ss").write(0x1) # Enable SPI slave 0
-	spi.getClient().dispatch()	
+    spi.getNode("divider").write(0xf) # Divide 31.25MHz ipbus clock by 32
+    spi.getNode("ctrl").write(0x2410) # 16b transfer length, auto CSN
+    spi.getNode("ss").write(0x1) # Enable SPI slave 0
+    spi.getClient().dispatch()  
 
 def spi_write(spi, addr, data):
-	spi.getNode("d0").write((addr << 8) + data) # Write data into addr
-	spi.getNode("ctrl").write(0x2510) # Do it
-	spi.getClient().dispatch()
-	r = spi.getNode("ctrl").read()
-	spi.getClient().dispatch()
-	if r & 0x100 != 0:
-		print "SPI write error", hex(addr), hex(data)
+    spi.getNode("d0").write((addr << 8) + data) # Write data into addr
+    spi.getNode("ctrl").write(0x2510) # Do it
+    spi.getClient().dispatch()
+    r = spi.getNode("ctrl").read()
+    spi.getClient().dispatch()
+    if r & 0x100 != 0:
+        print "SPI write error", hex(addr), hex(data)
 
 def spi_read(spi, addr):
-	spi.getNode("d0").write(0x8000 + (addr << 8)) # Read from addr
-	spi.getNode("ctrl").write(0x2510) # Do it
-	spi.getClient().dispatch()
-	d = spi.getNode("d0").read()
-	r = spi.getNode("ctrl").read()
-	spi.getClient().dispatch()
-	if r & 0x100 != 0:
-		print "SPI read error", hex(addr)
-	return d & 0xffff
+    spi.getNode("d0").write(0x8000 + (addr << 8)) # Read from addr
+    spi.getNode("ctrl").write(0x2510) # Do it
+    spi.getClient().dispatch()
+    d = spi.getNode("d0").read()
+    r = spi.getNode("ctrl").read()
+    spi.getClient().dispatch()
+    if r & 0x100 != 0:
+        print "SPI read error", hex(addr)
+    return d & 0xffff
 
 offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
-uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-
 # Db stuff. 
 ips = detector_config_tools.currentIPs(False)
 ips = [92]
@@ -50,8 +46,12 @@ print 'New TapSlips configID', configID
 
 for ith_ip in ips:
     ith_slips, ith_taps = [], []
-    print '\nAbout to align ip:', ith_ip
+    print '\n\n*********** About to align ip:', ith_ip
     board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235." + str(ith_ip) + ":50001", "file://addrtab/top.xml")
+
+    uhal.setLogLevelTo(uhal.LogLevel.ERROR)
+    board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
+    #board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.16:50001", "file://addrtab/top_sim.xml")
     board.getClient().setTimeoutPeriod(10000)
 
     v = board.getNode("csr.id").read()
@@ -65,7 +65,7 @@ for ith_ip in ips:
 
     time.sleep(1)
 
-    chans = range(0x1)
+    chans = range(0x40)
     adcs = range(0x10)
     patt = 0x0ff
     cap_len = 0x80
@@ -95,7 +95,7 @@ for ith_ip in ips:
         
         res = [False] * (15 * taps_per_slip)
         tr = []
-        for i_slip in range(1):
+        for i_slip in range(14):
             ok = False
             for i_tap in range(32):
                 board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
@@ -104,11 +104,18 @@ for ith_ip in ips:
                 time.sleep(0.01)
                 while True:
                     r = board.getNode("daq.chan.csr.stat").read()
+                    board.getNode("daq.chan.buf.addr").write(0x0)
+                    d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
                     board.dispatch()
                     if r & 0x1 == 1:
                         break
                     print "Crap no capture", hex(i_chan), hex(i_slip), hex(i_tap), hex(r), time.clock()
                 c = 0
+                for w in d:
+                    if int(w) & 0x3ff == patt:
+                        c += 1
+    #                                print hex(w),
+    #                        print hex(i_chan), hex(i_slip), hex(i_tap), c
                 res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len)
                 ok = (c == cap_len) or ok
                 board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
@@ -141,13 +148,13 @@ for ith_ip in ips:
                 trp += "+"
             else:
                 trp += "."
-        a = int((min + max) / 2)	
+        a = int((min + max) / 2)    
         d_slip = offsets.index(a // taps_per_slip)
         d_tap = a % taps_per_slip
-        print trp
         db['TapSlips'].insert({'configID': int(configID), 'ip': ith_ip, 'tap': d_tap, 'slip': d_slip, 'channel': i_chan})
         ith_slips.append(d_slip)
         ith_taps.append(d_tap)
+        print trp
         if not non_cont:
             print "Chan, rec_slip, rec_tap:", hex(i_chan), hex(d_slip), hex(d_tap)
         else:
