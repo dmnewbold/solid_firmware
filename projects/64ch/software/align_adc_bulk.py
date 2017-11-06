@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import dataset
 import uhal
 import time
 import sys
@@ -37,23 +38,19 @@ offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 # Db stuff. 
 ips = detector_config_tools.currentIPs(False)
-ips = [92]
+ips = [62]
 db = dataset.connect('mysql://DAQGopher:gogogadgetdatabase@localhost/solid_phase1_running')
 configID = 0 #first time case
 if len(db['TapSlips']) != 0: configID = max(db['TapSlips']['configID'])['configID'] + 1
 print 'Bulk scanning ips:', ips
 print 'New TapSlips configID', configID
+uhal.setLogLevelTo(uhal.LogLevel.ERROR)
 
 for ith_ip in ips:
     ith_slips, ith_taps = [], []
     print '\n\n*********** About to align ip:', ith_ip
     board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235." + str(ith_ip) + ":50001", "file://addrtab/top.xml")
-
-    uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-    board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
-    #board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.16:50001", "file://addrtab/top_sim.xml")
     board.getClient().setTimeoutPeriod(10000)
-
     v = board.getNode("csr.id").read()
     board.dispatch()
 
@@ -114,8 +111,8 @@ for ith_ip in ips:
                 for w in d:
                     if int(w) & 0x3ff == patt:
                         c += 1
-    #                                print hex(w),
-    #                        print hex(i_chan), hex(i_slip), hex(i_tap), c
+                        print hex(w),
+                        print hex(i_chan), hex(i_slip), hex(i_tap), c
                 res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len)
                 ok = (c == cap_len) or ok
                 board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
