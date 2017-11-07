@@ -28,7 +28,7 @@ fq = hw.getNode("io.freq_ctr.freq.count").read();
 fv = hw.getNode("io.freq_ctr.freq.valid").read();
 hw.dispatch()
 print "Freq:", int(fv), int(fq) * 119.20928 / 1000000;
-hw.getNode("daq.timing.csr.ctrl.en_ext_sync").write(1)
+#hw.getNode("daq.timing.csr.ctrl.en_ext_sync").write(1)
 '''
 f_lock = hw.getNode("csr.stat.mmcm_locked").read();
 hw.dispatch()
