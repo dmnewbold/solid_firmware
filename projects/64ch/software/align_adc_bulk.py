@@ -38,15 +38,17 @@ offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 # Db stuff. 
 ips = detector_config_tools.currentIPs(False)
-ips = [62]
+ips = [50]
 db = dataset.connect('mysql://DAQGopher:gogogadgetdatabase@localhost/solid_phase1_running')
 configID = 0 #first time case
 if len(db['TapSlips']) != 0: configID = max(db['TapSlips']['configID'])['configID'] + 1
 print 'Bulk scanning ips:', ips
 print 'New TapSlips configID', configID
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
+iBoard = -1
 
 for ith_ip in ips:
+    iBoard += 1
     ith_slips, ith_taps = [], []
     print '\n\n*********** About to align ip:', ith_ip
     board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235." + str(ith_ip) + ":50001", "file://addrtab/top.xml")
@@ -80,7 +82,7 @@ for ith_ip in ips:
         spi_write(spi, 0x4, patt & 0xff) # Test pattern
 
     for i_chan in chans:
-
+        workers = []
         board.getNode("csr.ctrl.chan").write(i_chan) # Talk to channel 0
         board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
         board.getNode("daq.chan.csr.ctrl.src").write(0x0) # Set source to ADC
@@ -111,9 +113,11 @@ for ith_ip in ips:
                 for w in d:
                     if int(w) & 0x3ff == patt:
                         c += 1
-                        print hex(w),
-                        print hex(i_chan), hex(i_slip), hex(i_tap), c
-                res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len)
+                        #print hex(w),
+                        #print i_chan, i_slip, i_tap, c, '\t-\t', iBoard
+                res[offsets[i_slip] * taps_per_slip - i_tap] = (c == cap_len)
+                #res[i_slip * taps_per_slip + i_tap] = (c == cap_len)
+                if c==cap_len: workers.append([i_slip, i_tap])
                 ok = (c == cap_len) or ok
                 board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
                 board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
@@ -128,6 +132,7 @@ for ith_ip in ips:
         min = 0
         max = 0
         non_cont = False
+        print workers, len(workers), workers[len(workers)/2]
         for i in range(len(res) - 1):
             if res[i + 1] and not res[i]:
                 if min == 0:
@@ -151,9 +156,11 @@ for ith_ip in ips:
         db['TapSlips'].insert({'configID': int(configID), 'ip': ith_ip, 'tap': d_tap, 'slip': d_slip, 'channel': i_chan})
         ith_slips.append(d_slip)
         ith_taps.append(d_tap)
+        #ith_slips.append(workers[len(workers)/2][0])
+        #ith_taps.append(workers[len(workers)/2][1])
         print trp
         if not non_cont:
-            print "Chan, rec_slip, rec_tap:", hex(i_chan), hex(d_slip), hex(d_tap)
+            print "Chan, rec_slip, rec_tap:", i_chan, d_slip, d_tap, '\t', iBoard
         else:
             print "Chan, NON CONTINUOUS RANGE", hex(i_chan), trp
     

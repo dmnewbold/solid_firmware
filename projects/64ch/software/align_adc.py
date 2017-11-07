@@ -35,7 +35,7 @@ offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.62:50001", "file://addrtab/top.xml")
+board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
 #board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.16:50001", "file://addrtab/top_sim.xml")
 board.getClient().setTimeoutPeriod(10000)
 
@@ -138,6 +138,6 @@ for i_chan in chans:
 	d_tap = a % taps_per_slip
         print trp
 	if not non_cont:
-		print "Chan, rec_slip, rec_tap:", hex(i_chan), hex(d_slip), hex(d_tap)
+		print "Chan, rec_slip, rec_tap:", i_chan, d_slip, d_tap
 	else:
 		print "Chan, NON CONTINUOUS RANGE", hex(i_chan), trp
