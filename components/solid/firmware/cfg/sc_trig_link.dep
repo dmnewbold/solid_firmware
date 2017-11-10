@@ -1,1 +1,2 @@
 src sc_trig_link.vhd
+src ../cgn/sc_trig_link_mgt.xci
