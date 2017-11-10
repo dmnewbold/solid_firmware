@@ -1,3 +1,4 @@
 src sc_trig_link.vhd
 addrtab sc_chan.xml
 src ../cgn/sc_trig_link_mgt.xci
+src -c ipbus-firmware:components/ipbus_slaves ipbus_ctrlreg_v.vhd ipbus_reg_types.vhd
