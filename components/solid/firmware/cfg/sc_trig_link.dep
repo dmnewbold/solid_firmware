@@ -1,2 +1,3 @@
 src sc_trig_link.vhd
+addrtab sc_chan.xml
 src ../cgn/sc_trig_link_mgt.xci

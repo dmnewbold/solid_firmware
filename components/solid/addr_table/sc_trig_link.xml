@@ -1,0 +1,18 @@
+<node id="trig_link" description="Inter-plane serial links">
+	<node id="csr" address="0x0" description="ctrl/stat reg" fwinfo="endpoint;width=1">
+		<node id="ctrl" address="0x0">
+			<node id="tx_rst" mask="0x1"/>
+			<node id="rx_rst" mask="0x2"/>			
+		</node>
+		<node id="stat" address="0x3">
+			<node id="tx_done_us" mask="0x1"/>
+			<node id="rx_done_us" mask="0x2"/>
+			<node id="tx_done_ds" mask="0x4"/>
+			<node id="rx_done_ds" mask="0x8"/>
+			<node id="rx_stat_us" mask="0x70"/>
+			<node id="tx_stat_us" mask="0x180"/>
+			<node id="rx_stat_ds" mask="0xe00"/>
+			<node id="tx_stat_ds" mask="0x3000"/>
+		</node>
+	</node>
+</node>

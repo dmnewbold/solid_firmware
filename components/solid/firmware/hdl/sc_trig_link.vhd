@@ -31,24 +31,52 @@ end sc_trig_link;
 
 architecture rtl of sc_trig_link is
 
+	signal ctrl: ipb_reg_v(0 downto 0);
+	signal stat: ipb_reg_v(0 downto 0);
+	signal ctrl_tx_rst, ctrl_rx_rst: std_logic;
+	signal tx_done_us, rx_done_us, tx_done_ds, rx_done_ds: std_logic;
+	signal tx_stat_us, tx_stat_ds: std_logic_vector(1 downto 0);
+	signal rx_stat_us, rx_stat_ds: std_logic_vector(2 downto 0);
 	signal txclk_us, txclk_ds: std_logic;
 	signal rxd_us, rxd_ds, txd_us, txd_ds: std_logic_vector(15 downto 0);
 	signal rxc_us, rxc_ds, rxk_us, rxk_ds, txk_us, txk_ds: std_logic;
 
 begin
 
+-- CSR
+
+	csr: entity work.ipbus_ctrlreg_v
+		generic map(
+			N_CTRL => 1,
+			N_STAT => 1
+		)
+		port map(
+			clk => clk,
+			reset => rst,
+			ipbus_in => ipb_in,
+			ipbus_out => ipb_out,
+			d => stat,
+			q => ctrl
+		);
+		
+	ctrl_tx_rst <= ctrl(0)(0);
+	ctrl_rx_rst <= ctrl(0)(1);
+	stat(0) <= X"0000" & "00" & tx_stat_ds & rx_stat_ds & tx_stat_us & rx_stat_us & rx_done_ds & tx_done_ds & rx_done_us & tx_done_us;
+		
+-- MGT block
+
 	sc_trig_link_mgt_i: sc_trig_link_mgt
 		port map(
 			SYSCLK_IN => clk,
-			SOFT_RESET_TX_IN => '0', -- Connect to sw reset bit
-			SOFT_RESET_RX_IN => '0', -- Connect to sw reset bit
+			SOFT_RESET_TX_IN => ctrl_tx_rst, -- Connect to sw reset bit
+			SOFT_RESET_RX_IN => ctrl_rx_rst, -- Connect to sw reset bit
 			DONT_RESET_ON_DATA_ERROR_IN => '1', -- Check this
-			GT0_TX_FSM_RESET_DONE_OUT => open, -- Connect to sw status bit
-			GT0_RX_FSM_RESET_DONE_OUT => open,
+			GT0_TX_FSM_RESET_DONE_OUT => tx_done_us, -- Connect to sw status bit
+			GT0_RX_FSM_RESET_DONE_OUT => rx_done_us,
 			GT0_DRP_BUSY_OUT => open, -- Not using DRP
 			GT0_DATA_VALID_IN => '1', -- Connect to sw bit for now, comma det later
-			GT1_TX_FSM_RESET_DONE_OUT => open, -- Connect to sw status bit
-			GT1_RX_FSM_RESET_DONE_OUT => open,
+			GT1_TX_FSM_RESET_DONE_OUT => tx_done_ds, -- Connect to sw status bit
+			GT1_RX_FSM_RESET_DONE_OUT => rx_done_ds,
 			GT1_DRP_BUSY_OUT => open, -- Not using DRP
 			GT1_DATA_VALID_IN => '1', -- Connect to sw bit for now, comma det later
 			gt0_drpaddr_in => (others => '0'), -- Not using DRP
@@ -66,19 +94,19 @@ begin
 			gt0_eyescandataerror_out => open,
 			gt0_eyescantrigger_in => '0',
 			gt0_rxclkcorcnt_out => open,
-			gt0_rxdata_out => rxd_us, -- The data output
-			gt0_rxusrclk_in => txclk_ds, -- comes from txclkout of ds,
+			gt0_rxdata_out => rxd_us,
+			gt0_rxusrclk_in => txclk_ds, -- Comes from txclkout of ds
 			gt0_rxusrclk2_in => txclk_ds,
 			gt0_rxprbserr_out => open,
 			gt0_rxprbssel_in => "000", -- No PRBS
 			gt0_rxprbscntreset_in => '0',
-			gt0_rxchariscomma_out => rxc_us, -- The chariscomma
-			gt0_rxcharisk_out => rxk_us, -- The charisk
+			gt0_rxchariscomma_out => rxc_us,
+			gt0_rxcharisk_out => rxk_us,
 			gt0_rxdisperr_out => open, -- Connect this?
 			gt0_rxnotintable_out => open, -- Connect this?
 			gt0_gtprxn_in => open, -- Auto-connected by tools
 			gt0_gtprxp_in => open,
-			gt0_rxbufstatus_out => open, -- Might want to connect this to sw status register
+			gt0_rxbufstatus_out => rx_stat_us, -- Might want to connect this to sw status register
 			gt0_rxmcommaalignen_in => '1', -- We like alignment
 			gt0_rxpcommaalignen_in => '1',
 			gt0_dmonitorout_out => open, -- Don't need this
@@ -98,7 +126,7 @@ begin
 			gt0_txelecidle_in => '0',
 			gt0_txprbsforceerr_in => '0',
 			gt0_txcharisk_in => txk_us, -- charisk
-			gt0_txbufstatus_out => open, -- Might want to connect this to sw status register
+			gt0_txbufstatus_out => tx_stat_us, -- Might want to connect this to sw status register
 			gt0_gtptxn_out => open, -- Auto-connected by tools
 			gt0_gtptxp_out => open,
 			gt0_txoutclk_out => txclk_us,
@@ -133,7 +161,7 @@ begin
 			gt1_rxnotintable_out => open, -- Connect this?
 			gt1_gtprxn_in => open, -- Auto-connected by tools
 			gt1_gtprxp_in => open, -- Auto-connected by tools
-			gt1_rxbufstatus_out => open, -- Might want to connect this to sw status register
+			gt1_rxbufstatus_out => rx_stat_ds, -- Might want to connect this to sw status register
 			gt1_rxmcommaalignen_in => '1', -- We like alignment
 			gt1_rxpcommaalignen_in => '1',
 			gt1_dmonitorout_out => open, -- Don't need this
@@ -153,7 +181,7 @@ begin
 			gt1_txelecidle_in => '0',
 			gt1_txprbsforceerr_in => '0',
 			gt1_txcharisk_in => txk_ds,
-			gt1_txbufstatus_out => open, -- Might want to connect this to sw status register
+			gt1_txbufstatus_out => tx_stat_ds, -- Might want to connect this to sw status register
 			gt1_gtptxn_out => open, -- Auto-connected by tools
 			gt1_gtptxp_out => open,
 			gt1_txoutclk_out => txclk_ds,
