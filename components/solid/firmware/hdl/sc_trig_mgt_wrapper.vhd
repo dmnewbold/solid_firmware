@@ -25,7 +25,7 @@ entity sc_trig_mgt_wrapper is
 		txk: in std_logic;
 		rxd: out std_logic_vector(15 downto 0);
 		rxk: out std_logic
-	)
+	);
 
 end sc_trig_mgt_wrapper;
 
@@ -49,7 +49,7 @@ begin
 			GT0_DRP_BUSY_OUT => open,
 			GT0_DATA_VALID_IN => '1',
 			gt0_drpaddr_in => (others => '0'), -- Not using DRP
-			gt0_drpclk_in => clk,
+			gt0_drpclk_in => sysclk,
 			gt0_drpdi_in => (others => '0'),
 			gt0_drpdo_out => open,
 			gt0_drpen_in => '0',
