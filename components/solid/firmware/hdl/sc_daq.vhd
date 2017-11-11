@@ -217,6 +217,7 @@ begin
 			pllclk => pllclk,
 			pllrefclk => pllrefclk,
 			link_ok => link_ok,
+			id => board_id,
 			clk40 => clk40_i,
 			rst40 => rst40_i,
 			d => link_d,

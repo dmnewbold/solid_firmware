@@ -21,6 +21,7 @@ entity sc_trig_link is
 		pllclk: in std_logic;
 		pllrefclk: in std_logic;
 		link_ok: out std_logic;
+		id: in std_logic_vector(7 downto 0);
 		clk40: in std_logic;
 		rst40: in std_logic;
 		d: in std_logic_vector(15 downto 0);
@@ -133,6 +134,7 @@ begin
 			ack => '0',
 			err_i => err_i_us,
 			err_o => err_o_us,
+			my_id => id,
 			link_id => id_us
 		);
 
@@ -152,6 +154,7 @@ begin
 			ack => '0',
 			err_i => err_i_ds,
 			err_o => err_o_ds,
+			my_id => id,
 			link_id => id_ds
 		);
 			

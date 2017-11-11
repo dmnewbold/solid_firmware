@@ -23,6 +23,7 @@ entity sc_trig_link_pipe is
 		ack: in std_logic;
 		err_i: out std_logic;
 		err_o: out std_logic;
+		my_id: in std_logic_vector(7 downto 0);
 		link_id: out std_logic_vector(7 downto 0)
 	);
 
@@ -32,9 +33,12 @@ architecture rtl of sc_trig_link_pipe is
 
 begin
 
-	txd <= (others => '0');
-	txk <= "00";
+	txd <= X"bc" & my_id;
+	txk <= "10";
 	q <= (others => '0');
 	qv <= '0';
+	err_i <= '0';
+	err_o <= '0';
+	link_id <= rxd(7 downto 0);
 
 end rtl;
