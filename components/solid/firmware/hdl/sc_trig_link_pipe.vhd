@@ -11,9 +11,9 @@ entity sc_trig_link_pipe is
 	port(
 		clk125: in std_logic;
 		rxd: in std_logic_vector(15 downto 0);
-		rxk: in std_logic;
+		rxk: in std_logic_vector(1 downto 0);
 		txd: out std_logic_vector(15 downto 0);
-		txk: out std_logic;
+		txk: out std_logic_vector(1 downto 0);
 		clk40: in std_logic;
 		rst40: in std_logic;
 		d: in std_logic_vector(15 downto 0);
@@ -33,7 +33,7 @@ architecture rtl of sc_trig_link_pipe is
 begin
 
 	txd <= (others => '0');
-	txk <= '0';
+	txk <= "00";
 	q <= (others => '0');
 	qv <= '0';
 

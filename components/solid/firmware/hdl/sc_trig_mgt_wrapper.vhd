@@ -22,9 +22,9 @@ entity sc_trig_mgt_wrapper is
 		loopback: in std_logic_vector(2 downto 0);
 		clk125: in std_logic;
 		txd: in std_logic_vector(15 downto 0);
-		txk: in std_logic;
+		txk: in std_logic_vector(1 downto 0);
 		rxd: out std_logic_vector(15 downto 0);
-		rxk: out std_logic
+		rxk: out std_logic_vector(1 downto 0);
 	);
 
 end sc_trig_mgt_wrapper;
@@ -180,8 +180,8 @@ begin
 			gt0_rxcharisk_out => rxk,
 			gt0_rxdisperr_out => open, -- Connect this?
 			gt0_rxnotintable_out => open, -- Connect this?
-			gt0_gtprxn_in => open, -- Auto-connected by tools
-			gt0_gtprxp_in => open,
+			gt0_gtprxn_in => '1', -- Auto-connected by tools
+			gt0_gtprxp_in => '0',
 			gt0_rxbufstatus_out => rx_stat,
 			gt0_rxmcommaalignen_in => '1', -- We like alignment
 			gt0_rxpcommaalignen_in => '1',
@@ -205,7 +205,7 @@ begin
 			gt0_txbufstatus_out => tx_stat,
 			gt0_gtptxn_out => open, -- Auto-connected by tools
 			gt0_gtptxp_out => open,
-			gt0_txoutclk_out => txclk_us,
+			gt0_txoutclk_out => clk125,
 			gt0_txoutclkfabric_out => open,
 			gt0_txoutclkpcs_out => open,
 			gt0_txresetdone_out => open, -- Use FSM signals for monitoring

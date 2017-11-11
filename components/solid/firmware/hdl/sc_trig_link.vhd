@@ -42,7 +42,7 @@ architecture rtl of sc_trig_link is
 	signal stat_us_tx, stat_ds_tx: std_logic_vector(1 downto 0);
 	signal stat_us_rx, stat_ds_rx: std_logic_vector(2 downto 0);
 	signal txd_us, rxd_us, txd_ds, rxd_ds: std_logic_vector(15 downto 0);
-	signal txk_us, rxk_us, txk_ds, rxk_ds: std_logic;
+	signal txk_us, rxk_us, txk_ds, rxk_ds: std_logic_vector(1 downto 0);
 	signal ack_us, ack_ds, err_i_us, err_o_us, err_i_ds, err_o_ds: std_logic;
 	signal id_us, id_ds: std_logic_vector(7 downto 0);
 
