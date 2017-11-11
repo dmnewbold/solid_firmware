@@ -18,6 +18,8 @@ entity sc_trig_link is
 		ipb_out: out ipb_rbus;
 		clk125: in std_logic;
 		rst125: in std_logic;
+		pllclk: in std_logic;
+		pllrefclk: in std_logic;
 		link_ok: out std_logic;
 		clk40: in std_logic;
 		rst40: in std_logic;
@@ -33,14 +35,16 @@ end sc_trig_link;
 architecture rtl of sc_trig_link is
 
 	signal ctrl: ipb_reg_v(0 downto 0);
-	signal stat: ipb_reg_v(0 downto 0);
-	signal ctrl_tx_rst, ctrl_rx_rst: std_logic;
-	signal tx_done_us, rx_done_us, tx_done_ds, rx_done_ds: std_logic;
-	signal tx_stat_us, tx_stat_ds: std_logic_vector(1 downto 0);
-	signal rx_stat_us, rx_stat_ds: std_logic_vector(2 downto 0);
-	signal txclk_us, txclk_ds: std_logic;
-	signal rxd_us, rxd_ds, txd_us, txd_ds: std_logic_vector(15 downto 0);
-	signal rxc_us, rxc_ds, rxk_us, rxk_ds, txk_us, txk_ds: std_logic;
+	signal stat: ipb_reg_v(1 downto 0);
+	signal ctrl_en_us, ctrl_en_ds, ctrl_tx_rst, ctrl_rx_rst: std_logic;
+	signal ctrl_loopback_us, ctrl_loopback_ds: std_logic_vector(2 downto 0);
+	signal rdy_us_tx, rdy_us_rx, rdy_ds_tx, rdy_ds_rx: std_logic;
+	signal stat_us_tx, stat_ds_tx: std_logic_vector(1 downto 0);
+	signal stat_us_rx, stat_ds_rx: std_logic_vector(2 downto 0);
+	signal txd_us, rxd_us, txd_ds, rxd_ds: std_logic_vector(15 downto 0);
+	signal txk_us, rxk_us, txk_ds, rxk_ds: std_logic;
+	signal ack_us, ack_ds, err_i_us, err_o_us, err_i_ds, err_o_ds: std_logic;
+	signal id_us, id_ds: std_logic_vector(7 downto 0);
 
 begin
 
@@ -49,7 +53,7 @@ begin
 	csr: entity work.ipbus_ctrlreg_v
 		generic map(
 			N_CTRL => 1,
-			N_STAT => 1
+			N_STAT => 2
 		)
 		port map(
 			clk => clk,
@@ -60,151 +64,97 @@ begin
 			q => ctrl
 		);
 		
-	ctrl_tx_rst <= ctrl(0)(0);
-	ctrl_rx_rst <= ctrl(0)(1);
-	stat(0) <= X"0000" & "00" & tx_stat_ds & rx_stat_ds & tx_stat_us & rx_stat_us & rx_done_ds & tx_done_ds & rx_done_us & tx_done_us;
-		
--- MGT block
+	ctrl_en_us <= ctrl(0)(0);
+	ctrl_en_ds <= ctrl(0)(1);
+	ctrl_rst_tx <= ctrl(0)(2);
+	ctrl_rst_rx <= ctrl(0)(3);
+	ctrl_loopback_us <= ctrl(0)(6 downto 4);
+	ctrl_loopback_ds <= ctrl(0)(9 downto 7);
+	stat(0) <= X"0000" & "00" & stat_ds_rx & stat_ds_tx & stat_us_rx & stat_us_tx & rdy_ds_rx & rdy_ds_tx & rdy_us_rx & rdy_us_tx;
+	stat(1) <= X"00" & id_ds & id_us & err_o_ds & err_i_ds & err_o_us & err_i_us;
+	
+-- MGTs
 
-	sc_trig_link_mgt_i: sc_trig_link_mgt
+	mgt_us: entity work.sc_trig_mgt_wrapper
 		port map(
-			SYSCLK_IN => clk,
-			SOFT_RESET_TX_IN => ctrl_tx_rst, -- Connect to sw reset bit
-			SOFT_RESET_RX_IN => ctrl_rx_rst, -- Connect to sw reset bit
-			DONT_RESET_ON_DATA_ERROR_IN => '1', -- Check this
-			GT0_TX_FSM_RESET_DONE_OUT => tx_done_us, -- Connect to sw status bit
-			GT0_RX_FSM_RESET_DONE_OUT => rx_done_us,
-			GT0_DRP_BUSY_OUT => open, -- Not using DRP
-			GT0_DATA_VALID_IN => '1', -- Connect to sw bit for now, comma det later
-			GT1_TX_FSM_RESET_DONE_OUT => tx_done_ds, -- Connect to sw status bit
-			GT1_RX_FSM_RESET_DONE_OUT => rx_done_ds,
-			GT1_DRP_BUSY_OUT => open, -- Not using DRP
-			GT1_DATA_VALID_IN => '1', -- Connect to sw bit for now, comma det later
-			gt0_drpaddr_in => (others => '0'), -- Not using DRP
-			gt0_drpclk_in => clk,
-			gt0_drpdi_in => (others => '0'),
-			gt0_drpdo_out => open,
-			gt0_drpen_in => '0',
-			gt0_drprdy_out => open,
-			gt0_drpwe_in => '0',
-			gt0_loopback_in => "000", -- Connect to sw bit
-			gt0_rxpd_in => "00", -- No power down
-			gt0_txpd_in => "00",
-			gt0_eyescanreset_in => '0', -- God knows
-			gt0_rxuserrdy_in => '0', -- See AR #68829
-			gt0_eyescandataerror_out => open,
-			gt0_eyescantrigger_in => '0',
-			gt0_rxclkcorcnt_out => open,
-			gt0_rxdata_out => rxd_us,
-			gt0_rxusrclk_in => txclk_ds, -- Comes from txclkout of ds
-			gt0_rxusrclk2_in => txclk_ds,
-			gt0_rxprbserr_out => open,
-			gt0_rxprbssel_in => "000", -- No PRBS
-			gt0_rxprbscntreset_in => '0',
-			gt0_rxchariscomma_out => rxc_us,
-			gt0_rxcharisk_out => rxk_us,
-			gt0_rxdisperr_out => open, -- Connect this?
-			gt0_rxnotintable_out => open, -- Connect this?
-			gt0_gtprxn_in => open, -- Auto-connected by tools
-			gt0_gtprxp_in => open,
-			gt0_rxbufstatus_out => rx_stat_us, -- Might want to connect this to sw status register
-			gt0_rxmcommaalignen_in => '1', -- We like alignment
-			gt0_rxpcommaalignen_in => '1',
-			gt0_dmonitorout_out => open, -- Don't need this
-			gt0_rxlpmhfhold_in => '0', -- As per user guide
-			gt0_rxlpmhfovrden_in => '0',
-			gt0_rxlpmlfhold_in => '0',
-			gt0_rxoutclk_out => open, -- We are doing clock correction, not needed
-			gt0_rxoutclkfabric_out => open,
-			gt0_gtrxreset_in => '0', -- Leave this to internal FSM
-			gt0_rxlpmreset_in => '0',
-			gt0_rxresetdone_out => open, -- Use FSM signals for monitoring
-			gt0_gttxreset_in => '0', -- Leave this to internal FSM
-			gt0_txuserrdy_in => '0', -- See AR #68829
-			gt0_txdata_in => txd_us, -- The data input
-			gt0_txusrclk_in => txclk_us,
-			gt0_txusrclk2_in => txclk_us,
-			gt0_txelecidle_in => '0',
-			gt0_txprbsforceerr_in => '0',
-			gt0_txcharisk_in => txk_us, -- charisk
-			gt0_txbufstatus_out => tx_stat_us, -- Might want to connect this to sw status register
-			gt0_gtptxn_out => open, -- Auto-connected by tools
-			gt0_gtptxp_out => open,
-			gt0_txoutclk_out => txclk_us,
-			gt0_txoutclkfabric_out => open,
-			gt0_txoutclkpcs_out => open,
-			gt0_txresetdone_out => open, -- Use FSM signals for monitoring
-			gt0_txprbssel_in => "000", -- No PRBS
-			gt1_drpaddr_in => (others => '0'), -- Not using DRP
-			gt1_drpclk_in => clk,
-			gt1_drpdi_in => (others => '0'),
-			gt1_drpdo_out => open,
-			gt1_drpen_in => '0',
-			gt1_drprdy_out => open,
-			gt1_drpwe_in => '0',
-			gt1_loopback_in => "000", -- Connect to sw bit
-			gt1_rxpd_in => "00", -- No power down
-			gt1_txpd_in => "00",
-			gt1_eyescanreset_in => '0', -- God knows
-			gt1_rxuserrdy_in => '0', -- See AR #68829
-			gt1_eyescandataerror_out => open,
-			gt1_eyescantrigger_in => '0',
-			gt1_rxclkcorcnt_out => open,
-			gt1_rxdata_out => rxd_ds,
-			gt1_rxusrclk_in => txclk_us, -- comes from txclkout of us
-			gt1_rxusrclk2_in => txclk_us,
-			gt1_rxprbserr_out => open,
-			gt1_rxprbssel_in => "000", -- No PRBS
-			gt1_rxprbscntreset_in => '0',
-			gt1_rxchariscomma_out => rxc_ds,
-			gt1_rxcharisk_out => rxk_ds,
-			gt1_rxdisperr_out => open, -- Connect this?
-			gt1_rxnotintable_out => open, -- Connect this?
-			gt1_gtprxn_in => open, -- Auto-connected by tools
-			gt1_gtprxp_in => open, -- Auto-connected by tools
-			gt1_rxbufstatus_out => rx_stat_ds, -- Might want to connect this to sw status register
-			gt1_rxmcommaalignen_in => '1', -- We like alignment
-			gt1_rxpcommaalignen_in => '1',
-			gt1_dmonitorout_out => open, -- Don't need this
-			gt1_rxlpmhfhold_in => '0', -- As per user guide
-			gt1_rxlpmhfovrden_in => '0',
-			gt1_rxlpmlfhold_in => '0',
-			gt1_rxoutclk_out => open, -- We are doing clock correction, not needed
-			gt1_rxoutclkfabric_out => open,
-			gt1_gtrxreset_in => '0', -- Leave this to internal FSM
-			gt1_rxlpmreset_in => '0',
-			gt1_rxresetdone_out => open, -- Use FSM signals for monitoring
-			gt1_gttxreset_in => '0', -- Leave this to internal FSM
-			gt1_txuserrdy_in => '0', -- See AR #68829
-			gt1_txdata_in => txd_ds, -- The data input
-			gt1_txusrclk_in => txclk_ds,
-			gt1_txusrclk2_in => txclk_ds,
-			gt1_txelecidle_in => '0',
-			gt1_txprbsforceerr_in => '0',
-			gt1_txcharisk_in => txk_ds,
-			gt1_txbufstatus_out => tx_stat_ds, -- Might want to connect this to sw status register
-			gt1_gtptxn_out => open, -- Auto-connected by tools
-			gt1_gtptxp_out => open,
-			gt1_txoutclk_out => txclk_ds,
-			gt1_txoutclkfabric_out => open,
-			gt1_txoutclkpcs_out => open,
-			gt1_txresetdone_out => open, -- Use FSM signals for monitoring
-			gt1_txprbssel_in => "000", -- No PRBS
-			GT0_PLL0OUTCLK_IN => pllclk,
-			GT0_PLL0OUTREFCLK_IN => pllrefclk
-			GT0_PLL0RESET_OUT => open, -- We are slave to another MGT block
-			GT0_PLL0LOCK_IN => '1', -- Dodgy, but hopefully will work
-			GT0_PLL0REFCLKLOST_IN => '0',
-			GT0_PLL1OUTCLK_IN => '0',
-			GT0_PLL1OUTREFCLK_IN => '0'
+			sysclk => clk,
+			en => ctrl_en_us,
+			tx_rst => ctrl_tx_rst,
+			rx_rst => ctrl_rx_rst,
+			tx_rdy => rdy_us_tx,
+			rx_rdy => rdy_us_rx,
+			tx_stat => stat_us_tx,
+			rx_stat => stat_us_rx,
+			pllclk => pllclk,
+			pllrefclk => pllrefclk,
+			loopback => ctrl_loopback_us,
+			clk125 => clk125,
+			txd => txd_us,
+			txk => txk_us,
+			rxd => rxd_us,
+			rxk => rxk_us
+		);
+			
+	mgt_ds: entity work.sc_trig_mgt_wrapper
+		port map(
+			sysclk => clk,
+			en => ctrl_en_ds,
+			tx_rst => ctrl_tx_rst,
+			rx_rst => ctrl_rx_rst,
+			tx_rdy => rdy_ds_tx,
+			rx_rdy => rdy_ds_rx,
+			tx_stat => stat_ds_tx,
+			rx_stat => stat_ds_rx,
+			pllclk => pllclk,
+			pllrefclk => pllrefclk,
+			loopback => ctrl_loopback_ds,
+			clk125 => clk125,
+			txd => txd_ds,
+			txk => txk_ds,
+			rxd => rxd_ds,
+			rxk => rxk_ds
+		);
+	
+-- Data pipeline
+
+	pipe_from_us: entity work.sc_trig_link_pipe
+		port map(
+			clk125 => clk125,
+			rxd => rxd_us,
+			rxk => rxk_us,
+			txd => txd_ds,
+			txk => txk_ds,
+			clk40 => clk40,
+			rst40 => rst40,
+			d => d,
+			dv => d_valid,
+			q => open,
+			qv => open,
+			ack => '0',
+			err_i => err_i_us,
+			err_o => err_o_us,
+			link_id => id_us
 		);
 
-	txd_us <= (others => '0');
-	txk_us <= '0',
-	txd_ds <= (others => '0');
-	txk_ds <= '0';
-		
-	ipb_out <= IPB_RBUS_NULL;
+	pipe_from_ds: entity work.sc_trig_link_pipe
+		port map(
+			clk125 => clk125,
+			rxd => rxd_ds,
+			rxk => rxk_ds,
+			txd => txd_us,
+			txk => txk_us,
+			clk40 => clk40,
+			rst40 => rst40,
+			d => d,
+			dv => d_valid,
+			q => open,
+			qv => open,
+			ack => '0',
+			err_i => err_i_ds,
+			err_o => err_o_ds,
+			link_id => id_ds
+		);
+			
 	q <= (others => '0');
 	q_valid <= '0';
 	link_ok <= '0';
