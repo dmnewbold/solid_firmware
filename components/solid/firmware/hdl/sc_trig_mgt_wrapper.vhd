@@ -176,15 +176,12 @@ begin
 			gt0_rxprbserr_out => open,
 			gt0_rxprbssel_in => "000", -- No PRBS
 			gt0_rxprbscntreset_in => '0',
-			gt0_rxchariscomma_out => open,
 			gt0_rxcharisk_out => rxk,
 			gt0_rxdisperr_out => open, -- Connect this?
 			gt0_rxnotintable_out => open, -- Connect this?
 			gt0_gtprxn_in => '1', -- Auto-connected by tools
 			gt0_gtprxp_in => '0',
 			gt0_rxbufstatus_out => rx_stat,
-			gt0_rxmcommaalignen_in => '1', -- We like alignment
-			gt0_rxpcommaalignen_in => '1',
 			gt0_dmonitorout_out => open, -- Don't need this
 			gt0_rxlpmhfhold_in => '0', -- As per user guide
 			gt0_rxlpmhfovrden_in => '0',

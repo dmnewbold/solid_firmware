@@ -33,12 +33,12 @@ architecture rtl of sc_trig_link_pipe is
 
 begin
 
-	txd <= X"bc" & my_id;
-	txk <= "10";
+	txd <= my_id & X"bc";
+	txk <= "01";
 	q <= (others => '0');
 	qv <= '0';
 	err_i <= '0';
 	err_o <= '0';
-	link_id <= rxd(7 downto 0);
+	link_id <= rxd(15 downto 8);
 
 end rtl;
