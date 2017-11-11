@@ -33,6 +33,8 @@ entity sc_daq is
 		d_n: in std_logic_vector(N_CHAN - 1 downto 0);
 		clk125: in std_logic;
 		rst125: in std_logic;
+		pllclk: in std_logic;
+		pllrefclk: in std_logic;
 		board_id: in std_logic_vector(7 downto 0)
 	);
 
@@ -212,6 +214,8 @@ begin
 			ipb_out => ipbr(N_SLV_TLINK),
 			clk125 => clk125,
 			rst125 => rst125,
+			pllclk => pllclk,
+			pllrefclk => pllrefclk,
 			link_ok => link_ok,
 			clk40 => clk40_i,
 			rst40 => rst40_i,

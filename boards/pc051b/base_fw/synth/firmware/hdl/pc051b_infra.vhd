@@ -23,6 +23,8 @@ entity pc051b_infra is
 		clk125_o: out std_logic;
 		rst125_o: out std_logic;
 		clk200: out std_logic; -- 200MHz unbuffered clock for IDELAYCTRL
+		pllclk: out std_logic;
+		pllrefclk: out std_logic;
 		nuke: in std_logic; -- The signal of doom
 		soft_rst: in std_logic; -- The signal of lesser doom
 		leds: out std_logic_vector(1 downto 0); -- status LEDs
@@ -98,6 +100,8 @@ begin
 			sfp_los => sfp_los,
 			clk125_out => clk125,
 			clk125_fr => clk125_fr,
+			pllclk => pllclk,
+			pllrefclk => pllrefclk,
 			rsti => rst_eth,
 			locked => eth_locked,
 			tx_data => mac_tx_data,

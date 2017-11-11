@@ -44,6 +44,7 @@ end top;
 architecture rtl of top is
 
 	signal clk_ipb, rst_ipb, clk125, rst125, nuke, soft_rst, userled, clk200, stealth_mode: std_logic;
+	signal pllclk, pllrefclk: std_logic;
 	signal ipb_out: ipb_wbus;
 	signal ipb_in: ipb_rbus;
 	signal debug: std_logic_vector(3 downto 0);
@@ -70,6 +71,8 @@ begin
 			clk125_o => clk125,
 			rst125_o => rst125,
 			clk200 => clk200,
+			pllclk => pllclk,
+			pllrefclk => pllrefclk,
 			nuke => nuke,
 			soft_rst => soft_rst,
 			leds => infra_leds,
@@ -93,6 +96,8 @@ begin
 			clk125 => clk125,
 			rst125 => rst125,
 			clk200 => clk200,
+			pllclk => pllclk,
+			pllrefclk => pllrefclk,
 			nuke => nuke,
 			soft_rst => soft_rst,
 			stealth_mode => stealth_mode,
