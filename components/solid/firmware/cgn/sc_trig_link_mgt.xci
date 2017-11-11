@@ -80,7 +80,7 @@
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_1_2">01010000</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_1_2_disp">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_1_2_k">false</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_1_2_mask">false</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_1_2_mask">true</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_1_3">00000000</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_1_3_disp">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_1_3_k">false</spirit:configurableElementValue>
@@ -106,7 +106,7 @@
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_2_4_k">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_2_4_mask">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_2_use">false</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_len">1</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_clk_cor_seq_len">2</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_comma_preset">K28.5</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_cpll_fbdiv">1</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_cpll_fbdiv_45">4</spirit:configurableElementValue>
@@ -144,7 +144,7 @@
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxbyteisaligned">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxbyterealign">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxcdrhold">false</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxchariscomma">true</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxchariscomma">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxcharisk">true</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxcommadet">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxdfeagcovrden">false</spirit:configurableElementValue>
@@ -153,9 +153,9 @@
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxlpmen">true</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxlpmhfovrden">true</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxlpmlfklovrden">false</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxmcommaalignen">true</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxmcommaalignen">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxoutclk">true</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxpcommaalignen">true</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxpcommaalignen">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxpcsreset">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxpmareset">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.gt0_val_port_rxpolarity">false</spirit:configurableElementValue>
@@ -687,7 +687,7 @@
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_1_2">01010000</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_1_2_disp">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_1_2_k">false</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_1_2_mask">false</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_1_2_mask">true</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_1_3">00000000</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_1_3_disp">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_1_3_k">false</spirit:configurableElementValue>
@@ -713,7 +713,7 @@
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_2_4_k">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_2_4_mask">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_2_use">false</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_len">1</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_clk_cor_seq_len">2</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_comma_preset">K28.5</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_cpll_fbdiv">1</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_cpll_fbdiv_45">4</spirit:configurableElementValue>
@@ -751,7 +751,7 @@
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxbyteisaligned">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxbyterealign">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxcdrhold">false</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxchariscomma">true</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxchariscomma">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxcharisk">true</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxcommadet">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxdfeagcovrden">false</spirit:configurableElementValue>
@@ -760,9 +760,9 @@
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxlpmen">true</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxlpmhfovrden">true</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxlpmlfklovrden">false</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxmcommaalignen">true</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxmcommaalignen">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxoutclk">true</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxpcommaalignen">true</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxpcommaalignen">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxpcsreset">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxpmareset">false</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.gt0_val_port_rxpolarity">false</spirit:configurableElementValue>
