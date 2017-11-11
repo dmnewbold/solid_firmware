@@ -31,6 +31,113 @@ end sc_trig_mgt_wrapper;
 
 architecture rtl of sc_trig_mgt_wrapper is
 
+	component sc_trig_link_mgt 
+		port(
+			SYSCLK_IN                               : in   std_logic;
+			SOFT_RESET_TX_IN                        : in   std_logic;
+			SOFT_RESET_RX_IN                        : in   std_logic;
+			DONT_RESET_ON_DATA_ERROR_IN             : in   std_logic;
+			GT0_TX_FSM_RESET_DONE_OUT               : out  std_logic;
+			GT0_RX_FSM_RESET_DONE_OUT               : out  std_logic;
+			GT0_DRP_BUSY_OUT                        : out  std_logic;
+			GT0_DATA_VALID_IN                       : in   std_logic;
+			--_________________________________________________________________________
+			--GT0  (X0Y2)
+			--____________________________CHANNEL PORTS________________________________
+			---------------------------- Channel - DRP Ports  --------------------------
+			gt0_drpaddr_in                          : in   std_logic_vector(8 downto 0);
+			gt0_drpclk_in                           : in   std_logic;
+			gt0_drpdi_in                            : in   std_logic_vector(15 downto 0);
+			gt0_drpdo_out                           : out  std_logic_vector(15 downto 0);
+			gt0_drpen_in                            : in   std_logic;
+			gt0_drprdy_out                          : out  std_logic;
+			gt0_drpwe_in                            : in   std_logic;
+			------------------------------- Loopback Ports -----------------------------
+			gt0_loopback_in                         : in   std_logic_vector(2 downto 0);
+			------------------------------ Power-Down Ports ----------------------------
+			gt0_rxpd_in                             : in   std_logic_vector(1 downto 0);
+			gt0_txpd_in                             : in   std_logic_vector(1 downto 0);
+			--------------------- RX Initialization and Reset Ports --------------------
+			gt0_eyescanreset_in                     : in   std_logic;
+			gt0_rxuserrdy_in                        : in   std_logic;
+			-------------------------- RX Margin Analysis Ports ------------------------
+			gt0_eyescandataerror_out                : out  std_logic;
+			gt0_eyescantrigger_in                   : in   std_logic;
+			------------------- Receive Ports - Clock Correction Ports -----------------
+			gt0_rxclkcorcnt_out                     : out  std_logic_vector(1 downto 0);
+			------------------ Receive Ports - FPGA RX Interface Ports -----------------
+			gt0_rxdata_out                          : out  std_logic_vector(15 downto 0);
+			gt0_rxusrclk_in                         : in   std_logic;
+			gt0_rxusrclk2_in                        : in   std_logic;
+			------------------- Receive Ports - Pattern Checker Ports ------------------
+			gt0_rxprbserr_out                       : out  std_logic;
+			gt0_rxprbssel_in                        : in   std_logic_vector(2 downto 0);
+			------------------- Receive Ports - Pattern Checker ports ------------------
+			gt0_rxprbscntreset_in                   : in   std_logic;
+			------------------ Receive Ports - RX 8B/10B Decoder Ports -----------------
+			gt0_rxchariscomma_out                   : out  std_logic_vector(1 downto 0);
+			gt0_rxcharisk_out                       : out  std_logic_vector(1 downto 0);
+			gt0_rxdisperr_out                       : out  std_logic_vector(1 downto 0);
+			gt0_rxnotintable_out                    : out  std_logic_vector(1 downto 0);
+			------------------------ Receive Ports - RX AFE Ports ----------------------
+			gt0_gtprxn_in                           : in   std_logic;
+			gt0_gtprxp_in                           : in   std_logic;
+			------------------- Receive Ports - RX Buffer Bypass Ports -----------------
+			gt0_rxbufstatus_out                     : out  std_logic_vector(2 downto 0);
+			-------------- Receive Ports - RX Byte and Word Alignment Ports ------------
+			gt0_rxmcommaalignen_in                  : in   std_logic;
+			gt0_rxpcommaalignen_in                  : in   std_logic;
+			------------ Receive Ports - RX Decision Feedback Equalizer(DFE) -----------
+			gt0_dmonitorout_out                     : out  std_logic_vector(14 downto 0);
+			-------------------- Receive Ports - RX Equailizer Ports -------------------
+			gt0_rxlpmhfhold_in                      : in   std_logic;
+			gt0_rxlpmhfovrden_in                    : in   std_logic;
+			gt0_rxlpmlfhold_in                      : in   std_logic;
+			--------------- Receive Ports - RX Fabric Output Control Ports -------------
+			gt0_rxoutclk_out                        : out  std_logic;
+			gt0_rxoutclkfabric_out                  : out  std_logic;
+			------------- Receive Ports - RX Initialization and Reset Ports ------------
+			gt0_gtrxreset_in                        : in   std_logic;
+			gt0_rxlpmreset_in                       : in   std_logic;
+			-------------- Receive Ports -RX Initialization and Reset Ports ------------
+			gt0_rxresetdone_out                     : out  std_logic;
+			--------------------- TX Initialization and Reset Ports --------------------
+			gt0_gttxreset_in                        : in   std_logic;
+			gt0_txuserrdy_in                        : in   std_logic;
+			------------------ Transmit Ports - FPGA TX Interface Ports ----------------
+			gt0_txdata_in                           : in   std_logic_vector(15 downto 0);
+			gt0_txusrclk_in                         : in   std_logic;
+			gt0_txusrclk2_in                        : in   std_logic;
+			--------------------- Transmit Ports - PCI Express Ports -------------------
+			gt0_txelecidle_in                       : in   std_logic;
+			------------------ Transmit Ports - Pattern Generator Ports ----------------
+			gt0_txprbsforceerr_in                   : in   std_logic;
+			------------------ Transmit Ports - TX 8B/10B Encoder Ports ----------------
+			gt0_txcharisk_in                        : in   std_logic_vector(1 downto 0);
+			---------------------- Transmit Ports - TX Buffer Ports --------------------
+			gt0_txbufstatus_out                     : out  std_logic_vector(1 downto 0);
+			--------------- Transmit Ports - TX Configurable Driver Ports --------------
+			gt0_gtptxn_out                          : out  std_logic;
+			gt0_gtptxp_out                          : out  std_logic;
+			----------- Transmit Ports - TX Fabric Clock Output Control Ports ----------
+			gt0_txoutclk_out                        : out  std_logic;
+			gt0_txoutclkfabric_out                  : out  std_logic;
+			gt0_txoutclkpcs_out                     : out  std_logic;
+			------------- Transmit Ports - TX Initialization and Reset Ports -----------
+			gt0_txresetdone_out                     : out  std_logic;
+			------------------ Transmit Ports - pattern Generator Ports ----------------
+			gt0_txprbssel_in                        : in   std_logic_vector(2 downto 0);
+			--____________________________COMMON PORTS________________________________
+			GT0_PLL0OUTCLK_IN  : in std_logic;
+			GT0_PLL0OUTREFCLK_IN  : in std_logic;
+			GT0_PLL0RESET_OUT  : out std_logic;
+			GT0_PLL0LOCK_IN  : in std_logic;
+			GT0_PLL0REFCLKLOST_IN  : in std_logic;    
+			GT0_PLL1OUTCLK_IN  : in std_logic;
+			GT0_PLL1OUTREFCLK_IN  : in std_logic
+		);
+	end component;
+
 	signal tx_rst_i, rx_rst_i: std_logic;
 
 begin
