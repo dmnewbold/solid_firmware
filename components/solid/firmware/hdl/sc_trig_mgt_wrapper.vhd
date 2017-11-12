@@ -75,7 +75,6 @@ architecture rtl of sc_trig_mgt_wrapper is
 			------------------- Receive Ports - Pattern Checker ports ------------------
 			gt0_rxprbscntreset_in                   : in   std_logic;
 			------------------ Receive Ports - RX 8B/10B Decoder Ports -----------------
-			gt0_rxchariscomma_out                   : out  std_logic_vector(1 downto 0);
 			gt0_rxcharisk_out                       : out  std_logic_vector(1 downto 0);
 			gt0_rxdisperr_out                       : out  std_logic_vector(1 downto 0);
 			gt0_rxnotintable_out                    : out  std_logic_vector(1 downto 0);
@@ -84,9 +83,6 @@ architecture rtl of sc_trig_mgt_wrapper is
 			gt0_gtprxp_in                           : in   std_logic;
 			------------------- Receive Ports - RX Buffer Bypass Ports -----------------
 			gt0_rxbufstatus_out                     : out  std_logic_vector(2 downto 0);
-			-------------- Receive Ports - RX Byte and Word Alignment Ports ------------
-			gt0_rxmcommaalignen_in                  : in   std_logic;
-			gt0_rxpcommaalignen_in                  : in   std_logic;
 			------------ Receive Ports - RX Decision Feedback Equalizer(DFE) -----------
 			gt0_dmonitorout_out                     : out  std_logic_vector(14 downto 0);
 			-------------------- Receive Ports - RX Equailizer Ports -------------------
