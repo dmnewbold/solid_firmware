@@ -3,7 +3,7 @@
 	<node id="timing" address="0x10" module="file://sc_timing.xml"/>
 	<node id="fake" address="0x20" module="file://sc_fake.xml"/>
 	<node id="rtrig" address="0x28" module="file://sc_rtrig.xml"/>
-	<node id="tlink" address="0x30" fwinfo="file://sc_trig_link.xml"/>
+	<node id="tlink" address="0x30" module="file://sc_trig_link.xml"/>
 	<node id="trig" address="0x40" module="file://sc_trig.xml"/>
 	<node id="roc" address="0x60" module="file://sc_roc.xml"/>
 </node>

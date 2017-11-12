@@ -1,4 +1,4 @@
-<node id="trig_link" description="Inter-plane serial links" fwinfo="endpoint;width=2">
+<node id="tlink" description="Inter-plane serial links" fwinfo="endpoint;width=2">
 	<node id="ctrl" address="0x0">
 		<node id="en_us" mask="0x1"/>
 		<node id="en_ds" mask="0x2"/>
