@@ -134,7 +134,7 @@ architecture rtl of sc_trig_mgt_wrapper is
 		);
 	end component;
 
-	signal tx_rst_i, rx_rst_i: std_logic;
+	signal tx_rst_i, rx_rst_i, pll_lock, pll_reset: std_logic;
 
 begin
 
@@ -205,11 +205,13 @@ begin
 			gt0_txprbssel_in => "000", -- No PRBS
 			GT0_PLL0OUTCLK_IN => pllclk,
 			GT0_PLL0OUTREFCLK_IN => pllrefclk,
-			GT0_PLL0RESET_OUT => open, 
-			GT0_PLL0LOCK_IN => '1',
+			GT0_PLL0RESET_OUT => pll_rst, 
+			GT0_PLL0LOCK_IN => pll_lock,
 			GT0_PLL0REFCLKLOST_IN => '0',      
 			GT0_PLL1OUTCLK_IN => '0',
 			GT0_PLL1OUTREFCLK_IN => '0'
 		);
+		
+	pll_lock <= not pll_rst; -- Needed to fool tx reset fsm into working, when PLL is shared with ethernet core
 
 end rtl;

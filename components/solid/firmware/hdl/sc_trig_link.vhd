@@ -72,7 +72,7 @@ begin
 	ctrl_loopback_us <= ctrl(0)(6 downto 4);
 	ctrl_loopback_ds <= ctrl(0)(9 downto 7);
 	stat(0) <= X"0000" & "00" & stat_ds_rx & stat_ds_tx & stat_us_rx & stat_us_tx & rdy_ds_rx & rdy_ds_tx & rdy_us_rx & rdy_us_tx;
-	stat(1) <= X"00" & id_ds & id_us & err_o_ds & err_i_ds & err_o_us & err_i_us;
+	stat(1) <= X"00" & id_ds & id_us & X"0" & err_o_ds & err_i_ds & err_o_us & err_i_us;
 	
 -- MGTs
 
