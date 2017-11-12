@@ -5,7 +5,7 @@
 		<node id="rst_tx" mask="0x4"/>
 		<node id="rst_rx" mask="0x8"/>
 		<node id="loop_us" mask="0x70"/>
-		<node id="loop_ds" msk="0x380"/>
+		<node id="loop_ds" mask="0x380"/>
 	</node>
 	<node id="link_stat" address="0x2">
 		<node id="rdy_us_tx" mask="0x1"/>
