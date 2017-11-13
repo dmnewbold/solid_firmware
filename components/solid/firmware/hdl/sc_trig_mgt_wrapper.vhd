@@ -27,7 +27,7 @@ entity sc_trig_mgt_wrapper is
 		rxk: out std_logic_vector(1 downto 0);
 		rx_aligned: out std_logic;
 		rx_realign: out std_logic;
-		rx_commadet: out std_logic;
+		rx_commadet: out std_logic
 	);
 
 end sc_trig_mgt_wrapper;
