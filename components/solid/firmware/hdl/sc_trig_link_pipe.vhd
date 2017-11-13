@@ -34,6 +34,7 @@ architecture rtl of sc_trig_link_pipe is
 
 	signal p: unsigned(1 downto 0) := "00";
 	signal c: unsigned(15 downto 0) := X"0000";
+	signal f: std_logic;
 
 begin
 
@@ -57,10 +58,12 @@ begin
 	process(clk125)
 	begin
 		if rising_edge(clk125) then
-			if rxk /= "00" then
+			if rxk /= "10" then
 				debug(15 downto 0) <= rxd;
-			else
+				f <= '1';
+			elsif f = '1' then
 				debug(31 downto 16) <= rxd;
+				f <= '0';
 			end if;
 		end if;
 	end process;
