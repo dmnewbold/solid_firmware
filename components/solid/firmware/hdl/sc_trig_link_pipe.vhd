@@ -40,8 +40,8 @@ begin
 	p <= not p when rising_edge(clk125);
 	c <= c + 1 when rising_edge(clk125) and p = '1';
 	
-	txd <= my_id & X"bc" when p = '0' else std_logic_vector(c);
-	txk <= "01" when p = '0' else "00";
+	txd <= X"bc" & my_id when p = '0' else std_logic_vector(c);
+	txk <= "10" when p = '0' else "00";
 	q <= (others => '0');
 	qv <= '0';
 	err_i <= '0';
