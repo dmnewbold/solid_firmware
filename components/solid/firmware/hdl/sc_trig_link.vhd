@@ -36,7 +36,7 @@ end sc_trig_link;
 architecture rtl of sc_trig_link is
 
 	signal ctrl: ipb_reg_v(0 downto 0);
-	signal stat: ipb_reg_v(1 downto 0);
+	signal stat: ipb_reg_v(3 downto 0);
 	signal ctrl_en_us, ctrl_en_ds, ctrl_rst_tx, ctrl_rst_rx: std_logic;
 	signal ctrl_loopback_us, ctrl_loopback_ds: std_logic_vector(2 downto 0);
 	signal rdy_us_tx, rdy_us_rx, rdy_ds_tx, rdy_ds_rx: std_logic;
@@ -54,7 +54,7 @@ begin
 	csr: entity work.ipbus_ctrlreg_v
 		generic map(
 			N_CTRL => 1,
-			N_STAT => 2
+			N_STAT => 4
 		)
 		port map(
 			clk => clk,
