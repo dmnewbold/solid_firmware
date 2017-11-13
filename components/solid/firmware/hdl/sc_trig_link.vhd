@@ -45,7 +45,7 @@ architecture rtl of sc_trig_link is
 	signal txd_us, rxd_us, txd_ds, rxd_ds: std_logic_vector(15 downto 0);
 	signal txk_us, rxk_us, txk_ds, rxk_ds: std_logic_vector(1 downto 0);
 	signal ack_us, ack_ds, err_i_us, err_o_us, err_i_ds, err_o_ds: std_logic;
-	signal id_us, id_ds: std_logic_vector(7 downto 0);
+	signal debug_us, debug_ds: std_logic_vector(31 downto 0);
 
 begin
 
@@ -72,7 +72,9 @@ begin
 	ctrl_loopback_us <= ctrl(0)(6 downto 4);
 	ctrl_loopback_ds <= ctrl(0)(9 downto 7);
 	stat(0) <= X"0000" & "00" & stat_ds_rx & stat_ds_tx & stat_us_rx & stat_us_tx & rdy_ds_rx & rdy_ds_tx & rdy_us_rx & rdy_us_tx;
-	stat(1) <= X"00" & id_ds & id_us & X"0" & err_o_ds & err_i_ds & err_o_us & err_i_us;
+	stat(1) <= X"00" & '0' & '0' & X"0" & err_o_ds & err_i_ds & err_o_us & err_i_us;
+	stat(2) <= debug_us;
+	stat(3) <= debug_ds;
 	
 -- MGTs
 
@@ -135,7 +137,7 @@ begin
 			err_i => err_i_us,
 			err_o => err_o_us,
 			my_id => id,
-			link_id => id_us
+			debug => debug_us
 		);
 
 	pipe_from_ds: entity work.sc_trig_link_pipe
@@ -155,7 +157,7 @@ begin
 			err_i => err_i_ds,
 			err_o => err_o_ds,
 			my_id => id,
-			link_id => id_ds
+			debug => debug_ds
 		);
 			
 	q <= (others => '0');
