@@ -38,7 +38,7 @@ architecture rtl of sc_trig_link_pipe is
 begin
 
 	p <= p + 1 when rising_edge(clk125);
-	c <= c + 1 when rising_edge(clk125) and p = '1';
+	c <= c + 1 when rising_edge(clk125) and p = "01";
 	
 	with p select txd <=
 		X"bc" & my_id when "00",
