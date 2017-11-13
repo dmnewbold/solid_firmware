@@ -33,7 +33,7 @@ end sc_trig_link_pipe;
 architecture rtl of sc_trig_link_pipe is
 
 	signal p: std_logic := '0';
-	signal c: unsigned(16 downto 0) := X"0000";
+	signal c: unsigned(15 downto 0) := X"0000";
 
 begin
 
