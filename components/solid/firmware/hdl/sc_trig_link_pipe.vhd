@@ -32,16 +32,23 @@ end sc_trig_link_pipe;
 
 architecture rtl of sc_trig_link_pipe is
 
-	signal p: std_logic := '0';
+	signal p: unsigned(1 downto 0) := "00";
 	signal c: unsigned(15 downto 0) := X"0000";
 
 begin
 
-	p <= not p when rising_edge(clk125);
+	p <= p + 1 when rising_edge(clk125);
 	c <= c + 1 when rising_edge(clk125) and p = '1';
 	
-	txd <= X"bc" & my_id when p = '0' else std_logic_vector(c);
-	txk <= "10" when p = '0' else "00";
+	with p select txd <=
+		X"bc" & my_id when "00",
+		std_logic_vector(c) when "01",
+		X"0000" when others;
+
+	with p select txk <=
+		"10" when "00",
+		"00" when others;
+
 	q <= (others => '0');
 	qv <= '0';
 	err_i <= '0';
