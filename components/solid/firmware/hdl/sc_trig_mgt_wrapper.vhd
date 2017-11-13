@@ -134,7 +134,7 @@ architecture rtl of sc_trig_mgt_wrapper is
 		);
 	end component;
 
-	signal tx_rst_i, rx_rst_i, pll_lock, pll_reset: std_logic;
+	signal tx_rst_i, rx_rst_i, pll_lock, pll_rst: std_logic;
 
 begin
 
