@@ -24,7 +24,10 @@ entity sc_trig_mgt_wrapper is
 		txd: in std_logic_vector(15 downto 0);
 		txk: in std_logic_vector(1 downto 0);
 		rxd: out std_logic_vector(15 downto 0);
-		rxk: out std_logic_vector(1 downto 0)
+		rxk: out std_logic_vector(1 downto 0);
+		rx_aligned: out std_logic;
+		rx_realign: out std_logic;
+		rx_commadet: out std_logic;
 	);
 
 end sc_trig_mgt_wrapper;
@@ -83,6 +86,10 @@ architecture rtl of sc_trig_mgt_wrapper is
 			gt0_gtprxp_in                           : in   std_logic;
 			------------------- Receive Ports - RX Buffer Bypass Ports -----------------
 			gt0_rxbufstatus_out                     : out  std_logic_vector(2 downto 0);
+			-------------- Receive Ports - RX Byte and Word Alignment Ports ------------
+			gt0_rxbyteisaligned_out                 : out  std_logic;
+			gt0_rxbyterealign_out                   : out  std_logic;
+			gt0_rxcommadet_out                      : out  std_logic;
 			------------ Receive Ports - RX Decision Feedback Equalizer(DFE) -----------
 			gt0_dmonitorout_out                     : out  std_logic_vector(14 downto 0);
 			-------------------- Receive Ports - RX Equailizer Ports -------------------
@@ -178,6 +185,9 @@ begin
 			gt0_gtprxn_in => '1', -- Auto-connected by tools
 			gt0_gtprxp_in => '0',
 			gt0_rxbufstatus_out => rx_stat,
+			gt0_rxbyteisaligned_out => rx_aligned,
+			gt0_rxbyterealign_out => rx_realign,
+			gt0_rxcommadet_out => rx_commadet,
 			gt0_dmonitorout_out => open, -- Don't need this
 			gt0_rxlpmhfhold_in => '0', -- As per user guide
 			gt0_rxlpmhfovrden_in => '0',

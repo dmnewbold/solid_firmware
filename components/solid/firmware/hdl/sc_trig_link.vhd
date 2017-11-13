@@ -46,6 +46,7 @@ architecture rtl of sc_trig_link is
 	signal txk_us, rxk_us, txk_ds, rxk_ds: std_logic_vector(1 downto 0);
 	signal ack_us, ack_ds, err_i_us, err_o_us, err_i_ds, err_o_ds: std_logic;
 	signal debug_us, debug_ds: std_logic_vector(31 downto 0);
+	signal rx_aligned_us, rx_aligned_ds, rx_realign_us, rx_realign_ds, rx_commadet_us, rx_commadet_ds: std_logic;
 
 begin
 
@@ -71,7 +72,7 @@ begin
 	ctrl_rst_rx <= ctrl(0)(3);
 	ctrl_loopback_us <= ctrl(0)(6 downto 4);
 	ctrl_loopback_ds <= ctrl(0)(9 downto 7);
-	stat(0) <= X"0000" & "00" & stat_ds_rx & stat_ds_tx & stat_us_rx & stat_us_tx & rdy_ds_rx & rdy_ds_tx & rdy_us_rx & rdy_us_tx;
+	stat(0) <= X"000" & "00" & rx_aligned_us & rx_aligned_ds & rx_realign_us & rx_realign_ds & rx_commadet_us & rx_commadet_ds & "00" & stat_ds_rx & stat_ds_tx & stat_us_rx & stat_us_tx & rdy_ds_rx & rdy_ds_tx & rdy_us_rx & rdy_us_tx;
 	stat(1) <= X"00" & '0' & '0' & X"0" & err_o_ds & err_i_ds & err_o_us & err_i_us;
 	stat(2) <= debug_us;
 	stat(3) <= debug_ds;
@@ -95,7 +96,10 @@ begin
 			txd => txd_us,
 			txk => txk_us,
 			rxd => rxd_us,
-			rxk => rxk_us
+			rxk => rxk_us,
+			rx_aligned => rx_aligned_us,
+			rx_realign => rx_realign_us,
+			rx_commadet => rx_commadet_us
 		);
 			
 	mgt_ds: entity work.sc_trig_mgt_wrapper
@@ -115,7 +119,10 @@ begin
 			txd => txd_ds,
 			txk => txk_ds,
 			rxd => rxd_ds,
-			rxk => rxk_ds
+			rxk => rxk_ds,
+			rx_aligned => rx_aligned_ds,
+			rx_realign => rx_realign_ds,
+			rx_commadet => rx_commadet_ds
 		);
 	
 -- Data pipeline
