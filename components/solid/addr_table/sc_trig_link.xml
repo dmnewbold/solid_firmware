@@ -25,6 +25,4 @@
 		<node id="id_us" mask="0xff00"/>
 		<node id="id_ds" mask="0xff0000"/>
 	</node>
-	<node id="debug_us" address="0x6"/>
-	<node id="debug_ds" address="0x7"/>
 </node>

@@ -220,6 +220,7 @@ begin
 			id => board_id,
 			clk40 => clk40_i,
 			rst40 => rst40_i,
+			sctr => sctr(15 downto 0),
 			d => link_d,
 			d_valid => link_d_valid,
 			q => link_q,

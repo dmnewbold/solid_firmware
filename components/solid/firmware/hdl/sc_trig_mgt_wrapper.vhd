@@ -13,8 +13,8 @@ entity sc_trig_mgt_wrapper is
 		en: in std_logic;
 		tx_rst: in std_logic;
 		rx_rst: in std_logic;
-		tx_rdy: out std_logic;
-		rx_rdy: out std_logic;
+		tx_good: out std_logic;
+		rx_good: out std_logic;
 		tx_stat: out std_logic_vector(1 downto 0);
 		rx_stat: out std_logic_vector(2 downto 0);
 		pllclk: in std_logic;
@@ -24,10 +24,7 @@ entity sc_trig_mgt_wrapper is
 		txd: in std_logic_vector(15 downto 0);
 		txk: in std_logic_vector(1 downto 0);
 		rxd: out std_logic_vector(15 downto 0);
-		rxk: out std_logic_vector(1 downto 0);
-		rx_aligned: out std_logic;
-		rx_realign: out std_logic;
-		rx_commadet: out std_logic
+		rxk: out std_logic_vector(1 downto 0)
 	);
 
 end sc_trig_mgt_wrapper;
@@ -142,7 +139,10 @@ architecture rtl of sc_trig_mgt_wrapper is
 	end component;
 
 	signal tx_rst_i, rx_rst_i, pll_lock, pll_rst: std_logic;
-
+	signal rx_aligned, rx_rdy: std_logic;
+	type state_t is (ST_START, ST_UP, ST_ERR);
+	signal state: state_t;
+	
 begin
 
 	tx_rst_i <= tx_rst or not en;
@@ -154,7 +154,7 @@ begin
 			SOFT_RESET_TX_IN => tx_rst_i,
 			SOFT_RESET_RX_IN => rx_rst_i,
 			DONT_RESET_ON_DATA_ERROR_IN => '0',
-			GT0_TX_FSM_RESET_DONE_OUT => tx_rdy,
+			GT0_TX_FSM_RESET_DONE_OUT => tx_good,
 			GT0_RX_FSM_RESET_DONE_OUT => rx_rdy,
 			GT0_DRP_BUSY_OUT => open,
 			GT0_DATA_VALID_IN => '1',
@@ -186,8 +186,8 @@ begin
 			gt0_gtprxp_in => '0',
 			gt0_rxbufstatus_out => rx_stat,
 			gt0_rxbyteisaligned_out => rx_aligned,
-			gt0_rxbyterealign_out => rx_realign,
-			gt0_rxcommadet_out => rx_commadet,
+			gt0_rxbyterealign_out => open,
+			gt0_rxcommadet_out => open,
 			gt0_dmonitorout_out => open, -- Don't need this
 			gt0_rxlpmhfhold_in => '0', -- As per user guide
 			gt0_rxlpmhfovrden_in => '0',
@@ -223,5 +223,34 @@ begin
 		);
 		
 	pll_lock <= not pll_rst; -- Needed to fool tx reset fsm into working, when PLL is shared with ethernet core
+	
+-- Link state
 
+	process(clk125)
+	begin
+		if rising_edge(clk125) then
+			if rx_rst = '1' then -- CDC, but long pulse on rx_rst
+				state <= ST_START;
+			else
+				case state is
+				
+				when ST_START =>
+					if rx_rdy = '1' and rx_aligned = '1' then
+						state <= ST_UP;
+					end if;
+					
+				when ST_UP =>
+					if rx_rdy = '0' or rx_aligned = '0' then
+						state <= ST_ERR
+					end if;
+					
+				when ST_ERR =>
+				
+				end case;
+			end if;
+		end if;
+	end process;
+	
+	rx_good <= '1' when state = ST_UP else '0';
+	
 end rtl;

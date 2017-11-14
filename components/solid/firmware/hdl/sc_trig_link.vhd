@@ -45,8 +45,10 @@ architecture rtl of sc_trig_link is
 	signal txd_us, rxd_us, txd_ds, rxd_ds: std_logic_vector(15 downto 0);
 	signal txk_us, rxk_us, txk_ds, rxk_ds: std_logic_vector(1 downto 0);
 	signal ack_us, ack_ds, err_i_us, err_o_us, err_i_ds, err_o_ds: std_logic;
-	signal debug_us, debug_ds: std_logic_vector(31 downto 0);
+	signal id_us, id_ds: std_logic_vector(7 downto 0);
 	signal rx_aligned_us, rx_aligned_ds, rx_realign_us, rx_realign_ds, rx_commadet_us, rx_commadet_ds: std_logic;
+	signal qv_us, qv_ds, ack_us, ack_ds: std_logic;
+	signal q_us, q_ds: std_logic_vector(15 downto 0);
 
 begin
 
@@ -72,11 +74,9 @@ begin
 	ctrl_rst_rx <= ctrl(0)(3);
 	ctrl_loopback_us <= ctrl(0)(6 downto 4);
 	ctrl_loopback_ds <= ctrl(0)(9 downto 7);
-	stat(0) <= X"000" & "00" & rx_aligned_us & rx_aligned_ds & rx_realign_us & rx_realign_ds & rx_commadet_us & rx_commadet_ds & "00" & stat_ds_rx & stat_ds_tx & stat_us_rx & stat_us_tx & rdy_ds_rx & rdy_ds_tx & rdy_us_rx & rdy_us_tx;
+	stat(0) <= X"0000" & "00" & stat_ds_rx & stat_ds_tx & stat_us_rx & stat_us_tx & rdy_ds_rx & rdy_ds_tx & rdy_us_rx & rdy_us_tx;
 	stat(1) <= X"00" & '0' & '0' & X"0" & err_o_ds & err_i_ds & err_o_us & err_i_us;
-	stat(2) <= debug_us;
-	stat(3) <= debug_ds;
-	
+
 -- MGTs
 
 	mgt_us: entity work.sc_trig_mgt_wrapper
@@ -85,8 +85,8 @@ begin
 			en => ctrl_en_us,
 			tx_rst => ctrl_rst_tx,
 			rx_rst => ctrl_rst_rx,
-			tx_rdy => rdy_us_tx,
-			rx_rdy => rdy_us_rx,
+			tx_good => rdy_us_tx,
+			rx_good => rdy_us_rx,
 			tx_stat => stat_us_tx,
 			rx_stat => stat_us_rx,
 			pllclk => pllclk,
@@ -96,10 +96,7 @@ begin
 			txd => txd_us,
 			txk => txk_us,
 			rxd => rxd_us,
-			rxk => rxk_us,
-			rx_aligned => rx_aligned_us,
-			rx_realign => rx_realign_us,
-			rx_commadet => rx_commadet_us
+			rxk => rxk_us
 		);
 			
 	mgt_ds: entity work.sc_trig_mgt_wrapper
@@ -108,8 +105,8 @@ begin
 			en => ctrl_en_ds,
 			tx_rst => ctrl_rst_tx,
 			rx_rst => ctrl_rst_rx,
-			tx_rdy => rdy_ds_tx,
-			rx_rdy => rdy_ds_rx,
+			tx_good => rdy_ds_tx,
+			rx_good => rdy_ds_rx,
 			tx_stat => stat_ds_tx,
 			rx_stat => stat_ds_rx,
 			pllclk => pllclk,
@@ -119,56 +116,65 @@ begin
 			txd => txd_ds,
 			txk => txk_ds,
 			rxd => rxd_ds,
-			rxk => rxk_ds,
-			rx_aligned => rx_aligned_ds,
-			rx_realign => rx_realign_ds,
-			rx_commadet => rx_commadet_ds
+			rxk => rxk_ds
 		);
-	
+		
 -- Data pipeline
 
 	pipe_from_us: entity work.sc_trig_link_pipe
 		port map(
+			en => ctrl_en_us,
 			clk125 => clk125,
 			rxd => rxd_us,
 			rxk => rxk_us,
+			link_good => rdy_us_rx,
 			txd => txd_ds,
 			txk => txk_ds,
 			clk40 => clk40,
 			rst40 => rst40,
 			d => d,
 			dv => d_valid,
-			q => open,
-			qv => open,
-			ack => '0',
+			q => q_us,
+			qv => qv_us,
+			ack => ack_us,
 			err_i => err_i_us,
 			err_o => err_o_us,
 			my_id => id,
-			debug => debug_us
+			remote_id => id_us,
+			data_good => data_good_us
 		);
 
 	pipe_from_ds: entity work.sc_trig_link_pipe
 		port map(
+			en => ctrl_en_ds,
 			clk125 => clk125,
 			rxd => rxd_ds,
 			rxk => rxk_ds,
+			link_good => rdy_ds_rx,
 			txd => txd_us,
 			txk => txk_us,
 			clk40 => clk40,
 			rst40 => rst40,
 			d => d,
 			dv => d_valid,
-			q => open,
-			qv => open,
-			ack => '0',
+			q => q_ds,
+			qv => qv_ds,
+			ack => ack_ds,
 			err_i => err_i_ds,
 			err_o => err_o_ds,
 			my_id => id,
-			debug => debug_ds
+			remote_id => id_ds,
+			data_good => data_good_ds
 		);
-			
-	q <= (others => '0');
-	q_valid <= '0';
-	link_ok <= '0';
+		
+-- Merger
+
+	q <= q_us when qv_us = '1' else q_ds;
+	q_valid <= qv_us or qv_ds;
+	ack_us <= ack and qv_us;
+	ack_ds <= ack and not qv_us;
+	
+	link_ok <= ((tx_good_us and rx_good_us and data_good_us) or not ctrl_en_us) and
+		((tx_good_ds and rx_good_ds and data_good_ds) or not ctrl_en_ds);
 
 end rtl;
