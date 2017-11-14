@@ -203,7 +203,7 @@ begin
 		);
 	
 	q <= lq;
-	q_valid <= lvalid;
+	q_valid <= lvalid when lq(7 downto 4) /= X"0" else '0';
 	
 -- ZS threshold select
 
