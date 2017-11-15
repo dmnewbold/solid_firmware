@@ -241,7 +241,7 @@ begin
 					
 				when ST_UP =>
 					if rx_rdy = '0' or rx_aligned = '0' then
-						state <= ST_ERR
+						state <= ST_ERR;
 					end if;
 					
 				when ST_ERR =>
