@@ -24,6 +24,7 @@ entity sc_trig_link is
 		id: in std_logic_vector(7 downto 0);
 		clk40: in std_logic;
 		rst40: in std_logic;
+		sctr: in std_logic_vector(15 downto 0);
 		d: in std_logic_vector(15 downto 0);
 		d_valid: in std_logic;
 		q: out std_logic_vector(15 downto 0);
@@ -44,9 +45,8 @@ architecture rtl of sc_trig_link is
 	signal stat_us_rx, stat_ds_rx: std_logic_vector(2 downto 0);
 	signal txd_us, rxd_us, txd_ds, rxd_ds: std_logic_vector(15 downto 0);
 	signal txk_us, rxk_us, txk_ds, rxk_ds: std_logic_vector(1 downto 0);
-	signal ack_us, ack_ds: std_logic;
 	signal id_us, id_ds: std_logic_vector(7 downto 0);
-	signal qv_us, qv_ds, ack_us, ack_ds: std_logic;
+	signal qv_us, qv_ds, ack_us, ack_ds, data_good_us, data_good_ds: std_logic;
 	signal q_us, q_ds: std_logic_vector(15 downto 0);
 	signal pstat_us_tx, pstat_ds_tx: std_logic_vector(1 downto 0);
 	signal pstat_us_rx, pstat_ds_rx: std_logic_vector(4 downto 0);
@@ -133,6 +133,7 @@ begin
 			txk => txk_ds,
 			clk40 => clk40,
 			rst40 => rst40,
+			sctr => sctr,
 			d => d,
 			dv => d_valid,
 			q => q_us,
@@ -156,6 +157,7 @@ begin
 			txk => txk_us,
 			clk40 => clk40,
 			rst40 => rst40,
+			sctr => sctr,
 			d => d,
 			dv => d_valid,
 			q => q_ds,
