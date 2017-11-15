@@ -159,7 +159,7 @@ begin
 			wren => wen_tx
 		);
 
-	stat_rx <= full_tx & empty_tx;
+	stat_rx(1 downto 0) <= full_tx & empty_tx;
 	ren_tx <= not empty_tx and not v;
 	wen_tx <= dv or not or_reduce(sctr(7 downto 0));
 	
