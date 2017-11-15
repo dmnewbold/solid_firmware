@@ -25,7 +25,7 @@ entity sc_trig_mgt_wrapper is
 		txk: in std_logic;
 		rxd: out std_logic_vector(15 downto 0);
 		rxk: out std_logic
-	)
+	);
 
 end sc_trig_mgt_wrapper;
 

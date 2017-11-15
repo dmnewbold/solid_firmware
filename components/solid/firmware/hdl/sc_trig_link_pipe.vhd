@@ -104,7 +104,7 @@ begin
 						cctr <= (others => '0');
 					end if;
 				end if;
-			else
+			elsif up = '1' then
 				if and_reduce(std_logic_vector(cctr)) = '1' then -- Timeout between block markers
 					up <= '0';
 					fail <= '1';

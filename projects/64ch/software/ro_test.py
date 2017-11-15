@@ -94,7 +94,7 @@ while True:
 		l = m & 0xffff
 		if len(r) >= l:
 			w0  = int(r.pop(0))
-                        print hex(w0)
+            print hex(w0)
 			rtype = (w0 >> 28)
 			print "Readout type %d Len %04x" % (rtype, l)
 			if rtype == 0: # A data block

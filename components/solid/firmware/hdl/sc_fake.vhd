@@ -2,6 +2,8 @@
 --
 -- Fake data generator for trigger testing
 --
+-- mode = 0 is random data; mode = 1 is fake pulses
+--
 -- Dave Newbold, June 2017
 
 library IEEE;

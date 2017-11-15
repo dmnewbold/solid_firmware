@@ -2,6 +2,8 @@
 --
 -- The buffer chain for one input channel
 --
+-- Seriously, this stuff is mindfuck. If you are reading this, you are doomed.
+--
 -- Dave Newbold, May 2016
 
 library IEEE;
