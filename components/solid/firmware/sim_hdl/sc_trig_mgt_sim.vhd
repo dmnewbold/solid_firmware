@@ -22,9 +22,9 @@ entity sc_trig_mgt_wrapper is
 		loopback: in std_logic_vector(2 downto 0);
 		clk125: in std_logic;
 		txd: in std_logic_vector(15 downto 0);
-		txk: in std_logic;
+		txk: in std_logic_vector(1 downto 0);
 		rxd: out std_logic_vector(15 downto 0);
-		rxk: out std_logic
+		rxk: out std_logic_vector(1 downto 0)
 	);
 
 end sc_trig_mgt_wrapper;
