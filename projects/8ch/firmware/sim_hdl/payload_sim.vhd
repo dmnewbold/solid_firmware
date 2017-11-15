@@ -107,6 +107,8 @@ begin
 			d_n => (others => '1'),
 			clk125 => clk125,
 			rst125 => rst125,
+			pllclk => '0',
+			pllrefclk => '0',
 			board_id => ctrl_board_id
 		);
 		
