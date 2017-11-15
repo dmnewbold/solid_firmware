@@ -13,8 +13,8 @@ entity sc_trig_mgt_wrapper is
 		en: in std_logic;
 		tx_rst: in std_logic;
 		rx_rst: in std_logic;
-		tx_rdy: out std_logic;
-		rx_rdy: out std_logic;
+		tx_good: out std_logic;
+		rx_good: out std_logic;
 		tx_stat: out std_logic_vector(1 downto 0);
 		rx_stat: out std_logic_vector(2 downto 0);
 		pllclk: in std_logic;
@@ -33,8 +33,8 @@ architecture rtl of sc_trig_mgt_wrapper is
 
 begin
 
-	tx_rdy <= en;
-	rx_rdy <= en;
+	tx_good <= en;
+	rx_good <= en;
 	tx_stat <= "00";
 	rx_stat <= "000";
 	rxd <= txd when rising_edge(clk125);

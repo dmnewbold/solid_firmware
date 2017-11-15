@@ -56,7 +56,7 @@ begin
 	rx_valid <= '1' when rxk = "00" and link_good = '1' else '0';
 	di_rx <= X"0000" & rxd;
 	
-	fifo: FIFO18E1
+	rx_fifo: FIFO18E1
 		generic map(
 			DATA_WIDTH => 18,
 			FIRST_WORD_FALL_THROUGH => true
@@ -105,7 +105,7 @@ begin
 					end if;
 				end if;
 			else
-				if and_reduce(cctr) = '1' then -- Timeout between block markers
+				if and_reduce(std_logic_vector(cctr)) = '1' then -- Timeout between block markers
 					up <= '0';
 					fail <= '1';
 					cause <= '1';
@@ -137,9 +137,9 @@ begin
 
 -- Output FIFO
 
-	di_tx <= X"0000" & d when dcv = '0' else X"0000" & sctr(15 downto 8) & X"1f";
+	di_tx <= X"0000" & d when or_reduce(sctr(7 downto 0)) = '1' else X"0000" & sctr(15 downto 8) & X"1f";
 
-	fifo: FIFO18E1
+	tx_fifo: FIFO18E1
 		generic map(
 			DATA_WIDTH => 18,
 			FIRST_WORD_FALL_THROUGH => true
