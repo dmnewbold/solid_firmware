@@ -78,7 +78,7 @@ begin
 
 	q <= do_rx(15 downto 0);
 	qv <= up and not empty_rx;
-	stat_rx <= full_rx & empty_rx;
+	stat_rx(1 downto 0) <= full_rx & empty_rx;
 	ren_rx <= ack or not up;
 	
 -- Data checker: rx
@@ -159,7 +159,7 @@ begin
 			wren => wen_tx
 		);
 
-	stat_rx(1 downto 0) <= full_tx & empty_tx;
+	stat_tx <= full_tx & empty_tx;
 	ren_tx <= not empty_tx and not v;
 	wen_tx <= dv or not or_reduce(sctr(7 downto 0));
 	
