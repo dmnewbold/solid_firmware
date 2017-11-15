@@ -36,7 +36,7 @@ end sc_trig_link;
 architecture rtl of sc_trig_link is
 
 	signal ctrl: ipb_reg_v(0 downto 0);
-	signal stat: ipb_reg_v(3 downto 0);
+	signal stat: ipb_reg_v(1 downto 0);
 	signal ctrl_en_us, ctrl_en_ds, ctrl_rst_tx, ctrl_rst_rx: std_logic;
 	signal ctrl_loopback_us, ctrl_loopback_ds: std_logic_vector(2 downto 0);
 	signal rdy_us_tx, rdy_us_rx, rdy_ds_tx, rdy_ds_rx: std_logic;
@@ -44,11 +44,12 @@ architecture rtl of sc_trig_link is
 	signal stat_us_rx, stat_ds_rx: std_logic_vector(2 downto 0);
 	signal txd_us, rxd_us, txd_ds, rxd_ds: std_logic_vector(15 downto 0);
 	signal txk_us, rxk_us, txk_ds, rxk_ds: std_logic_vector(1 downto 0);
-	signal ack_us, ack_ds, err_i_us, err_o_us, err_i_ds, err_o_ds: std_logic;
+	signal ack_us, ack_ds: std_logic;
 	signal id_us, id_ds: std_logic_vector(7 downto 0);
-	signal rx_aligned_us, rx_aligned_ds, rx_realign_us, rx_realign_ds, rx_commadet_us, rx_commadet_ds: std_logic;
 	signal qv_us, qv_ds, ack_us, ack_ds: std_logic;
 	signal q_us, q_ds: std_logic_vector(15 downto 0);
+	signal pstat_us_tx, pstat_ds_tx: std_logic_vector(1 downto 0);
+	signal pstat_us_rx, pstat_ds_rx: std_logic_vector(4 downto 0);
 
 begin
 
@@ -57,7 +58,7 @@ begin
 	csr: entity work.ipbus_ctrlreg_v
 		generic map(
 			N_CTRL => 1,
-			N_STAT => 4
+			N_STAT => 2
 		)
 		port map(
 			clk => clk,
@@ -74,8 +75,8 @@ begin
 	ctrl_rst_rx <= ctrl(0)(3);
 	ctrl_loopback_us <= ctrl(0)(6 downto 4);
 	ctrl_loopback_ds <= ctrl(0)(9 downto 7);
-	stat(0) <= X"0000" & "00" & stat_ds_rx & stat_ds_tx & stat_us_rx & stat_us_tx & rdy_ds_rx & rdy_ds_tx & rdy_us_rx & rdy_us_tx;
-	stat(1) <= X"00" & '0' & '0' & X"0" & err_o_ds & err_i_ds & err_o_us & err_i_us;
+	stat(0) <= X"00" & id_us & '0' & pstat_us_rx & pstat_us_tx & '0' & stat_us_rx & stat_us_tx & rdy_us_rx & rdy_us_tx;
+	stat(1) <= X"00" & id_ds & '0' & pstat_ds_rx & pstat_ds_tx & '0' & stat_ds_rx & stat_ds_tx & rdy_ds_rx & rdy_ds_tx;
 
 -- MGTs
 
@@ -137,8 +138,8 @@ begin
 			q => q_us,
 			qv => qv_us,
 			ack => ack_us,
-			err_i => err_i_us,
-			err_o => err_o_us,
+			stat_rx => pstat_us_rx,
+			stat_tx => pstat_us_tx,
 			my_id => id,
 			remote_id => id_us,
 			data_good => data_good_us
@@ -160,8 +161,8 @@ begin
 			q => q_ds,
 			qv => qv_ds,
 			ack => ack_ds,
-			err_i => err_i_ds,
-			err_o => err_o_ds,
+			stat_rx => pstat_ds_rx,
+			stat_tx => pstat_ds_tx,
 			my_id => id,
 			remote_id => id_ds,
 			data_good => data_good_ds

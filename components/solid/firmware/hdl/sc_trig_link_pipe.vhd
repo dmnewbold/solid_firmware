@@ -9,6 +9,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 use ieee.std_logic_misc.all;
 
+library unisim;
+use unisim.VComponents.all;
+
 entity sc_trig_link_pipe is
 	port(
 		en: in std_logic;
@@ -26,7 +29,7 @@ entity sc_trig_link_pipe is
 		q: out std_logic_vector(15 downto 0);
 		qv: out std_logic;
 		ack: in std_logic;
-		stat_rx: out std_logic_vector(1 downto 0);
+		stat_rx: out std_logic_vector(4 downto 0);
 		stat_tx: out std_logic_vector(1 downto 0);
 		my_id: in std_logic_vector(7 downto 0);
 		remote_id: out std_logic_vector(7 downto 0);
@@ -41,9 +44,10 @@ architecture rtl of sc_trig_link_pipe is
 	signal txk_idle: std_logic_vector(1 downto 0);
 	signal rx_valid, tx_f_valid: std_logic;
 	signal di_rx, do_rx, di_tx, do_tx: std_logic_vector(31 downto 0);
-	signal ren_rx, ren_tx, wen_tx, empty_rx, full_rx, empty_tx, full_tx: std_logic;
+	signal v, ren_rx, ren_tx, wen_tx, empty_rx, full_rx, empty_tx, full_tx: std_logic;
 	signal f: std_logic_vector(15 downto 0);
-	signal up, fail: std_logic;
+	signal up, fail, cause: std_logic;
+	signal cctr: unsigned(8 downto 0);
 
 begin
 
@@ -82,25 +86,40 @@ begin
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
-			if rst40 = '1' or en = '0' then -- CDC, en is on clk_ipb, but ~static level
+			if rst40 = '1' or en = '0' or link_good = '0' then -- CDC, en is on clk_ipb, but ~static level
 				up <= '0';
 				fail <= '0';
+				cause <= '0';
 			elsif do_rx(3 downto 0) = X"f" then
-				if up = '0' and fail = '0' then 
-					if do_rx(15 downto 8) = sctr(15 downto 8) then
+				if up = '0' then 
+					if fail = '0' and do_rx(15 downto 8) = sctr(15 downto 8) then
 						up <= '1';
+						cctr <= (others => '0');
 					end if;
 				else
 					if do_rx(15 downto 8) /= sctr(15 downto 8) then
 						up <= '0';
 						fail <= '1';
+					else
+						cctr <= (others => '0');
 					end if;
+				end if;
+			else
+				if and_reduce(cctr) = '1' then -- Timeout between block markers
+					up <= '0';
+					fail <= '1';
+					cause <= '1';
+				else
+					cctr <= cctr + 1;
 				end if;
 			end if;
 		end if;
 	end process;
-	
+		
 	data_good <= up;
+	stat_rx(2) <= up;
+	stat_rx(3) <= fail;
+	stat_rx(4) <= cause;
 
 -- Trigger forwarding and hop count
 
@@ -108,7 +127,7 @@ begin
 	begin
 		if rising_edge(clk125) then
 			f <= rxd(15 downto 8) & std_logic_vector(unsigned(rxd(7 downto 4)) - 1) & rxd(3 downto 0);
-			if rx_valid = '1' and rxd(7 downto 4) /= "0001" then
+			if rx_valid = '1' and rxd(7 downto 4) /= "0001" and up = '1' then
 				v <= '1';
 			else
 				v <= '0';
