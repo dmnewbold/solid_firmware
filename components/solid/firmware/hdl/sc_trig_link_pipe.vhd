@@ -44,7 +44,7 @@ architecture rtl of sc_trig_link_pipe is
 	signal di_rx, do_rx, di_tx, do_tx: std_logic_vector(31 downto 0);
 	signal v, ren_rx, ren_tx, wen_tx, empty_rx, full_rx, empty_tx, full_tx: std_logic;
 	signal f: std_logic_vector(15 downto 0);
-	signal up, fail, cause: std_logic;
+	signal up, fail, cause, tb: std_logic;
 	signal cctr: unsigned(8 downto 0);
 
 begin
@@ -77,9 +77,11 @@ begin
 	q <= do_rx(15 downto 0);
 	qv <= up and not empty_rx;
 	stat_rx(1 downto 0) <= full_rx & empty_rx;
-	ren_rx <= (ack or not up) and en;
+	ren_rx <= (ack or tb or not up) and en;
 	
 -- Data checker: rx
+
+	tb <= '1' when do_rx(3 downto 0) = X"f" and empty_rx = '0' else '0';
 
 	process(clk40)
 	begin
@@ -88,7 +90,7 @@ begin
 				up <= '0';
 				fail <= '0';
 				cause <= '0';
-			elsif do_rx(3 downto 0) = X"f" then
+			elsif tb = '1' then
 				if up = '0' then 
 					if fail = '0' and do_rx(15 downto 8) = sctr(15 downto 8) then
 						up <= '1';
