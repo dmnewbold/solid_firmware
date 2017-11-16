@@ -40,9 +40,7 @@ end sc_trig_link_pipe;
 
 architecture rtl of sc_trig_link_pipe is
 	
-	signal txd_idle: std_logic_vector(15 downto 0);
-	signal txk_idle: std_logic_vector(1 downto 0);
-	signal rx_valid, tx_f_valid: std_logic;
+	signal rx_valid: std_logic;
 	signal di_rx, do_rx, di_tx, do_tx: std_logic_vector(31 downto 0);
 	signal v, ren_rx, ren_tx, wen_tx, empty_rx, full_rx, empty_tx, full_tx: std_logic;
 	signal f: std_logic_vector(15 downto 0);
@@ -79,7 +77,7 @@ begin
 	q <= do_rx(15 downto 0);
 	qv <= up and not empty_rx;
 	stat_rx(1 downto 0) <= full_rx & empty_rx;
-	ren_rx <= ack or not up;
+	ren_rx <= (ack or not up) and en;
 	
 -- Data checker: rx
 
