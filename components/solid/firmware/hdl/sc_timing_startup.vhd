@@ -55,7 +55,7 @@ begin
 --					end if;
 					if unsigned(sctr(7 + BLK_RADIX downto 0)) = 9 * 2 ** BLK_RADIX - 1 then
 						nzs_en <= '1';
-					elsif unsigned(sctr(7 + BLK_RADIX downto 0)) = (9 + NZS_BLKS) * 2 ** BLK_RADIX + ZS_DEL then
+					elsif unsigned(sctr(7 + BLK_RADIX downto 0)) = (9 + NZS_BLKS) * 2 ** BLK_RADIX + ZS_DEL - 2 then
 						zs_en <= '1';
 					elsif unsigned(sctr(7 + BLK_RADIX downto 0)) = (10 + NZS_BLKS + ZS_BLKS) * 2 ** BLK_RADIX then
 						trig_en <= '1';
