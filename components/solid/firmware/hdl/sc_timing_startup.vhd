@@ -58,7 +58,7 @@ begin
 					elsif unsigned(sctr(7 + BLK_RADIX downto 0)) = (9 + NZS_BLKS) * 2 ** BLK_RADIX + ZS_DEL then
 						zs_en <= '1';
 					elsif unsigned(sctr(7 + BLK_RADIX downto 0)) = (10 + NZS_BLKS + ZS_BLKS) * 2 ** BLK_RADIX then
-						trig_en <= '1'
+						trig_en <= '1';
 					end if;
 				end if;
 			end if;
