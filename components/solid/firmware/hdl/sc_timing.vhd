@@ -107,9 +107,8 @@ begin
 	ctrl_pipeline_en <= ctrl(0)(5);
 	ctrl_send_sync <= ctrl(0)(6);
 	ctrl_chan_slip <= ctrl(0)(12);
-	ctrl_chan_rst_buf <= ctrl(0)(13);
-	ctrl_chan_cap <= ctrl(0)(14);
-	ctrl_chan_inc <= ctrl(0)(15);
+	ctrl_chan_cap <= ctrl(0)(13);
+	ctrl_chan_inc <= ctrl(0)(14);
 	ctrl_zs_blks <= ctrl(0)(23 downto 16);
 	stat(0) <= X"0000000" & "00"  & sync_err & wait_sync;
 	stat(1) <= std_logic_vector(sctr_s(31 downto 0));
@@ -209,7 +208,7 @@ begin
 
 	chan_sync_ctrl(0) <= ctrl_chan_slip and stb(0); -- bitslip for serdes
 	chan_sync_ctrl(1) <= ctrl_chan_cap and stb(0); -- cap start
-	chan_sync_ctrl(2) <= ctrl_chan_inc and stb(0); -- cap start
+	chan_sync_ctrl(2) <= ctrl_chan_inc and stb(0); -- inc for idelay
 	chan_sync_ctrl(3) <= '0';
 	
 end rtl;
