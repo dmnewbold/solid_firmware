@@ -118,7 +118,7 @@ begin
 		end loop;
 	end process;
 
-	go <= '1' when ctrl_force = '1' or (or_reduce(mask and rand(27 downto 12)) = '0' and or_reduce(rand(11 downto 0)) = '0') else '0';
+	go <= '1' when ctrl_force = '1' or (ctrl_en = '1' and (or_reduce(mask and rand(27 downto 12)) = '0' and or_reduce(rand(11 downto 0)) = '0')) else '0';
 	samp <= '1' when ctrl_samp_lock = '0' or sctr = params_samp else '0';
 	pend <= (pend or (go and not act)) and not (rst40 or act) when rising_edge(clk40);
 	act <= (act or (pend and samp)) and not (rst40 or done) when rising_edge(clk40);
