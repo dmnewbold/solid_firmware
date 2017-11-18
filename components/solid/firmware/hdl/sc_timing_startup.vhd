@@ -44,21 +44,14 @@ begin
 					up <= '1';
 				end if;
 				if up = '1' then
---					if and_reduce(std_logic_vector(sctr(BLK_RADIX - 1 downto 0))) = '1' then
---						if unsigned(sctr(3 + BLK_RADIX downto BLK_RADIX)) = 8 then
---							nzs_en <= '1';
---						elsif unsigned(sctr(3 + BLK_RADIX downto BLK_RADIX)) = 8 + NZS_BLKS then
---							zs_en <= '1';
---						elsif unsigned(sctr(7 + BLK_RADIX downto BLK_RADIX)) = 7 + NZS_BLKS + ZS_BLKS then
---							trig_en <= '1';
---						end if;
---					end if;
-					if unsigned(sctr(7 + BLK_RADIX downto 0)) = 9 * 2 ** BLK_RADIX - 1 then
-						nzs_en <= '1';
-					elsif unsigned(sctr(7 + BLK_RADIX downto 0)) = (9 + NZS_BLKS) * 2 ** BLK_RADIX + ZS_DEL - 2 then
-						zs_en <= '1';
-					elsif unsigned(sctr(7 + BLK_RADIX downto 0)) = (10 + NZS_BLKS + ZS_BLKS) * 2 ** BLK_RADIX then
-						trig_en <= '1';
+					if and_reduce(std_logic_vector(sctr(BLK_RADIX - 1 downto 0))) = '1' then
+						if unsigned(sctr(3 + BLK_RADIX downto BLK_RADIX)) = 0 then
+							nzs_en <= '1';
+						elsif unsigned(sctr(3 + BLK_RADIX downto BLK_RADIX)) = NZS_BLKS then
+							zs_en <= '1';
+						elsif unsigned(sctr(7 + BLK_RADIX downto BLK_RADIX)) = NZS_BLKS + ZS_BLKS - 1 then
+							trig_en <= '1';
+						end if;
 					end if;
 				end if;
 			end if;

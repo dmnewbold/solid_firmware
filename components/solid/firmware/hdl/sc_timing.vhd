@@ -51,9 +51,12 @@ architecture rtl of sc_timing is
 	signal rst_ctr: unsigned(3 downto 0);
 	signal ctrl_rst_ctr, ctrl_cap_ctr, ctrl_en_sync, ctrl_force_sync, ctrl_pipeline_en, ctrl_send_sync: std_logic;
 	signal ctrl_chan_slip, ctrl_chan_rst_buf, ctrl_chan_cap, ctrl_chan_inc: std_logic;
-	signal frst, sync, sync_f, wait_sync, sync_err, io_err: std_logic;
+	signal frst, sync, wait_sync, sync_err, io_err: std_logic;
 	signal sync_in_r, trig_in_r, trig_in_r_d: std_logic;
 	signal sync_ctr, trig_ctr: unsigned(31 downto 0);
+	
+	attribute IOB: string;
+	attribute IOB of sync_in_r, trig_in_r: signal is "TRUE";
 
 begin
 
@@ -107,7 +110,7 @@ begin
 	ctrl_chan_rst_buf <= ctrl(0)(13);
 	ctrl_chan_cap <= ctrl(0)(14);
 	ctrl_chan_inc <= ctrl(0)(15);
-	stat(0) <= X"0000000" & '0' & io_err & sync_err & wait_sync;
+	stat(0) <= X"0000000" & "00"  & sync_err & wait_sync;
 	stat(1) <= std_logic_vector(sctr_s(31 downto 0));
 	stat(2) <= X"0000" & std_logic_vector(sctr_s(47 downto 32));
 	stat(3) <= std_logic_vector(sync_ctr);
@@ -139,7 +142,6 @@ begin
 -- Sync signals
 	
 	sync <= (sync_in_r and ctrl_en_sync) or (ctrl_force_sync and stb(0));
-	sync_f <= sync and wait_sync;
 
 	process(clk40_i)
 	begin
@@ -158,7 +160,6 @@ begin
 		end if;
 	end process;
 	
-	io_err <= '1';
 	led <= not (wait_sync or sync_err);
 	
 -- Sample counter
@@ -166,7 +167,7 @@ begin
 	process(clk40_i)
 	begin
 		if rising_edge(clk40_i) then
-			if rst40_i = '1' or sync_f = '1' then
+			if rst40_i = '1' or wait_sync = '1' then
 				sctr_i <= X"000000000001";
 			else
 				sctr_i <= sctr_i + 1;
@@ -195,7 +196,7 @@ begin
 			clk40 => clk40_i,
 			rst40 => rst40_i,
 			en => ctrl_pipeline_en,
-			sync => sync_f,
+			sync => sync,
 			sctr => sctr_i,
 			nzs_en => nzs_en,
 			zs_en => zs_en,
