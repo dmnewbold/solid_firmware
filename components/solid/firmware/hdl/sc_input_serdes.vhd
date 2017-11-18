@@ -19,6 +19,7 @@ entity sc_input_serdes is
 		d_n: in std_logic;
 		slip: in std_logic;
 		inc: in std_logic;
+		cntout: out std_logic_vector(4 downto 0);
 		q: out std_logic_vector(13 downto 0)
 	);
 
@@ -55,7 +56,8 @@ begin
 			idatain => d_b,
 			datain => '0',
 			ldpipeen => '0',
-			dataout => d_d
+			dataout => d_d,
+			cntvalueout => cntout
 		);
 
 	clk_sb <= not clk_s;	

@@ -48,11 +48,10 @@ architecture rtl of sc_timing is
 	signal stat: ipb_reg_v(4 downto 0);
 	signal stb: std_logic_vector(0 downto 0);
 	signal sctr_i, sctr_s: unsigned(47 downto 0);
-	signal rst_ctr: unsigned(3 downto 0);
 	signal ctrl_rst_ctr, ctrl_cap_ctr, ctrl_en_sync, ctrl_force_sync, ctrl_pipeline_en, ctrl_send_sync: std_logic;
 	signal ctrl_chan_slip, ctrl_chan_rst_buf, ctrl_chan_cap, ctrl_chan_inc: std_logic;
 	signal ctrl_zs_blks: std_logic_vector(7 downto 0);
-	signal frst, sync, wait_sync, sync_err, io_err: std_logic;
+	signal sync, wait_sync, sync_err, io_err: std_logic;
 	signal sync_in_r, trig_in_r, trig_in_r_d: std_logic;
 	signal sync_ctr, trig_ctr: unsigned(31 downto 0);
 	
@@ -207,23 +206,10 @@ begin
 		);
 	
 -- Channel sync control
-	
-	process(clk40_i)
-	begin
-		if rising_edge(clk40_i) then
-			if rst40_i = '1' then
-				rst_ctr <= "0000";
-			elsif frst = '1' or (ctrl_chan_rst_buf = '1' and stb(0) = '1') then
-				rst_ctr <= rst_ctr + 1;
-			end if;
-		end if;
-	end process;
-	
-	frst <= '1' when rst_ctr /= "1111" else '0';
 
 	chan_sync_ctrl(0) <= ctrl_chan_slip and stb(0); -- bitslip for serdes
-	chan_sync_ctrl(1) <= frst; -- reset channel
-	chan_sync_ctrl(2) <= ctrl_chan_cap and stb(0); -- cap start
-	chan_sync_ctrl(3) <= ctrl_chan_inc and stb(0); -- cap start
+	chan_sync_ctrl(1) <= ctrl_chan_cap and stb(0); -- cap start
+	chan_sync_ctrl(2) <= ctrl_chan_inc and stb(0); -- cap start
+	chan_sync_ctrl(3) <= '0';
 	
 end rtl;
