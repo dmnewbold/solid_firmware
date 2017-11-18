@@ -75,7 +75,7 @@ begin
 	tg1: entity work.sc_trig_gen_or
 		generic map(
 			TBIT => 1,
-			DELAY => 3
+			DELAY => 4
 		)
 		port map(
 			clk => clk40,
@@ -92,7 +92,7 @@ begin
 	tg2: entity work.sc_trig_gen_or
 		generic map(
 			TBIT => 2,
-			DELAY => 2
+			DELAY => 3
 		)
 		port map(
 			clk => clk40,

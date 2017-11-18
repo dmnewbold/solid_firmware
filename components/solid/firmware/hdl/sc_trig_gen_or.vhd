@@ -33,7 +33,7 @@ end sc_trig_gen_or;
 architecture rtl of sc_trig_gen_or is
 
 	signal t, m, tc, v: std_logic;
-	signal mark_del: std_logic_vector(DELAY - 1 downto 0);
+	signal mark_del: std_logic_vector(DELAY downto 0);
 	signal c: std_logic_vector(N_CHAN - 1 downto 0);
 
 begin
@@ -41,8 +41,8 @@ begin
 -- Define the trigger condition and block boundary
 
 	t <= or_reduce(chan_trig(TBIT));
-	mark_del <= mark_del(DELAY - 2 downto 0) & mark when rising_edge(clk);
-	m <= mark_del(DELAY - 1);
+	mark_del <= mark_del(DELAY - 1 downto 0) & mark when rising_edge(clk);
+	m <= mark_del(DELAY);
 	
 -- Catch a trigger feature with the block
 

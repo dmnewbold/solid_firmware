@@ -3,6 +3,7 @@
 -- Fake data generator for trigger testing
 --
 -- mode = 0 is random data; mode = 1 is fake pulses
+-- NB: for sample lock mode, pulse is issued 2 cycles after setting
 --
 -- Dave Newbold, June 2017
 
