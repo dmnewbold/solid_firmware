@@ -14,7 +14,7 @@
 			<node id="dr_warn" mask="0x8"/>
 			<node id="err" mask="0x10"/>
 			<node id="slip" mask="0xff00"/>
-			<node id="tap" mask="0xff0000"/>
+			<node id="tap" mask="0x1f0000"/>
 		</node>
 	</node>
 	<node id="buf" address="0x2" description="channel buffers" fwinfo="endpoint;width=1">

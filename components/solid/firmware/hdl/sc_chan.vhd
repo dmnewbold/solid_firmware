@@ -118,7 +118,7 @@ begin
 	cap <= sync_ctrl(1) and ctrl_en_sync; -- CDC
 	inc <= sync_ctrl(2) and ctrl_en_sync; -- CDC
 	
-	stat(0) <= X"00" & cntout & std_logic_vector(act_slip) & "000" & err_i & dr_warn & dr_full & buf_full & cap_full; -- CDC
+	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & "000" & err_i & dr_warn & dr_full & buf_full & cap_full; -- CDC
 
 -- Keep track of slips and taps for debug
 
