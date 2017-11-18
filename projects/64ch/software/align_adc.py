@@ -50,7 +50,7 @@ board.dispatch()
 
 time.sleep(1)
 
-chans = range(0x40)
+chans = range(0x1)
 adcs = range(0x10)
 patt = 0x0ff
 cap_len = 0x80
@@ -83,6 +83,13 @@ for i_chan in chans:
 	for i_slip in range(14):
 		ok = False
 		for i_tap in range(32):
+                        atap = board.getNode("daq.chan.csr.stat.tap").read()
+                        aslip = board.getNode("daq.chan.csr.stat.slip").read()
+                        board.dispatch()
+                        print "Set slip, tap ; actual slip, tap", hex(i_slip), hex(i_tap), hex(aslip), hex(atap)
+                        if i_slip != aslip or i_tap != atap:
+                                print "Colossal bullshit has occured"
+                                sys.exit()
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
 			board.dispatch()
