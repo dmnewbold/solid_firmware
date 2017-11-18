@@ -13,10 +13,9 @@ package top_decl is
 	constant IP_ADDR: std_logic_vector(31 downto 0) := X"c0a8eb00"; -- last byte from local addr
 	constant FW_REV: std_logic_vector(15 downto 0) := X"0011";
 
-	constant N_CHAN: integer := 1;
+	constant N_CHAN: integer := 64;
 	constant BLK_RADIX: integer := 8; -- 256 sample blocks
-	constant SUPERBLK_RADIX: integer := 16; -- Superblock is 64k blocks
-	constant BUF_RADIX: integer := 11; -- One BRAM for NZS / ZS buffer
+	constant BUF_RADIX: integer := 12; -- One BRAM for NZS / ZS buffer
 	constant NZS_BLKS: integer := 2; -- Reserve two blocks of space for NZS buffer
 	constant N_TRG: integer := 4; -- Number of trigger types
 	constant N_ZS_THRESH: integer := 4; -- Number of ZS thresholds
