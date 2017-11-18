@@ -25,16 +25,11 @@ end sc_zs_sel;
 
 architecture rtl of sc_zs_sel is
 
---	signal mark_del: std_logic_vector(ZS_DEL - 1 downto 0);
---	signal m: std_logic;
 	signal sel_i: std_logic_vector(1 downto 0);
 	signal ti: integer range 15 downto 0 := 0;
 	signal zs: std_logic_vector(1 downto 0);
 
 begin
-
---	mark_del <= mark_del(ZS_DEL - 2 downto 0) & mark when rising_edge(clk40);
---	m <= mark_del(ZS_DEL - 1);
 
 	ti <= to_integer(unsigned(trig(3 downto 0)));
 	zs <= zscfg(ti * 2 + 1 downto ti * 2);
@@ -42,7 +37,6 @@ begin
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
---			if rst40 = '1' or m = '1' then
 			if rst40 = '1' or mark = '1' then
 				sel_i <= "00";
 				sel <= sel_i;

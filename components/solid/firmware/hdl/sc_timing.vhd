@@ -110,6 +110,7 @@ begin
 	ctrl_chan_rst_buf <= ctrl(0)(13);
 	ctrl_chan_cap <= ctrl(0)(14);
 	ctrl_chan_inc <= ctrl(0)(15);
+	ctrl_zs_blks <= ctrl(0)(23 downto 16);
 	stat(0) <= X"0000000" & "00"  & sync_err & wait_sync;
 	stat(1) <= std_logic_vector(sctr_s(31 downto 0));
 	stat(2) <= X"0000" & std_logic_vector(sctr_s(47 downto 32));
@@ -196,6 +197,7 @@ begin
 			clk40 => clk40_i,
 			rst40 => rst40_i,
 			en => ctrl_pipeline_en,
+			zs_blks => ctrl_zs_blks,
 			sync => sync,
 			sctr => sctr_i,
 			nzs_en => nzs_en,
