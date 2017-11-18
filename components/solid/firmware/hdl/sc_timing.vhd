@@ -51,6 +51,7 @@ architecture rtl of sc_timing is
 	signal rst_ctr: unsigned(3 downto 0);
 	signal ctrl_rst_ctr, ctrl_cap_ctr, ctrl_en_sync, ctrl_force_sync, ctrl_pipeline_en, ctrl_send_sync: std_logic;
 	signal ctrl_chan_slip, ctrl_chan_rst_buf, ctrl_chan_cap, ctrl_chan_inc: std_logic;
+	signal ctrl_zs_blks: std_logic_vector(7 downto 0);
 	signal frst, sync, wait_sync, sync_err, io_err: std_logic;
 	signal sync_in_r, trig_in_r, trig_in_r_d: std_logic;
 	signal sync_ctr, trig_ctr: unsigned(31 downto 0);
