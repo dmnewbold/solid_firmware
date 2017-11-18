@@ -8,7 +8,8 @@ from si5344 import si5344
 import time
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-hw = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
+manager = uhal.ConnectionManager("file://connections.xml")
+hw = manager.getDevice(sys.argv[1])
 
 while True:
     hw.getNode("daq.timing.csr.ctrl.cap_ctr").write(1)

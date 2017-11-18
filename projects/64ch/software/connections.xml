@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<connections>
+  <connection id="MAROC_64CH" uri="ipbusudp-2.0://192.168.235.50:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="SIM" uri="ipbusudp-2.0://192.168.235.16:50001"
+   address_table="file://addrtab/top_sim.xml" />
+  <connection id="BEK_8CH" uri="ipbusudp-2.0://192.168.235.1:50001"
+   address_table="file://addrtab/top_sim.xml" />
+</connections>
