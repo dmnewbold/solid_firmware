@@ -24,6 +24,8 @@ entity payload is
 		clk125: in std_logic;
 		rst125: in std_logic;
 		clk200: in std_logic;
+		pllclk: in std_logic;
+		pllrefclk: in std_logic;
 		nuke: out std_logic;
 		soft_rst: out std_logic;
 		stealth_mode: out std_logic;
@@ -157,10 +159,12 @@ begin
 			led_out => daq_led,
 			chan => ctrl_chan,
 			chan_err => chan_err,
-			d_p => adc_d_p,
-			d_n => adc_d_n,
+			d_p => adc_d_p(N_CHAN - 1 downto 0),
+			d_n => adc_d_n(N_CHAN - 1 downto 0),
 			clk125 => clk125,
 			rst125 => rst125,
+			pllclk => pllclk,
+			pllrefclk => pllrefclk,
 			board_id => addr
 		);
 		

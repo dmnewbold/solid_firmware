@@ -59,6 +59,7 @@ architecture rtl of sc_trig is
 	signal ctrl_dtmon_en, ctrl_trig_in_en, ctrl_trig_out_force: std_logic;
 	signal masks: ipb_reg_v(N_CHAN_TRG * 2 - 1 downto 0);
 	signal trig_mask: std_logic_vector(N_TRG - 1 downto 0);
+	signal hop_cfg: std_logic_vector(31 downto 0);
 	signal ctrig: sc_trig_array;
 	signal lq: std_logic_vector(15 downto 0);
 	signal rveto, lvalid, lack, mark, err: std_logic;
@@ -164,6 +165,18 @@ begin
 		);
 		
 	trig_mask <= ctrl_mask(0)(N_TRG - 1 downto 0);
+	
+	hop_reg: entity work.ipbus_reg_v
+		generic map(
+			N_REG => 1
+		)
+		port map(
+			clk => clk,
+			reset => rst,
+			ipbus_in => ipbw(N_SLV_HOP_CFG),
+			ipbus_out => ipbr(N_SLV_HOP_CFG),
+			q(0) => hop_cfg
+		);
 
 	ltrig: entity work.sc_local_trig
 		port map(
@@ -171,6 +184,7 @@ begin
 			rst40 => rst40,
 			en => trig_en,
 			mask => trig_mask,
+			hops => hop_cfg,
 			mark => mark,
 			sctr => sctr,
 			rand => rand,
@@ -189,7 +203,7 @@ begin
 		);
 	
 	q <= lq;
-	q_valid <= lvalid;
+	q_valid <= lvalid when lq(7 downto 4) /= X"0" else '0';
 	
 -- ZS threshold select
 

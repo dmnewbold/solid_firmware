@@ -1,4 +1,3 @@
-src sc_trig_link.vhd sc_trig_mgt_wrapper.vhd sc_trig_link_pipe.vhd
+src sc_trig_link.vhd ../sim_hdl/sc_trig_mgt_sim.vhd sc_trig_link_pipe.vhd
 addrtab sc_trig_link.xml
-src ../cgn/sc_trig_link_mgt.xci
 src -c ipbus-firmware:components/ipbus_slaves ipbus_ctrlreg_v.vhd ipbus_reg_types.vhd

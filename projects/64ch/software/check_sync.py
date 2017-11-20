@@ -12,6 +12,9 @@ import detector_config_tools
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
 ips = detector_config_tools.currentIPs(False)
 #ips = [58]
+#manager = uhal.ConnectionManager("file://connections.xml")
+#hw = manager.getDevice(sys.argv[1])
+
 while True:
     print '\n', time.ctime(),
     for ip in ips:

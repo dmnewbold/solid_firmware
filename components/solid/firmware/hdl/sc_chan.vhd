@@ -12,9 +12,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 use ieee.std_logic_misc.all;
 
-library unisim;
-use unisim.VComponents.all;
-
 use work.ipbus.all;
 use work.ipbus_decode_sc_chan.all;
 use work.ipbus_reg_types.all;
@@ -65,6 +62,8 @@ architecture rtl of sc_chan is
 	signal d_in, d_in_i, d_buf: std_logic_vector(13 downto 0);
 	signal d_c: std_logic_vector(1 downto 0);
 	signal slip, chan_rst, cap, inc: std_logic;
+	signal act_slip: unsigned(7 downto 0);
+	signal cntout: std_logic_vector(4 downto 0);
 	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert: std_logic;
 	signal ctrl_mode: std_logic;
 	signal ctrl_src: std_logic_vector(1 downto 0);
@@ -116,10 +115,23 @@ begin
 	ctrl_src <= ctrl(0)(7 downto 6);
 	
 	slip <= sync_ctrl(0) and ctrl_en_sync; -- CDC
-	cap <= sync_ctrl(2) and ctrl_en_sync; -- CDC
-	inc <= sync_ctrl(3) and ctrl_en_sync; -- CDC
+	cap <= sync_ctrl(1) and ctrl_en_sync; -- CDC
+	inc <= sync_ctrl(2) and ctrl_en_sync; -- CDC
 	
-	stat(0) <= X"000000" & "000" & err_i & dr_warn & dr_full & buf_full & cap_full; -- CDC
+	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & "000" & err_i & dr_warn & dr_full & buf_full & cap_full; -- CDC
+
+-- Keep track of slips and taps for debug
+
+	process(clk40)
+	begin
+		if rising_edge(clk40) then
+			if rst40 = '1' then
+				act_slip <= X"00";
+			elsif slip = '1' then
+				act_slip <= act_slip + 1;
+			end if;
+		end if;
+	end process;
 
 -- Input logic
 	
@@ -132,6 +144,7 @@ begin
 			d_n => d_n,
 			slip => slip,
 			inc => inc,
+			cntout => cntout,
 			q => d_in
 		);
 		
@@ -173,7 +186,7 @@ begin
 			qmask => (others => X"00003fff")
 		);
 		
-	zs_sel_i <= to_integer(unsigned(zs_sel));
+	zs_sel_i <= to_integer(unsigned(zs_sel)); -- Might need pipelining here
 	zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0) when zs_sel_i < N_ZS_THRESH else (others => '0');
 	
 -- Buffers

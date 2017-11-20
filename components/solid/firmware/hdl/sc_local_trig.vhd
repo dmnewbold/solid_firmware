@@ -20,6 +20,7 @@ entity sc_local_trig is
 		rst40: in std_logic;
 		en: in std_logic;
 		mask: in std_logic_vector(N_TRG - 1 downto 0);
+		hops: in std_logic_vector(31 downto 0);
 		mark: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
 		rand: in std_logic_vector(31 downto 0);
@@ -74,7 +75,7 @@ begin
 	tg1: entity work.sc_trig_gen_or
 		generic map(
 			TBIT => 1,
-			DELAY => 3
+			DELAY => 4
 		)
 		port map(
 			clk => clk40,
@@ -91,7 +92,7 @@ begin
 	tg2: entity work.sc_trig_gen_or
 		generic map(
 			TBIT => 2,
-			DELAY => 2
+			DELAY => 3
 		)
 		port map(
 			clk => clk40,
@@ -136,7 +137,7 @@ begin
 		end loop;
 	end process;
 
-	trig_q <= X"00" & X"0" & std_logic_vector(to_unsigned(s, 4)); -- Hop count will go in 7:4 one day
+	trig_q <= X"00" & hops(s * 4 + 3 downto s * 4) & std_logic_vector(to_unsigned(s, 4));
 	trig_valid <= or_reduce(te) and not rveto;
 	
 	process(s, trig_ack)

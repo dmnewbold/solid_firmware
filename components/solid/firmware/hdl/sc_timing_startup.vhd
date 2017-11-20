@@ -16,6 +16,7 @@ entity sc_timing_startup is
 		clk40: in std_logic;
 		rst40: in std_logic;
 		en: in std_logic;
+		zs_blks: in std_logic_vector(7 downto 0);
 		sync: in std_logic;
 		sctr: in unsigned(47 downto 0);
 		nzs_en: out std_logic;
@@ -45,11 +46,11 @@ begin
 				end if;
 				if up = '1' then
 					if and_reduce(std_logic_vector(sctr(BLK_RADIX - 1 downto 0))) = '1' then
-						if unsigned(sctr(3 + BLK_RADIX downto BLK_RADIX)) = 8 then
+						if unsigned(sctr(3 + BLK_RADIX downto BLK_RADIX)) = 0 then
 							nzs_en <= '1';
-						elsif unsigned(sctr(3 + BLK_RADIX downto BLK_RADIX)) = 8 + NZS_BLKS then
+						elsif unsigned(sctr(3 + BLK_RADIX downto BLK_RADIX)) = NZS_BLKS then
 							zs_en <= '1';
-						elsif unsigned(sctr(7 + BLK_RADIX downto BLK_RADIX)) = 7 + NZS_BLKS + ZS_BLKS then
+						elsif unsigned(sctr(7 + BLK_RADIX downto BLK_RADIX)) = NZS_BLKS - 1 + unsigned(zs_blks) then
 							trig_en <= '1';
 						end if;
 					end if;

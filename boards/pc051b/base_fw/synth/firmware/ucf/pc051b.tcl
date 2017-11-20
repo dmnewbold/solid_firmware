@@ -24,6 +24,8 @@ set_property PACKAGE_PIN F6 [get_ports eth_clk_p]
 set_property PACKAGE_PIN E6 [get_ports eth_clk_n]
 
 set_property LOC GTPE2_CHANNEL_X0Y4 [get_cells -hier -filter {name=~infra/eth/*/gtpe2_i}]
+set_property LOC GTPE2_CHANNEL_X0Y6 [get_cells -hier -filter {name=~*/mgt_ds/*/gtpe2_i}]
+set_property LOC GTPE2_CHANNEL_X0Y7 [get_cells -hier -filter {name=~*/mgt_us/*/gtpe2_i}]
 
 proc false_path {patt clk} {
     set p [get_ports -quiet $patt -filter {direction != out}]

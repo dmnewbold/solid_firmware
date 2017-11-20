@@ -13,8 +13,8 @@
 			<node id="samp" mask="0xff000000"/>
 		</node>
 		<node id="size" address="0x1">
-			<node id="level" mask="0x3ff"/>
-			<node id="ped" mask="0x3ff0000"/>
+			<node id="level" mask="0x3fff"/>
+			<node id="ped" mask="0x3fff0000"/>
 		</node>
 	</node>
 </node>

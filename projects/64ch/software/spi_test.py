@@ -7,10 +7,8 @@ import random
 from I2CuHal import I2CCore
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-hw = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
-
-#hw.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
-#hw.dispatch()
+manager = uhal.ConnectionManager("file://connections.xml")
+hw = manager.getDevice(sys.argv[1])
 
 spi = hw.getNode("io.spi")
 spi.getNode("divider").write(0xf) # Divide 31.25MHz ipbus clock by 32
