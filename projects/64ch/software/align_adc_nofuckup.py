@@ -35,7 +35,7 @@ offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
+board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.51:50001", "file://addrtab/top.xml")
 #board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.16:50001", "file://addrtab/top_sim.xml")
 board.getClient().setTimeoutPeriod(10000)
 
@@ -101,8 +101,9 @@ for i_chan in chans:
 					c += 1
 #                                print hex(w),
                         l = (offsets[i_slip] + 2) * taps_per_slip - i_tap
-                        print hex(i_chan), hex(i_slip), hex(i_tap), hex(l), hex(c)
+                        #print hex(i_chan), hex(i_slip), hex(i_tap), hex(l), hex(c)
                         res[l] = (c == cap_len)
+                        #print (c == cap_len), i_slip, i_tap
 			ok = (c == cap_len) or ok
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)

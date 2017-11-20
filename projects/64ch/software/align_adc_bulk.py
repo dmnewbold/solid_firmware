@@ -38,7 +38,6 @@ offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 # Db stuff. 
 ips = detector_config_tools.currentIPs(False)
-ips = [50]
 db = dataset.connect('mysql://DAQGopher:gogogadgetdatabase@localhost/solid_phase1_running')
 configID = 0 #first time case
 if len(db['TapSlips']) != 0: configID = max(db['TapSlips']['configID'])['configID'] + 1
@@ -92,7 +91,7 @@ for ith_ip in ips:
         board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
         board.dispatch()
         
-        res = [False] * (15 * taps_per_slip)
+        res = [False] * (17 * taps_per_slip)
         tr = []
         for i_slip in range(14):
             ok = False
@@ -115,7 +114,8 @@ for ith_ip in ips:
                         c += 1
                         #print hex(w),
                         #print i_chan, i_slip, i_tap, c, '\t-\t', iBoard
-                res[offsets[i_slip] * taps_per_slip - i_tap] = (c == cap_len)
+                l = (offsets[i_slip] + 2) * taps_per_slip - i_tap
+                res[l] = (c == cap_len)
                 #res[i_slip * taps_per_slip + i_tap] = (c == cap_len)
                 if c==cap_len: workers.append([i_slip, i_tap])
                 ok = (c == cap_len) or ok
@@ -151,8 +151,18 @@ for ith_ip in ips:
             else:
                 trp += "."
         a = int((min + max) / 2)    
-        d_slip = offsets.index(a // taps_per_slip)
-        d_tap = a % taps_per_slip
+        l_tap = taps_per_slip
+        d_slip = 0
+        d_tap = 0
+        
+        for i_slip in range(14):
+            for i_tap in range(taps_per_slip):
+                if a == (offsets[i_slip] + 2) * taps_per_slip - i_tap:
+                    d_slip = i_slip
+                    d_tap = i_tap
+
+
+
         db['TapSlips'].insert({'configID': int(configID), 'ip': ith_ip, 'tap': d_tap, 'slip': d_slip, 'channel': i_chan})
         ith_slips.append(d_slip)
         ith_taps.append(d_tap)
