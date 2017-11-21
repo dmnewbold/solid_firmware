@@ -7,4 +7,10 @@
    address_table="file://addrtab/top_sim.xml" />
   <connection id="BEK_8CH" uri="ipbusudp-2.0://192.168.235.1:50001"
    address_table="file://addrtab/top_sim.xml" />
+  <connection id="BR2_51" uri="ipbusudp-2.0://192.168.235.51:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_52" uri="ipbusudp-2.0://192.168.235.52:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_53" uri="ipbusudp-2.0://192.168.235.53:50001"
+   address_table="file://addrtab/top.xml" />
 </connections>
