@@ -46,7 +46,7 @@ for i in range(1):
         board.getNode("daq.chan.csr.ctrl.mode").write(0x0) # Set to normal DAQ mode
         board.getNode("daq.chan.csr.ctrl.src").write(0x3) # Set source to fake data
         board.getNode("daq.chan.zs_thresh").writeBlock([0x0, 0x1]) # Set ZS thresholds #0 = 0, #1 =1
-	board.getNode("daq.chan.trig_thresh.threshold.thresh").write(0x1000) # Set ctrig 0 threshold
+        board.getNode("daq.chan.trig_thresh.threshold.thresh").write(0x1000) # Set ctrig 0 threshold
         board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
 
 board.getNode("daq.fake.ctrl.mode").write(0x1) # Set fake data to pulse
