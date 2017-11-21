@@ -4,6 +4,7 @@ import uhal
 import time
 import sys
 import collections
+import pickle
 
 def spi_config(spi, div, ctrl, ss):
     spi.getNode("divider").write(0xf) # Divide 31.25MHz ipbus clock by 32
@@ -53,7 +54,7 @@ time.sleep(1)
 chans = range(0x40)
 adcs = range(0x10)
 patt = 0x0ff
-cap_len = 0x80
+cap_len = 0x400
 taps_per_slip = 22
 
 spi = board.getNode("io.spi")
@@ -146,9 +147,9 @@ for i_chan in chans:
             if a == (offsets[i_slip] + 2) * taps_per_slip - i_tap:
                 d_slip = i_slip
                 d_tap = i_tap
-    print trp
+#    print trp
     if not non_cont:
-        print "Chan, rec_slip, rec_tap:", i_chan, d_slip, d_tap
+        print "Chan, rec_slip, rec_tap:", hex(i_chan), hex(d_slip), hex(d_tap)
         settings.append((i_chan, d_slip, d_tap))
     else:
         print "Chan, NON CONTINUOUS RANGE", hex(i_chan), trp

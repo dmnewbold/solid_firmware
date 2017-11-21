@@ -4,6 +4,7 @@ import uhal
 import time
 import sys
 import collections
+import pickle
 
 def spi_config(spi, div, ctrl, ss):
     spi.getNode("divider").write(0xf) # Divide 31.25MHz ipbus clock by 32
@@ -51,8 +52,8 @@ time.sleep(1)
 
 adcs = range(0x10)
 patt = 0x0ff
-cap_len = 0x80
-taps_per_slip = 22
+cap_len = 0x400
+reps = 0x100
 
 spi = board.getNode("io.spi")
 spi_config(spi, 0xf, 0x2410, 0x1) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
@@ -71,7 +72,7 @@ f.close()
 
 for s_ch in settings:
 
-	(i_chan, i_slip, i_tap) = s_ch
+    (i_chan, i_slip, i_tap) = s_ch
 	
     board.getNode("csr.ctrl.chan").write(i_chan) # Talk to correct channel
     board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
@@ -99,26 +100,27 @@ for s_ch in settings:
     	print "Colossal bullshit has occured"
     	sys.exit()
 
-	board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
-	board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
-	board.dispatch()
+    board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
+    board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
+    board.dispatch()
 
-	while True:
-		r = board.getNode("daq.chan.csr.stat").read()
-		board.getNode("daq.chan.buf.addr").write(0x0)
-		d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
-		board.dispatch()
-		if r & 0x1 == 1:
-			break
-			print "Crap no capture", hex(i_chan), hex(i_slip), hex(i_tap), hex(r), time.clock()
+    c = 0
+    for i in range(reps):
+        while True:
+            r = board.getNode("daq.chan.csr.stat").read()
+            board.getNode("daq.chan.buf.addr").write(0x0)
+            d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
+            board.dispatch()
+            if r & 0x1 == 1:
+                break
+                print "Crap no capture", hex(i_chan), hex(i_slip), hex(i_tap), hex(r), time.clock()
             
-	c = 0
-	for w in d:
-		if int(w) & 0x3ff == patt:
-			c += 1
+        for w in d:
+            if int(w) & 0x3ff == patt:
+                c += 1
 
-	print hex(i_chan), hex(i_slip), hex(i_tap), hex(c)
-	if c != cap_len:
-		print "Failure"
-		sys.exit()
-		
+    print hex(i_chan), hex(i_slip), hex(i_tap), hex(c)
+    if c != cap_len * reps:
+        print "Failure"
+        sys.exit()
+
