@@ -31,7 +31,6 @@ def spi_read(spi, addr):
         print "SPI read error", hex(addr)
     return d & 0xffff
 
-offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
@@ -50,7 +49,6 @@ board.dispatch()
 
 time.sleep(1)
 
-chans = range(0x40)
 adcs = range(0x10)
 patt = 0x0ff
 cap_len = 0x80
@@ -67,10 +65,14 @@ for i in adcs:
     spi_write(spi, 0x3, 0x80 + (patt >> 8)) # Test pattern
     spi_write(spi, 0x4, patt & 0xff) # Test pattern
 
-settings = []
+f = open(sys.argv[2])
+settings = pickle.load(f)
+f.close()
 
-for i_chan in chans:
+for s_ch in settings:
 
+	(i_chan, i_slip, i_tap) = s_ch
+	
     board.getNode("csr.ctrl.chan").write(i_chan) # Talk to correct channel
     board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
     board.getNode("daq.chan.csr.ctrl.src").write(0x0) # Set source to ADC
@@ -80,77 +82,43 @@ for i_chan in chans:
     board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
     board.dispatch()
 
-    res = [False] * (17 * taps_per_slip)
-    tr = []
-    for i_slip in range(14):
-        ok = False
-        for i_tap in range(32):
-            atap = board.getNode("daq.chan.csr.stat.tap").read()
-            aslip = board.getNode("daq.chan.csr.stat.slip").read()
-            board.dispatch()
-            if i_slip != aslip or i_tap != atap:
-                print "Colossal bullshit has occured"
-                sys.exit()
-            board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
-            board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
-            board.dispatch()
-#            time.sleep(0.01)
-            while True:
-                r = board.getNode("daq.chan.csr.stat").read()
-                board.getNode("daq.chan.buf.addr").write(0x0)
-                d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
-                board.dispatch()
-                if r & 0x1 == 1:
-                    break
-                print "Crap no capture", hex(i_chan), hex(i_slip), hex(i_tap), hex(r), time.clock()
-            c = 0
-            for w in d:
-                if int(w) & 0x3ff == patt:
-                    c += 1
-#          	print hex(w),
-#           print hex(i_chan), hex(i_slip), hex(i_tap), c
-            res[(offsets[i_slip] + 2) * taps_per_slip - i_tap] = (c == cap_len)
-            board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
-            board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
-            board.dispatch()
+    for _ in range(i_slip):
         board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
         board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0)
         board.dispatch()
+        
+    for _ in range(i_tap): 
+        board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
+        board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
+        board.dispatch()
 
-    trp = ""
-    min = 0
-    max = 0
-    non_cont = False
-    for i in range(len(res) - 1):
-        if res[i + 1] and not res[i]:
-            if min == 0:
-                min = i + 1
-            else:
-                non_cont = True
-        elif res[i] and not res[i + 1]:
-            if max == 0:
-                max = i
-            else:
-                non_cont = True
-        if res[i] == None:
-            trp += "_"
-        elif res[i]:
-            trp += "+"
-        else:
-            trp += "."
-    a = int((min + max) / 2)
-    d_slip = 0
-    d_tap = 0
-    for i_slip in range(14):
-        for i_tap in range(taps_per_slip):
-            if a == (offsets[i_slip] + 2) * taps_per_slip - i_tap:
-                d_slip = i_slip
-                d_tap = i_tap
-    print trp
-    if not non_cont:
-        print "Chan, rec_slip, rec_tap:", i_chan, d_slip, d_tap
-        settings.append((i_chan, d_slip, d_tap))
-    else:
-        print "Chan, NON CONTINUOUS RANGE", hex(i_chan), trp
+    atap = board.getNode("daq.chan.csr.stat.tap").read()
+    aslip = board.getNode("daq.chan.csr.stat.slip").read()
+    board.dispatch()
+    if i_slip != aslip or i_tap != atap:
+    	print "Colossal bullshit has occured"
+    	sys.exit()
 
-print settings
+	board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
+	board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
+	board.dispatch()
+
+	while True:
+		r = board.getNode("daq.chan.csr.stat").read()
+		board.getNode("daq.chan.buf.addr").write(0x0)
+		d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
+		board.dispatch()
+		if r & 0x1 == 1:
+			break
+			print "Crap no capture", hex(i_chan), hex(i_slip), hex(i_tap), hex(r), time.clock()
+            
+	c = 0
+	for w in d:
+		if int(w) & 0x3ff == patt:
+			c += 1
+
+	print hex(i_chan), hex(i_slip), hex(i_tap), hex(c)
+	if c != cap_len:
+		print "Failure"
+		sys.exit()
+		

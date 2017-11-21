@@ -153,4 +153,6 @@ for i_chan in chans:
     else:
         print "Chan, NON CONTINUOUS RANGE", hex(i_chan), trp
 
-print settings
+f = open(sys.argv[2], 'w')
+pickle.dump(settings, f)
+f.close()
