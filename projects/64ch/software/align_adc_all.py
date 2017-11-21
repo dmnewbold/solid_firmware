@@ -35,8 +35,11 @@ offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.51:50001", "file://addrtab/top.xml")
+#board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
 #board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.16:50001", "file://addrtab/top_sim.xml")
+uhal.setLogLevelTo(uhal.LogLevel.INFO)
+manager = uhal.ConnectionManager("file://connections.xml")
+board = manager.getDevice(sys.argv[1])
 board.getClient().setTimeoutPeriod(10000)
 
 v = board.getNode("csr.id").read()
@@ -78,11 +81,18 @@ for i_chan in chans:
 	board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
 	board.dispatch()
 	
-	res = [False] * (17 * taps_per_slip)
+	res = [False] * (15 * taps_per_slip)
 	tr = []
 	for i_slip in range(14):
 		ok = False
 		for i_tap in range(32):
+                        atap = board.getNode("daq.chan.csr.stat.tap").read()
+                        aslip = board.getNode("daq.chan.csr.stat.slip").read()
+                        board.dispatch()
+#                        print "Set slip, tap ; actual slip, tap", hex(i_slip), hex(i_tap), hex(aslip), hex(atap)
+                        if i_slip != aslip or i_tap != atap:
+                                print "Colossal bullshit has occured"
+                                sys.exit()
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
 			board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
 			board.dispatch()
@@ -100,10 +110,8 @@ for i_chan in chans:
 				if int(w) & 0x3ff == patt:
 					c += 1
 #                                print hex(w),
-                        l = (offsets[i_slip] + 2) * taps_per_slip - i_tap
-                        #print hex(i_chan), hex(i_slip), hex(i_tap), hex(l), hex(c)
-                        res[l] = (c == cap_len)
-                        #print (c == cap_len), i_slip, i_tap
+#                        print hex(i_chan), hex(i_slip), hex(i_tap), c
+                        res[offsets[i_slip] * taps_per_slip + (31 - i_tap)] = (c == cap_len)
 			ok = (c == cap_len) or ok
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
 			board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
@@ -135,17 +143,11 @@ for i_chan in chans:
 			trp += "+"
 		else:
 			trp += "."
-	a = int((min + max) / 2)
-	l_tap = taps_per_slip
-        d_slip = 0
-        d_tap = 0
-        for i_slip in range(14):
-                for i_tap in range(taps_per_slip):
-                        if a == (offsets[i_slip] + 2) * taps_per_slip - i_tap:
-                                d_slip = i_slip
-                                d_tap = i_tap
+	a = int((min + max) / 2)	
+	d_slip = offsets.index(a // taps_per_slip)
+	d_tap = a % taps_per_slip
         print trp
 	if not non_cont:
-		print "Chan, centre, rec_slip, rec_tap:", hex(i_chan), hex(a), hex(d_slip), hex(d_tap)
+		print "Chan, rec_slip, rec_tap:", i_chan, d_slip, d_tap
 	else:
 		print "Chan, NON CONTINUOUS RANGE", hex(i_chan), trp

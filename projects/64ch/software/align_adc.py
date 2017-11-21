@@ -34,6 +34,9 @@ def spi_read(spi, addr):
 offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 
+uhal.setLogLevelTo(uhal.LogLevel.ERROR)
+board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.51:50001", "file://addrtab/top.xml")
+#board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.16:50001", "file://addrtab/top_sim.xml")
 uhal.setLogLevelTo(uhal.LogLevel.INFO)
 manager = uhal.ConnectionManager("file://connections.xml")
 board = manager.getDevice(sys.argv[1])
@@ -50,7 +53,7 @@ board.dispatch()
 
 time.sleep(1)
 
-chans = range(0x1)
+chans = range(0x40)
 adcs = range(0x10)
 patt = 0x0ff
 cap_len = 0x80
@@ -86,7 +89,7 @@ for i_chan in chans:
                         atap = board.getNode("daq.chan.csr.stat.tap").read()
                         aslip = board.getNode("daq.chan.csr.stat.slip").read()
                         board.dispatch()
-                        print "Set slip, tap ; actual slip, tap", hex(i_slip), hex(i_tap), hex(aslip), hex(atap)
+#                        print "Set slip, tap ; actual slip, tap", hex(i_slip), hex(i_tap), hex(aslip), hex(atap)
                         if i_slip != aslip or i_tap != atap:
                                 print "Colossal bullshit has occured"
                                 sys.exit()
@@ -145,6 +148,6 @@ for i_chan in chans:
 	d_tap = a % taps_per_slip
         print trp
 	if not non_cont:
-		print "Chan, rec_slip, rec_tap:", hex(i_chan), hex(d_slip), hex(d_tap)
+		print "Chan, rec_slip, rec_tap:", i_chan, d_slip, d_tap
 	else:
 		print "Chan, NON CONTINUOUS RANGE", hex(i_chan), trp
