@@ -12,6 +12,7 @@ uhal.setLogLevelTo(uhal.LogLevel.ERROR)
 
 ips = detector_config_tools.currentIPs(False)
 slaveReadoutBoards = True
+ips = [51]
 for ip in ips:
     print 'Setting up readout board ip:', ip
     hw = uhal.getDevice("board", "ipbusudp-2.0://192.168.235." + str(ip) + ":50001", "file://addrtab/top.xml")
@@ -84,3 +85,4 @@ print "daq.trig.csr.stat", hex(f_ctrl_2)
 fw = hw.getNode("daq.timing.csr.stat.wait_sync").read();
 hw.dispatch()
 print "wait_sync, sync_err:", int(fw)
+'''

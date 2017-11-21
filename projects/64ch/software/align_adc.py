@@ -35,7 +35,7 @@ offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.50:50001", "file://addrtab/top.xml")
+board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.51:50001", "file://addrtab/top.xml")
 #board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235.16:50001", "file://addrtab/top_sim.xml")
 #uhal.setLogLevelTo(uhal.LogLevel.INFO)
 #manager = uhal.ConnectionManager("file://connections.xml")
@@ -53,7 +53,7 @@ board.dispatch()
 
 time.sleep(1)
 
-chans = range(0x1)
+chans = range(64)
 adcs = range(0x10)
 patt = 0x0ff
 cap_len = 0x80
