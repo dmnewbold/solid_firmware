@@ -68,5 +68,3 @@ for hw in hw_list:
         hw.dispatch()
         f = hw.getNode("csr.stat").read()
         hw.dispatch()
-    
-

@@ -47,4 +47,3 @@ print "us -- remote_id", hex((vu & 0xff0000) >> 16)
 print "ds -- rdy_tx, buf_tx, stat_tx:", (vd & 0x1), hex((vd & 0xc) >> 2), hex((vd & 0x300) >> 8)
 print "ds -- rdy_rx, buf_rx, stat_rx:", (vd & 0x2) >> 1, hex((vd & 0x70) >> 4), hex((vd & 0x7c00) >> 10)
 print "ds -- remote_id", hex((vd & 0xff0000) >> 16)
-

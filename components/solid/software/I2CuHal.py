@@ -175,7 +175,7 @@ class I2CCore:
                 self.cmd_stat.write(I2CCore.readcmd) # <---
             else:
                 self.cmd_stat.write(I2CCore.readcmd | I2CCore.ack | I2CCore.stopcmd) # <--- This tells the slave that it is the last word
-	        self.target.dispatch()
+                self.target.dispatch()
             ack = self.delayorcheckack()
             val = self.data.read()
             self.target.dispatch()
