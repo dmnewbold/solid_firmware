@@ -15,6 +15,24 @@
    address_table="file://addrtab/top.xml" />
   <connection id="BR2_74" uri="ipbusudp-2.0://192.168.235.74:50001"
    address_table="file://addrtab/top.xml" />
-  <connection id="BR2_54" uri="ipbusudp-2.0://192.168.235.54:50001"
+  <connection id="BR2_72" uri="ipbusudp-2.0://192.168.235.72:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_62" uri="ipbusudp-2.0://192.168.235.62:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_70" uri="ipbusudp-2.0://192.168.235.70:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_71" uri="ipbusudp-2.0://192.168.235.71:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_87" uri="ipbusudp-2.0://192.168.235.87:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_94" uri="ipbusudp-2.0://192.168.235.94:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_85" uri="ipbusudp-2.0://192.168.235.83:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_83" uri="ipbusudp-2.0://192.168.235.83:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_89" uri="ipbusudp-2.0://192.168.235.89:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_68" uri="ipbusudp-2.0://192.168.235.68:50001"
    address_table="file://addrtab/top.xml" />
 </connections>

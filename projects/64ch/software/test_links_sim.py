@@ -48,4 +48,3 @@ vu = hw.getNode("daq.tlink.us_stat").read()
 vd = hw.getNode("daq.tlink.ds_stat").read()
 hw.dispatch()
 print "us, ds:", hex(vu), hex(vd)
-

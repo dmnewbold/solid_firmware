@@ -5,17 +5,15 @@ nChanJumps = 0
 iEntry = -1
 prevChan = 64
 min_tap, max_tap, min_slip, max_slip = 99, 99, 99, 99
-print 'Channel, slip, tap'
-for entry in db['TapSlips']: 
-    if entry['ip'] == '51': 
-        print entry['channel'], entry['slip'], entry['tap']        
+for entry in db['TapSlips']:
+    if entry['ip'] == '72' and entry['channel'] == 38: print 'IP 102:', entry
 
     '''
     if entry['configID'] == 26:
         if prevChan != entry['channel'] - 1:
             #print entry
-            nChanJumps += 1 
-        
+            nChanJumps += 1
+
         iEntry += 1
         if iEntry == 0 or entry['tap'] > max_tap: max_tap = entry['tap']
         if iEntry == 0 or entry ['tap'] < min_tap: min_tap = entry['tap']

@@ -98,7 +98,7 @@ begin
 		);
 		
 	stat(0) <= X"a753" & FW_REV;
-	stat(1) <= X"00000" & addr & '0' & chan_err & idelayctrl_rdy & locked;
+	stat(1) <= X"0000" & addr & "00000" & chan_err & idelayctrl_rdy & locked;
 	
 	soft_rst <= ctrl(0)(0);
 	nuke <= ctrl(0)(1);

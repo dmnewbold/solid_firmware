@@ -50,7 +50,7 @@ while int(f) & 0x2 == 0:
     hw.dispatch()
     f = hw.getNode("csr.stat").read()
     hw.dispatch()
-    
+
 
 f_ver = hw.getNode("csr.id").read()
 hw.dispatch()
