@@ -6,14 +6,15 @@ import sys
 from I2CuHal import I2CCore
 from si5344 import si5344
 
-sys.path.append('/home/solid/workspace/go_projects/src/bitbucket.org/solidexperiment/readout-software/scripts')
+sys.path.append('/home/dsaunder/workspace/go_projects/src/bitbucket.org/solidexperiment/readout-software/scripts')
 import detector_config_tools
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
 
-#ips = detector_config_tools.currentIPs(False)
-ips = [62, 72, 70, 71, 87, 94, 89, 85, 83, 68, 51, 61, 52, 63, 91, 81, 67, 73, 57, 102, 74, 59, 96, 90, 64, 98, 76, 104, 54, 58]
+ips = detector_config_tools.currentIPs(False)
+#ips = [62, 72, 70, 71, 87, 94, 89, 85, 83, 68, 51, 61, 52, 63, 91, 81, 67, 73, 57, 102, 74, 59, 96, 90, 64, 98, 76, 104, 54, 58]
+ips = [72]
 slaveReadoutBoards = True
->>>>>>> 770260c728da726f742260c3dfe27c8be7156add
+hw_list = []
 for ip in ips:
     print 'Setting up readout board ip:', ip
     hw_list.append(uhal.getDevice("board", "ipbusudp-2.0://192.168.235." + str(ip) + ":50001", "file://addrtab/top.xml"))
@@ -50,7 +51,7 @@ for hw in hw_list:
 
     f = hw.getNode("csr.stat").read()
     hw.dispatch()
-    print "csr.stat:", hex(f)
+    print "csr.stat:", hex(f), int(f) & 0x1, int(f) & 0x2
 
     while int(f) & 0x1 == 0:
         print "Wait for MMCM lock"

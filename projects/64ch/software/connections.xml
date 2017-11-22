@@ -13,4 +13,8 @@
    address_table="file://addrtab/top.xml" />
   <connection id="BR2_53" uri="ipbusudp-2.0://192.168.235.53:50001"
    address_table="file://addrtab/top.xml" />
+  <connection id="BR2_74" uri="ipbusudp-2.0://192.168.235.74:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_54" uri="ipbusudp-2.0://192.168.235.54:50001"
+   address_table="file://addrtab/top.xml" />
 </connections>
