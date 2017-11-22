@@ -180,7 +180,16 @@ begin
 	end process;
 
 -- Remote link ID
-
-	remote_id <= rxd(7 downto 0) when rising_edge(clk125) and rxk = "10" and link_good = '1';
+	
+	process(clk125)
+	begin
+		if rising_edge(clk125) then
+			if en = '0' or link_good = '0' then
+				remote_id <= (others => '0');
+			elsif rxk = "10" then
+				remote_id <= rxd(7 downto 0);
+			end if;
+		end if;
+	end process;
 
 end rtl;
