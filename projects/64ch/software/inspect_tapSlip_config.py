@@ -6,8 +6,8 @@ iEntry = -1
 prevChan = 64
 min_tap, max_tap, min_slip, max_slip = 99, 99, 99, 99
 for entry in db['TapSlips']:
-    if entry['ip'] == '72' and entry['channel'] == 38: print 'IP 102:', entry
 
+    if entry['ip'] == '72': print entry
     '''
     if entry['configID'] == 26:
         if prevChan != entry['channel'] - 1:

@@ -8,6 +8,7 @@ import detector_config_tools
 
 ips = detector_config_tools.currentIPs(False)
 print ips
+
 '''
 for ip in ips:
     cmd = "python align_adc.py BR2_" + str(ip) + " output_" + str(ip) + ".tapslips"
@@ -17,7 +18,6 @@ for ip in ips:
     except:
         sys.exit(0)
 '''
-
 # Dump into a db
 db = dataset.connect('mysql://DAQGopher:gogogadgetdatabase@localhost/solid_phase1_running')
 configID = 0 #first time case
