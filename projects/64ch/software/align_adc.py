@@ -36,8 +36,8 @@ offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
 invert = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-manager = uhal.ConnectionManager("file://connections.xml")
-board = manager.getDevice(sys.argv[1])
+#board = manager.getDevice(sys.argv[1])
+board = uhal.getDevice("board", "ipbusudp-2.0://192.168.235." + str(sys.argv[1]) + ":50001", "file://addrtab/top.xml")
 board.getClient().setTimeoutPeriod(10000)
 
 v = board.getNode("csr.id").read()

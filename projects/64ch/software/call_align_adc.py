@@ -8,10 +8,9 @@ import detector_config_tools
 
 ips = detector_config_tools.currentIPs(False)
 print ips
-
 '''
 for ip in ips:
-    cmd = "python align_adc.py BR2_" + str(ip) + " output_" + str(ip) + ".tapslips"
+    cmd = "python align_adc.py " + str(ip) + " output_" + str(ip) + ".tapslips"
     print cmd
     try:
         os.system(cmd)
@@ -28,3 +27,4 @@ for ip in ips:
     results = pickle.load( open( "output_" + str(ip) + ".tapslips", "rb" ) )
     for res in results:
         db['TapSlips'].insert({'configID': int(configID), 'ip': str(ip), 'tap': res[2], 'slip': res[1], 'channel': res[0]})
+
