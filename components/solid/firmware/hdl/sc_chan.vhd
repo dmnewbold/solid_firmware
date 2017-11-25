@@ -74,6 +74,7 @@ architecture rtl of sc_chan is
 	signal sctr_p: std_logic_vector(11 downto 0);
 	signal dr_d: std_logic_vector(31 downto 0);
 	signal ro_en, keep_i, flush_i, err_i, req, blkend, dr_blkend, dr_wen: std_logic;
+	signal ctrl_tt: std_logic;
 	
 begin
 
@@ -113,6 +114,7 @@ begin
 	ctrl_invert <= ctrl(0)(2);
 	ctrl_mode <= ctrl(0)(4);
 	ctrl_src <= ctrl(0)(7 downto 6);
+	ctrl_tt <= not ctrl(0)(8);
 	
 	slip <= sync_ctrl(0) and ctrl_en_sync; -- CDC
 	cap <= sync_ctrl(1) and ctrl_en_sync; -- CDC
@@ -145,7 +147,8 @@ begin
 			slip => slip,
 			inc => inc,
 			cntout => cntout,
-			q => d_in
+			q => d_in,
+			tt => ctrl_tt
 		);
 		
 	d_in_i <= d_in when ctrl_invert = '0' else not d_in;

@@ -6,6 +6,7 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use ieee.numeric_std.all;
 
 library unisim;
 use unisim.VComponents.all;
@@ -15,12 +16,13 @@ entity sc_input_serdes is
 		clk: in std_logic;
 		rst: in std_logic;
 		clk_s: in std_logic;
-		d_p: in std_logic;
-		d_n: in std_logic;
+		d_p: inout std_logic;
+		d_n: inout std_logic;
 		slip: in std_logic;
 		inc: in std_logic;
 		cntout: out std_logic_vector(4 downto 0);
-		q: out std_logic_vector(13 downto 0)
+		q: out std_logic_vector(13 downto 0);
+		tt: in std_logic
 	);
 
 end sc_input_serdes;
@@ -31,6 +33,8 @@ architecture rtl of sc_input_serdes is
 	signal d: std_logic_vector(13 downto 0);
 	signal s1, s2: std_logic;
 	signal clk_sb: std_logic;
+	signal k: std_logic_vector(13 downto 0);
+	signal tq: std_logic;
 	
 begin
 
@@ -134,6 +138,40 @@ begin
 			ofb => '0',
 			dynclkdivsel => '0',
 			dynclksel => '0'
+		);
+		
+-- Test logic
+
+	process(clk_s)
+	begin
+		if rising_edge(clk_s) then
+			if rst = '1' then
+				k <= "00000000000001";
+			else
+				k <= k(12 downto 0) & '0';
+			end if;
+		end if;
+	end process;
+	
+	oreg: ODDR
+		generic map(
+			DDR_CLK_EDGE => "SAME_EDGE"
+		)
+		port map(
+			q => tq,
+			c => clk_s,
+			ce => '1',
+			d1 => k(0),
+			d2 => k(1),
+			s => '0'
+		);
+
+	obuf: OBUFTDS
+		port map(
+			i => tq,
+			t => tt,
+			o => d_p,
+			ob => d_n
 		);
 
 end rtl;
