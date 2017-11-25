@@ -41,13 +41,22 @@ board.dispatch()
 
 sleep(1)
 
+tap = 11
+slip = 7
 for i in range(1):
-    board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
+    board.getNode("csr.ctrl.chan").write(38) # Talk to channel 0
     board.getNode("daq.chan.csr.ctrl.mode").write(0x0) # Set to normal DAQ mode
     board.getNode("daq.chan.csr.ctrl.src").write(0x3) # Set source to fake data
     board.getNode("daq.chan.zs_thresh").writeBlock([0x0, 0x1]) # Set ZS thresholds #0 = 0, #1 =1
     board.getNode("daq.chan.trig_thresh.threshold.thresh").write(0x1000) # Set ctrig 0 threshold
     board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
+    for islip in range(slip):
+        board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1)
+        board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0)
+
+    for itap in range(tap): 
+        board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1)
+        board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
 
 board.getNode("daq.fake.ctrl.mode").write(0x1) # Set fake data to pulse
 board.getNode("daq.fake.ctrl.samp_lock").write(0x1) # Lock to sample
