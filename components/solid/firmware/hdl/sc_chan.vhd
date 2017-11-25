@@ -31,8 +31,8 @@ entity sc_chan is
 		rst40: in std_logic;
 		clk160: in std_logic;
 		clk280: in std_logic;
-		d_p: in std_logic;
-		d_n: in std_logic;
+		d_p: inout std_logic;
+		d_n: inout std_logic;
 		sync_ctrl: in std_logic_vector(3 downto 0);
 		zs_sel: in std_logic_vector(1 downto 0);
 		sctr: in std_logic_vector(47 downto 0);		

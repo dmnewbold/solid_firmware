@@ -46,8 +46,8 @@ entity payload is
 		sync_in: in std_logic;
 		trig_in: in std_logic;
 		trig_out: out std_logic;
-		adc_d_p: in std_logic_vector(63 downto 0);
-		adc_d_n: in std_logic_vector(63 downto 0)
+		adc_d_p: inout std_logic_vector(63 downto 0);
+		adc_d_n: inout std_logic_vector(63 downto 0)
 	);
 
 end payload;
@@ -182,6 +182,14 @@ begin
 				i => adc_d_p(i),
 				ib => adc_d_n(i),
 				o => open
+			);
+			
+		bufo: OBUFTDS
+			port map(
+				i => '0',
+				t => '1',
+				o => adc_d_p(i),
+				ob => adc_p_n(i)
 			);
 
 	end generate;

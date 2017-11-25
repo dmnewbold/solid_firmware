@@ -29,8 +29,8 @@ entity sc_daq is
 		led_out: out std_logic;
 		chan: in std_logic_vector(7 downto 0);
 		chan_err: out std_logic;
-		d_p: in std_logic_vector(N_CHAN - 1 downto 0);
-		d_n: in std_logic_vector(N_CHAN - 1 downto 0);
+		d_p: inout std_logic_vector(N_CHAN - 1 downto 0);
+		d_n: inout std_logic_vector(N_CHAN - 1 downto 0);
 		clk125: in std_logic;
 		rst125: in std_logic;
 		pllclk: in std_logic;

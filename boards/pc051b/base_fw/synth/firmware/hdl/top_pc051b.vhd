@@ -35,8 +35,8 @@ entity top is port(
 		sync_in: in std_logic; -- IO via timing interface
 		trig_in: in std_logic;
 		trig_out: out std_logic;
-		adc_d_p: in std_logic_vector(63 downto 0); -- ADC serial input data
-		adc_d_n: in std_logic_vector(63 downto 0)
+		adc_d_p: inout std_logic_vector(63 downto 0); -- ADC serial input data
+		adc_d_n: inout std_logic_vector(63 downto 0)
 	);
 
 end top;
