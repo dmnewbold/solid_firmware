@@ -42,7 +42,8 @@ architecture rtl of sc_deadtime_mon is
 	signal we, inc, done, p: std_logic;
 	signal sel: integer range 2 ** (ADDR_BITS - 1) - 1 downto 0 := 0;
 	signal sel_c: integer range N_CHAN - 1 downto 0 := 0;
-	
+	signal veto_r: std_logic_vector(N_CHAN - 1 downto 0);
+
 begin
 
 -- Timing
@@ -106,10 +107,12 @@ begin
 	sel <= to_integer(unsigned(sctr(ADDR_BITS - 1 downto 1)));
 	sel_c <= sel when sel < N_CHAN else 0;
 	
+	veto_r <= veto when rising_edge(clk40); -- Pipelining to meet timing
+	
 	with std_logic_vector'(sctr(0) & c(1)) select inc <=
 		'1' when "00",
 		keep(sel_c) when "01",
-		veto(sel_c) when "10",
-		keep(sel_c) and veto(sel_c) when others;
+		veto_r(sel_c) when "10",
+		keep(sel_c) and veto_r(sel_c) when others;
 		
 end rtl;

@@ -29,11 +29,12 @@ end sc_input_serdes;
 
 architecture rtl of sc_input_serdes is
 
-	signal d_l, d_h, d_ld, d_hd, d_hdi: std_logic;
+	signal d_l, d_h, d_ld, d_hd: std_logic;
 	signal d: std_logic_vector(13 downto 0);
 	signal s1, s2: std_logic;
 	signal clk_sb: std_logic;
 	signal rst_s: std_logic;
+	signal qi: std_logic_vector(15 downto 0)
 	
 begin
 
@@ -86,8 +87,6 @@ begin
 			dataout => d_hd,
 			cntvalueout => open
 		);
-		
-	d_hdi <= not d_hd;
 
 	clk_sb <= not clk_s;	
 	
@@ -99,14 +98,14 @@ begin
 			IOBDELAY => "BOTH" -- Essential. And undocumented.
 		)
 		port map(
-			q1 => q(0),
-			q2 => q(2),
-			q3 => q(4),
-			q4 => q(6),
-			q5 => q(8),
-			q6 => q(10),
-			q7 => q(12),
-			q8 => open,
+			q1 => qi(0),
+			q2 => qi(2),
+			q3 => qi(4),
+			q4 => qi(6),
+			q5 => qi(8),
+			q6 => qi(10),
+			q7 => qi(12),
+			q8 => qi(14),
 			shiftout1 => open,
 			shiftout2 => open,
 			d => '0',
@@ -136,18 +135,18 @@ begin
 			IOBDELAY => "BOTH" -- Essential. And undocumented.
 		)
 		port map(
-			q1 => q(1),
-			q2 => q(3),
-			q3 => q(5),
-			q4 => q(7),
-			q5 => q(9),
-			q6 => q(11),
-			q7 => q(13),
-			q8 => open,
+			q1 => qi(1),
+			q2 => qi(3),
+			q3 => qi(5),
+			q4 => qi(7),
+			q5 => qi(9),
+			q6 => qi(11),
+			q7 => qi(13),
+			q8 => qi(15),
 			shiftout1 => open,
 			shiftout2 => open,
 			d => '0',
-			ddly => d_hdi,
+			ddly => d_hd,
 			clk => clk_sb,
 			clkb => '0',
 			ce1 => '1',
@@ -164,5 +163,8 @@ begin
 			dynclkdivsel => '0',
 			dynclksel => '0'
 		);
+		
+	q <= not qi(15) & qi(14) & not qi(13) & qi(12) & not qi(11) & qi(10) & not qi(9) & qi(8) &
+		not qi(7) & qi(6) & not qi(5) & qi(4) & not qi(3) & qi(2) & not qi(1) & qi(0);
 		
 end rtl;
