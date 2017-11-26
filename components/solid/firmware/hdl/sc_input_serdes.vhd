@@ -21,8 +21,7 @@ entity sc_input_serdes is
 		slip: in std_logic;
 		inc: in std_logic;
 		cntout: out std_logic_vector(4 downto 0);
-		q: out std_logic_vector(13 downto 0);
-		tt: in std_logic
+		q: out std_logic_vector(13 downto 0)
 	);
 
 end sc_input_serdes;
