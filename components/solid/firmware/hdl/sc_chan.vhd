@@ -129,7 +129,7 @@ begin
 		if rising_edge(clk40) then
 			if rst40 = '1' then
 				act_slip <= X"00";
-			elsif slip = '1' then
+			elsif slip_l = '1' then
 				act_slip <= act_slip + 1;
 			end if;
 		end if;

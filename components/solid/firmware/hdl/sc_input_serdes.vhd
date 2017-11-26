@@ -34,7 +34,7 @@ architecture rtl of sc_input_serdes is
 	signal s1, s2: std_logic;
 	signal clk_sb: std_logic;
 	signal rst_s: std_logic;
-	signal qi: std_logic_vector(15 downto 0)
+	signal qi: std_logic_vector(15 downto 0);
 	
 begin
 
