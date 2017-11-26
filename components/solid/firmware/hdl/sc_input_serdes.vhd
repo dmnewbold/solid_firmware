@@ -20,6 +20,7 @@ entity sc_input_serdes is
 		d_n: in std_logic;
 		slip_l: in std_logic;
 		slip_h: in std_logic;
+		swap: in std_logic;
 		inc: in std_logic;
 		cntout: out std_logic_vector(4 downto 0);
 		q: out std_logic_vector(15 downto 0)
@@ -165,6 +166,8 @@ begin
 		);
 		
 	q <= not qi(15) & qi(14) & not qi(13) & qi(12) & not qi(11) & qi(10) & not qi(9) & qi(8) &
-		not qi(7) & qi(6) & not qi(5) & qi(4) & not qi(3) & qi(2) & not qi(1) & qi(0);
+		not qi(7) & qi(6) & not qi(5) & qi(4) & not qi(3) & qi(2) & not qi(1) & qi(0) when swap = '0' else
+		qi(14) & not qi(15) & qi(12) & not qi(13) & qi(10) & not qi(11) & qi(8) & not qi(9) &
+		qi(6) & not qi(7) & qi(4) & not qi(5) & qi(2) & not qi(3) & qi(0) & not qi(1);
 		
 end rtl;
