@@ -61,7 +61,7 @@ architecture rtl of sc_chan is
 	signal stat: ipb_reg_v(0 downto 0);		
 	signal d_in, d_in_i, d_buf: std_logic_vector(15 downto 0);
 	signal d_c: std_logic_vector(1 downto 0);
-	signal slip, slip_s, chan_rst, cap, inc: std_logic;
+	signal slip_l, slip_h, chan_rst, cap, inc: std_logic;
 	signal act_slip: unsigned(7 downto 0);
 	signal cntout: std_logic_vector(4 downto 0);
 	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert: std_logic;
@@ -115,10 +115,10 @@ begin
 	ctrl_mode <= ctrl(0)(4);
 	ctrl_src <= ctrl(0)(7 downto 6);
 	
-	slip <= sync_ctrl(0) and ctrl_en_sync; -- CDC
-	cap <= sync_ctrl(1) and ctrl_en_sync; -- CDC
-	inc <= sync_ctrl(2) and ctrl_en_sync; -- CDC
-	slip_s <= sync_ctrl(3) and ctrl_en_sync; -- CDC
+	slip_l <= sync_ctrl(0) and ctrl_en_sync; -- CDC
+	slip_h <= sync_ctrl(1) and ctrl_en_sync; -- CDC
+	cap <= sync_ctrl(2) and ctrl_en_sync; -- CDC
+	inc <= sync_ctrl(3) and ctrl_en_sync; -- CDC
 	
 	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & "000" & err_i & dr_warn & dr_full & buf_full & cap_full; -- CDC
 
@@ -144,8 +144,8 @@ begin
 			clk_s => clk280,
 			d_p => d_p,
 			d_n => d_n,
-			slip => slip,
-			slip_s => slip_s,
+			slip_l => slip_l,
+			slip_h => slip_h,
 			inc => inc,
 			cntout => cntout,
 			q => d_in

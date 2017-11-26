@@ -18,8 +18,8 @@ entity sc_input_serdes is
 		clk_s: in std_logic;
 		d_p: in std_logic;
 		d_n: in std_logic;
-		slip: in std_logic;
-		slip_s: in std_logic;
+		slip_l: in std_logic;
+		slip_h: in std_logic;
 		inc: in std_logic;
 		cntout: out std_logic_vector(4 downto 0);
 		q: out std_logic_vector(15 downto 0)
@@ -98,7 +98,7 @@ begin
 			clkdivp => '0', -- WTF is this? Not in the user guide
 			oclk => '0',
 			oclkb => '0',
-			bitslip => slip,
+			bitslip => slip_l,
 			shiftin1 => '0',
 			shiftin2 => '0',
 			ofb => '0',
@@ -135,7 +135,7 @@ begin
 			clkdivp => '0', -- WTF is this? Not in the user guide
 			oclk => '0',
 			oclkb => '0',
-			bitslip => slip_s,
+			bitslip => slip_h,
 			shiftin1 => '0',
 			shiftin2 => '0',
 			ofb => '0',

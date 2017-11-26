@@ -49,7 +49,7 @@ architecture rtl of sc_timing is
 	signal stb: std_logic_vector(0 downto 0);
 	signal sctr_i, sctr_s: unsigned(47 downto 0);
 	signal ctrl_rst_ctr, ctrl_cap_ctr, ctrl_en_sync, ctrl_force_sync, ctrl_pipeline_en, ctrl_send_sync: std_logic;
-	signal ctrl_chan_slip, ctrl_chan_slip_s, ctrl_chan_rst_buf, ctrl_chan_cap, ctrl_chan_inc: std_logic;
+	signal ctrl_chan_slip_l, ctrl_chan_slip_h, ctrl_chan_rst_buf, ctrl_chan_cap, ctrl_chan_inc: std_logic;
 	signal ctrl_zs_blks: std_logic_vector(7 downto 0);
 	signal sync, wait_sync, sync_err, io_err: std_logic;
 	signal sync_in_r, trig_in_r, trig_in_r_d: std_logic;
@@ -106,10 +106,10 @@ begin
 	ctrl_force_sync <= ctrl(0)(4);
 	ctrl_pipeline_en <= ctrl(0)(5);
 	ctrl_send_sync <= ctrl(0)(6);
-	ctrl_chan_slip <= ctrl(0)(12);
-	ctrl_chan_cap <= ctrl(0)(13);
-	ctrl_chan_inc <= ctrl(0)(14);
-	ctrl_chan_slip_s <= ctrl(0)(15);
+	ctrl_chan_slip_l <= ctrl(0)(12);
+	ctrl_chan_slip_h <= ctrl(0)(13);
+	ctrl_chan_cap <= ctrl(0)(14);
+	ctrl_chan_inc <= ctrl(0)(15);
 	ctrl_zs_blks <= ctrl(0)(23 downto 16);
 	stat(0) <= X"0000000" & "00"  & sync_err & wait_sync;
 	stat(1) <= std_logic_vector(sctr_s(31 downto 0));
@@ -207,9 +207,9 @@ begin
 	
 -- Channel sync control
 
-	chan_sync_ctrl(0) <= ctrl_chan_slip and stb(0); -- bitslip for serdes
-	chan_sync_ctrl(1) <= ctrl_chan_cap and stb(0); -- cap start
-	chan_sync_ctrl(2) <= ctrl_chan_inc and stb(0); -- inc for idelay
-	chan_sync_ctrl(3) <= ctrl_chan_slip_s and stb(0);
+	chan_sync_ctrl(0) <= ctrl_chan_slip_l and stb(0); -- bitslip for serdes
+	chan_sync_ctrl(1) <= ctrl_chan_slip_h and stb(0);
+	chan_sync_ctrl(2) <= ctrl_chan_cap and stb(0); -- cap start
+	chan_sync_ctrl(3) <= ctrl_chan_inc and stb(0); -- inc for idelay
 	
 end rtl;
