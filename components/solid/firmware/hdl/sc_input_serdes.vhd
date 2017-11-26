@@ -125,7 +125,7 @@ begin
 			shiftout1 => open,
 			shiftout2 => open,
 			d => '0',
-			ddly => '0',
+			ddly => d_d,
 			clk => clk_sb,
 			clkb => '0',
 			ce1 => '1',
