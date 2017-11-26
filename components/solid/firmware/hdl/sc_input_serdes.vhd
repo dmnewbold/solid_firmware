@@ -29,7 +29,7 @@ end sc_input_serdes;
 
 architecture rtl of sc_input_serdes is
 
-	signal d_b, d_d: std_logic;
+	signal d_l, d_h, d_ld, d_hd, d_hdi: std_logic;
 	signal d: std_logic_vector(13 downto 0);
 	signal s1, s2: std_logic;
 	signal clk_sb: std_logic;
@@ -41,14 +41,15 @@ begin
 
 	rst_s <= rst when rising_edge(clk_s);
 
-	ibuf: IBUFDS
+	ibuf: IBUFDS_DIFF_OUT
 		port map(
 			i => d_p,
 			ib => d_n,
-			o => d_b
+			o => d_l
+			o => d_h
 		);
 
-	idel: IDELAYE2
+	idel_l: IDELAYE2
 		generic map(
 			IDELAY_TYPE => "VARIABLE"
 		)
@@ -60,12 +61,33 @@ begin
 			inc => '1',
 			cinvctrl => '0',
 			cntvaluein => "00000",
-			idatain => d_b,
+			idatain => d_l,
 			datain => '0',
 			ldpipeen => '0',
-			dataout => d_d,
+			dataout => d_ld,
 			cntvalueout => cntout
 		);
+		
+	idel_h: IDELAYE2
+		generic map(
+			IDELAY_TYPE => "VARIABLE"
+		)
+		port map(
+			c => clk,
+			regrst => '0',
+			ld => rst,
+			ce => inc,
+			inc => '1',
+			cinvctrl => '0',
+			cntvaluein => "00000",
+			idatain => d_h,
+			datain => '0',
+			ldpipeen => '0',
+			dataout => d_hd,
+			cntvalueout => open
+		);
+		
+	d_hdi <= not d_hd;
 
 	clk_sb <= not clk_s;	
 	
@@ -88,7 +110,7 @@ begin
 			shiftout1 => open,
 			shiftout2 => open,
 			d => '0',
-			ddly => d_d,
+			ddly => d_ld,
 			clk => clk_s,
 			clkb => '0',
 			ce1 => '1',
@@ -125,7 +147,7 @@ begin
 			shiftout1 => open,
 			shiftout2 => open,
 			d => '0',
-			ddly => d_d,
+			ddly => d_hdi,
 			clk => clk_sb,
 			clkb => '0',
 			ce1 => '1',
@@ -142,5 +164,5 @@ begin
 			dynclkdivsel => '0',
 			dynclksel => '0'
 		);
-
+		
 end rtl;
