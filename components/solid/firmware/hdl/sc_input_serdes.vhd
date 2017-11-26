@@ -45,8 +45,8 @@ begin
 		port map(
 			i => d_p,
 			ib => d_n,
-			o => d_l
-			o => d_h
+			o => d_l,
+			ob => d_h
 		);
 
 	idel_l: IDELAYE2
