@@ -31,8 +31,8 @@ entity sc_chan is
 		rst40: in std_logic;
 		clk160: in std_logic;
 		clk280: in std_logic;
-		d_p: inout std_logic;
-		d_n: inout std_logic;
+		d_p: in std_logic;
+		d_n: in std_logic;
 		sync_ctrl: in std_logic_vector(3 downto 0);
 		zs_sel: in std_logic_vector(1 downto 0);
 		sctr: in std_logic_vector(47 downto 0);		
@@ -114,7 +114,6 @@ begin
 	ctrl_invert <= ctrl(0)(2);
 	ctrl_mode <= ctrl(0)(4);
 	ctrl_src <= ctrl(0)(7 downto 6);
-	ctrl_tt <= not ctrl(0)(8);
 	
 	slip <= sync_ctrl(0) and ctrl_en_sync; -- CDC
 	cap <= sync_ctrl(1) and ctrl_en_sync; -- CDC
@@ -147,8 +146,7 @@ begin
 			slip => slip,
 			inc => inc,
 			cntout => cntout,
-			q => d_in,
-			tt => ctrl_tt
+			q => d_in
 		);
 		
 	d_in_i <= d_in when ctrl_invert = '0' else not d_in;
