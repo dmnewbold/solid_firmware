@@ -19,9 +19,10 @@ entity sc_input_serdes is
 		d_p: in std_logic;
 		d_n: in std_logic;
 		slip: in std_logic;
+		slip_s: in std_logic;
 		inc: in std_logic;
 		cntout: out std_logic_vector(4 downto 0);
-		q: out std_logic_vector(13 downto 0)
+		q: out std_logic_vector(15 downto 0)
 	);
 
 end sc_input_serdes;
@@ -113,8 +114,8 @@ begin
 			IOBDELAY => "BOTH" -- Essential. And undocumented.
 		)
 		port map(
-			q1 => open,
-			q2 => open,
+			q1 => q(14),
+			q2 => q(15),
 			q3 => q(8),
 			q4 => q(9),
 			q5 => q(10),
@@ -134,7 +135,7 @@ begin
 			clkdivp => '0', -- WTF is this? Not in the user guide
 			oclk => '0',
 			oclkb => '0',
-			bitslip => slip,
+			bitslip => slip_s,
 			shiftin1 => s1,
 			shiftin2 => s2,
 			ofb => '0',

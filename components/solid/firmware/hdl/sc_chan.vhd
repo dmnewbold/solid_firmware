@@ -59,9 +59,9 @@ architecture rtl of sc_chan is
 	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(0 downto 0);		
-	signal d_in, d_in_i, d_buf: std_logic_vector(13 downto 0);
+	signal d_in, d_in_i, d_buf: std_logic_vector(15 downto 0);
 	signal d_c: std_logic_vector(1 downto 0);
-	signal slip, chan_rst, cap, inc: std_logic;
+	signal slip, slip_s, chan_rst, cap, inc: std_logic;
 	signal act_slip: unsigned(7 downto 0);
 	signal cntout: std_logic_vector(4 downto 0);
 	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert: std_logic;
@@ -118,6 +118,7 @@ begin
 	slip <= sync_ctrl(0) and ctrl_en_sync; -- CDC
 	cap <= sync_ctrl(1) and ctrl_en_sync; -- CDC
 	inc <= sync_ctrl(2) and ctrl_en_sync; -- CDC
+	slip_s <= sync_ctrl(3) and ctrl_en_sync; -- CDC
 	
 	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & "000" & err_i & dr_warn & dr_full & buf_full & cap_full; -- CDC
 
@@ -144,6 +145,7 @@ begin
 			d_p => d_p,
 			d_n => d_n,
 			slip => slip,
+			slip_s => slip_s,
 			inc => inc,
 			cntout => cntout,
 			q => d_in
@@ -158,10 +160,10 @@ begin
 		sctr(47 downto 36) when others;
 	
 	with ctrl_src select d_buf <=
-		d_in_i when "00",
+		blkend & '0' & d_in_i when "00",
 		(others => '0') when "01",
-		"00" & sctr_p when "10",
-		fake when others;
+		"0000" & sctr_p when "10",
+		"00" & fake when others;
 		
 -- Channel status
 

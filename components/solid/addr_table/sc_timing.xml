@@ -11,6 +11,7 @@
 			<node id="chan_slip" mask="0x1000"/>
 			<node id="chan_cap" mask="0x2000"/>
 			<node id="chan_inc" mask="0x4000"/>
+			<node id="chan_slip_s" mask="0x8000"/>
 			<node id="zs_blks" mask="0xff0000"/>
 		</node>
 		<node id="stat" address="0x8">

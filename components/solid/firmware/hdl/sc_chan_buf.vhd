@@ -25,7 +25,7 @@ entity sc_chan_buf is
 		clk40: in std_logic;
 		clk160: in std_logic;
 		buf_rst: in std_logic; -- general reset; clk40 dom
-		d: in std_logic_vector(13 downto 0); -- data in; clk40 dom
+		d: in std_logic_vector(15 downto 0); -- data in; clk40 dom
 		blkend: in std_logic;
 		nzs_en: in std_logic; -- enable nzs buffer; clk40 dom
 		cap: in std_logic;
@@ -50,7 +50,7 @@ architecture rtl of sc_chan_buf is
 
 	signal c: unsigned(1 downto 0);
 	signal we: std_logic;
-	signal d_ram, q_ram, d_nzs, q_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
+	signal d_ram, q_ram, q_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
 	signal a_ram: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr: unsigned(BUF_RADIX - 1 downto 0);
 	signal cap_run, cap_done: std_logic;
@@ -97,7 +97,7 @@ begin
 		std_logic_vector(pzr) when others; -- data from zs on 4th edge of clk160
 	
 	with c select d_ram <=
-		d_nzs when "11",
+		d when "11",
 		d_zs when others;
 		
 	with c select we <=
@@ -136,7 +136,6 @@ begin
 	
 	cap_done <= '1' when pnz = ZS_LAST_ADDR else '0';
 	wenz <= (nzs_en and not mode) or cap_run or cap;
-	d_nzs <= blkend & '0' & d;
 	cap_full <= not nzen;
 	
 -- Zero suppression
