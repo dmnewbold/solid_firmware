@@ -39,11 +39,12 @@ begin
 		if rising_edge(clk40) then
 			if rst40 = '1' or mark = '1' then
 				sel_i <= "00";
-				sel <= sel_i;
 			elsif trig_valid = '1' and unsigned(zs) > unsigned(sel_i) then
 				sel_i <= zs;
 			end if;
 		end if;
 	end process;
 
+	sel <= sel_i;
+	
 end rtl;

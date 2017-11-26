@@ -190,7 +190,17 @@ begin
 		);
 		
 	zs_sel_i <= to_integer(unsigned(zs_sel)); -- Might need pipelining here
-	zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0) when zs_sel_i < N_ZS_THRESH else (others => '0');
+
+	process(clk)
+	begin
+		if rising_edge(clk) and blkend = '1' then
+			if zs_sel_i < N_ZS_THRESH then
+				zs_thresh <= (others => '0');
+			else
+				zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0);
+			end if;
+		end if;
+	end process;
 	
 -- Buffers
 	
