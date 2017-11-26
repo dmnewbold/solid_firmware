@@ -160,7 +160,7 @@ begin
 		sctr(47 downto 36) when others;
 	
 	with ctrl_src select d_buf <=
-		blkend & '0' & d_in_i when "00",
+		d_in_i when "00",
 		(others => '0') when "01",
 		"0000" & sctr_p when "10",
 		"00" & fake when others;
@@ -254,7 +254,7 @@ begin
 			rst40 => rst40,
 			mark => blkend,
 			en => nzs_en,
-			d => d_buf,
+			d => d_buf(13 downto 0),
 			trig => trig
 		);
 
