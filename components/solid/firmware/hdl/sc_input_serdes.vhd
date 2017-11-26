@@ -32,8 +32,13 @@ architecture rtl of sc_input_serdes is
 	signal d: std_logic_vector(13 downto 0);
 	signal s1, s2: std_logic;
 	signal clk_sb: std_logic;
+	signal rst_s: std_logic;
 	
 begin
+
+-- Resync reset
+
+	rst_s <= rst when rising_edge(clk_s);
 
 	ibuf: IBUFDS
 		port map(
@@ -87,7 +92,7 @@ begin
 			clkb => clk_sb,
 			ce1 => '1',
 			ce2 => '1',
-			rst => rst,
+			rst => rst_s,
 			clkdiv => clk,
 			clkdivp => '0', -- WTF is this? Not in the user guide
 			oclk => '0',
@@ -124,7 +129,7 @@ begin
 			clkb => clk_sb,
 			ce1 => '1',
 			ce2 => '1',
-			rst => rst,
+			rst => rst_s,
 			clkdiv => clk,
 			clkdivp => '0', -- WTF is this? Not in the user guide
 			oclk => '0',
