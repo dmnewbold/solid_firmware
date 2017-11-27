@@ -51,7 +51,7 @@ board.dispatch()
 time.sleep(1)
 
 adcs = range(0x10)
-patt = 0x0ff
+patt = 0x3830
 cap_len = 0x400
 reps = 0x100
 
@@ -93,6 +93,7 @@ for s_ch in settings:
         board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
         board.dispatch()
 
+
     atap = board.getNode("daq.chan.csr.stat.tap").read()
     aslip = board.getNode("daq.chan.csr.stat.slip").read()
     board.dispatch()
@@ -116,11 +117,15 @@ for s_ch in settings:
                 print "Crap no capture", hex(i_chan), hex(i_slip), hex(i_tap), hex(r), time.clock()
             
         for w in d:
-            if int(w) & 0x3ff == patt:
+            if int(w) & 0x3fff == patt:
                 c += 1
 
     print hex(i_chan), hex(i_slip), hex(i_tap), hex(c)
     if c != cap_len * reps:
         print "Failure"
         sys.exit()
+
+    board.getNode("daq.chan.csr.ctrl.en_buf").write(0x0) # Disable this channel
+    board.getNode("daq.chan.csr.ctrl.en_sync").write(0x0) # Disable sync commands
+    board.dispatch()
 

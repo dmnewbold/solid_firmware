@@ -24,7 +24,7 @@ if len(db['TapSlips']) != 0: configID = max(db['TapSlips']['configID'])['configI
 
 print 'New config ID:', configID
 for ip in ips:
-    results = pickle.load( open( "output_" + str(ip) + ".tapslips", "rb" ) )
+    results = pickle.load( open( "alignments/" + str(ip) + ".dat", "rb" ) )
     for res in results:
         db['TapSlips'].insert({'configID': int(configID), 'ip': str(ip), 'tap': res[2], 'slip': res[1], 'channel': res[0]})
 

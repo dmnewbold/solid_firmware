@@ -143,20 +143,17 @@ begin
 -- Sync signals
 	
 	sync <= (sync_in_r and ctrl_en_sync) or (ctrl_force_sync and stb(0));
-
+	wait_sync <= (wait_sync and not sync) or rst40_i when rising_edge(clk40_i);
+		
 	process(clk40_i)
 	begin
 		if rising_edge(clk40_i) then
 			if rst40_i = '1' then
-				wait_sync <= '1';
 				sync_err <= '0';
-			else
-				if sync = '1' then
-					wait_sync <= '0';
-					if wait_sync = '0' and or_reduce(std_logic_vector(sctr_i(BLK_RADIX - 1 downto 0))) /= '0' then
-						sync_err <= '1';
-					end if;
-				end if;
+			elsif wait_sync = '0' and
+				((sync = '1' and or_reduce(std_logic_vector(sctr_i(BLK_RADIX - 1 downto 0))) /= '0') or
+				(sync = '0' and or_reduce(std_logic_vector(sctr_i(BLK_RADIX - 1 downto 0))) = '0')) then
+				sync_err <= '1';
 			end if;
 		end if;
 	end process;
