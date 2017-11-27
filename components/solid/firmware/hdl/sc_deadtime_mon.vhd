@@ -98,7 +98,7 @@ begin
 			addr => a_ram
 		);
 	
-	d_ram <= std_logic_vector(unsigned(q_ram + unsigned(std_logic_vector'(0 => inc))) when first = '0' else (0 => inc, others => '0');
+	d_ram <= std_logic_vector(unsigned(q_ram) + unsigned(std_logic_vector'(0 => inc))) when first = '0' else (0 => inc, others => '0');
 	we <= c(0) and not done;
 	a_ram <= sctr(ADDR_BITS - 2 downto 0) & c(1); 
 	
