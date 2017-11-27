@@ -193,9 +193,9 @@ begin
 		
 	zs_sel_i <= to_integer(unsigned(zs_sel)); -- Might need pipelining here
 
-	process(clk)
+	process(clk40)
 	begin
-		if rising_edge(clk) and blkend = '1' then
+		if rising_edge(clk40) and blkend = '1' then
 			if zs_sel_i < N_ZS_THRESH then
 				zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0);
 			else
