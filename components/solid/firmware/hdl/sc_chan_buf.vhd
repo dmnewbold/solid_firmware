@@ -25,7 +25,7 @@ entity sc_chan_buf is
 		clk40: in std_logic;
 		clk160: in std_logic;
 		buf_rst: in std_logic; -- general reset; clk40 dom
-		d: in std_logic_vector(13 downto 0); -- data in; clk40 dom
+		d: in std_logic_vector(15 downto 0); -- data in; clk40 dom
 		blkend: in std_logic;
 		nzs_en: in std_logic; -- enable nzs buffer; clk40 dom
 		cap: in std_logic;
@@ -136,8 +136,8 @@ begin
 	
 	cap_done <= '1' when pnz = ZS_LAST_ADDR else '0';
 	wenz <= (nzs_en and not mode) or cap_run or cap;
-	d_nzs <= blkend & '0' & d;
 	cap_full <= not nzen;
+	d_nzs <= blkend & '0' & d(13 downto 0) when mode = '0' else d;
 	
 -- Zero suppression
 		

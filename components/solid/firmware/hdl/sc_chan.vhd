@@ -59,12 +59,12 @@ architecture rtl of sc_chan is
 	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(0 downto 0);		
-	signal d_in, d_in_i, d_buf: std_logic_vector(13 downto 0);
+	signal d_in, d_in_i, d_buf: std_logic_vector(15 downto 0);
 	signal d_c: std_logic_vector(1 downto 0);
-	signal slip, chan_rst, cap, inc: std_logic;
+	signal slip_l, slip_h, chan_rst, cap, inc: std_logic;
 	signal act_slip: unsigned(7 downto 0);
 	signal cntout: std_logic_vector(4 downto 0);
-	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert: std_logic;
+	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert, ctrl_swap: std_logic;
 	signal ctrl_mode: std_logic;
 	signal ctrl_src: std_logic_vector(1 downto 0);
 	signal cap_full, buf_full, dr_full, dr_warn: std_logic;
@@ -74,6 +74,7 @@ architecture rtl of sc_chan is
 	signal sctr_p: std_logic_vector(11 downto 0);
 	signal dr_d: std_logic_vector(31 downto 0);
 	signal ro_en, keep_i, flush_i, err_i, req, blkend, dr_blkend, dr_wen: std_logic;
+	signal ctrl_tt: std_logic;
 	
 begin
 
@@ -111,12 +112,14 @@ begin
 	ctrl_en_sync <= ctrl(0)(0);
 	ctrl_en_buf <= ctrl(0)(1);
 	ctrl_invert <= ctrl(0)(2);
+	ctrl_swap <= ctrl(0)(3);
 	ctrl_mode <= ctrl(0)(4);
 	ctrl_src <= ctrl(0)(7 downto 6);
 	
-	slip <= sync_ctrl(0) and ctrl_en_sync; -- CDC
-	cap <= sync_ctrl(1) and ctrl_en_sync; -- CDC
-	inc <= sync_ctrl(2) and ctrl_en_sync; -- CDC
+	slip_l <= sync_ctrl(0) and ctrl_en_sync; -- CDC
+	slip_h <= sync_ctrl(1) and ctrl_en_sync; -- CDC
+	cap <= sync_ctrl(2) and ctrl_en_sync; -- CDC
+	inc <= sync_ctrl(3) and ctrl_en_sync; -- CDC
 	
 	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & "000" & err_i & dr_warn & dr_full & buf_full & cap_full; -- CDC
 
@@ -127,7 +130,7 @@ begin
 		if rising_edge(clk40) then
 			if rst40 = '1' then
 				act_slip <= X"00";
-			elsif slip = '1' then
+			elsif slip_l = '1' then
 				act_slip <= act_slip + 1;
 			end if;
 		end if;
@@ -142,7 +145,9 @@ begin
 			clk_s => clk280,
 			d_p => d_p,
 			d_n => d_n,
-			slip => slip,
+			slip_l => slip_l,
+			slip_h => slip_h,
+			swap => ctrl_swap,
 			inc => inc,
 			cntout => cntout,
 			q => d_in
@@ -159,8 +164,8 @@ begin
 	with ctrl_src select d_buf <=
 		d_in_i when "00",
 		(others => '0') when "01",
-		"00" & sctr_p when "10",
-		fake when others;
+		"0000" & sctr_p when "10",
+		"00" & fake when others;
 		
 -- Channel status
 
@@ -187,7 +192,17 @@ begin
 		);
 		
 	zs_sel_i <= to_integer(unsigned(zs_sel)); -- Might need pipelining here
-	zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0) when zs_sel_i < N_ZS_THRESH else (others => '0');
+
+	process(clk)
+	begin
+		if rising_edge(clk) and blkend = '1' then
+			if zs_sel_i < N_ZS_THRESH then
+				zs_thresh <= (others => '0');
+			else
+				zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0);
+			end if;
+		end if;
+	end process;
 	
 -- Buffers
 	
@@ -251,7 +266,7 @@ begin
 			rst40 => rst40,
 			mark => blkend,
 			en => nzs_en,
-			d => d_buf,
+			d => d_buf(13 downto 0),
 			trig => trig
 		);
 
