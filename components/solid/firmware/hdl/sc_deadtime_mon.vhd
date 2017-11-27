@@ -37,7 +37,7 @@ architecture rtl of sc_deadtime_mon is
 	constant ADDR_BITS: integer := calc_width(N_CHAN) + 2;
 	signal c: unsigned(1 downto 0);
 	signal en_i, first: std_logic;
-	signal d_ram, q_ram: std_logic_vector(31 downto 0);
+	signal d_ram, q_ram: std_logic_vector(23 downto 0);
 	signal a_ram: std_logic_vector(ADDR_BITS - 1 downto 0);
 	signal we, inc, done, p: std_logic;
 	signal sel: integer range 2 ** (ADDR_BITS - 1) - 1 downto 0 := 0;
@@ -84,7 +84,7 @@ begin
 	ram: entity work.ipbus_ported_dpram
 		generic map(
 			ADDR_WIDTH => ADDR_BITS,
-			DATA_WIDTH => 32
+			DATA_WIDTH => 24
 		)
 		port map(
 			clk => clk,
@@ -98,7 +98,7 @@ begin
 			addr => a_ram
 		);
 	
-	d_ram <= std_logic_vector(unsigned(q_ram) + unsigned(std_logic_vector'(0 => inc))) when first = '0' else (0 => inc, others => '0');
+	d_ram <= std_logic_vector(unsigned(q_ram + unsigned(std_logic_vector'(0 => inc))) when first = '0' else (0 => inc, others => '0');
 	we <= c(0) and not done;
 	a_ram <= sctr(ADDR_BITS - 2 downto 0) & c(1); 
 	
