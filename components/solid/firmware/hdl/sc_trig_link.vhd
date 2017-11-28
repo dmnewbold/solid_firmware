@@ -182,7 +182,6 @@ begin
 	ack_us <= ack and qv_us;
 	ack_ds <= ack and not qv_us;
 	
-	link_ok <= ((rdy_us_tx and rdy_us_rx and data_good_us) or not ctrl_en_us) and
-		((rdy_ds_tx and rdy_ds_rx and data_good_ds) or not ctrl_en_ds);
+	link_ok <= '0';
 
 end rtl;
