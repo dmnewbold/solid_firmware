@@ -70,12 +70,16 @@ begin
 			q => ctrl
 		);
 		
-	ctrl_en_us <= ctrl(0)(0);
-	ctrl_en_ds <= ctrl(0)(1);
-	ctrl_rst_tx <= ctrl(0)(2);
-	ctrl_rst_rx <= ctrl(0)(3);
-	ctrl_loopback_us <= ctrl(0)(6 downto 4);
-	ctrl_loopback_ds <= ctrl(0)(9 downto 7);
+	ctrl_en_us_tx_phy <= ctrl(0)(0);
+	ctrl_en_us_rx_phy <= ctrl(0)(1);
+	ctrl_en_us_tx <= ctrl(0)(2);
+	ctrl_en_us_rx <= ctrl(0)(3);
+	ctrl_en_ds_tx_phy <= ctrl(0)(4);
+	ctrl_en_ds_rx_phy <= ctrl(0)(5);
+	ctrl_en_ds_tx <= ctrl(0)(6);
+	ctrl_en_ds_rx <= ctrl(0)(7);
+	ctrl_loopback_us <= ctrl(0)(10 downto 8);
+	ctrl_loopback_ds <= ctrl(0)(14 downto 12);
 	stat(0) <= X"00" & id_us & '0' & pstat_us_rx & pstat_us_tx & '0' & stat_us_rx & stat_us_tx & rdy_us_rx & rdy_us_tx;
 	stat(1) <= X"00" & id_ds & '0' & pstat_ds_rx & pstat_ds_tx & '0' & stat_ds_rx & stat_ds_tx & rdy_ds_rx & rdy_ds_tx;
 

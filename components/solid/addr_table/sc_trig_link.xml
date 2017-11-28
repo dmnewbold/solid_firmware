@@ -9,7 +9,7 @@
 	    <node id="en_ds_tx" mask="0x40"/>
 	    <node id="en_ds_rx" mask="0x80"/>
 		<node id="loop_us" mask="0x700"/>
-		<node id="loop_ds" mask="0x3800"/>
+		<node id="loop_ds" mask="0x7000"/>
 	</node>
 	<node id="us_stat" address="0x2">
 		<node id="phy_rdy_tx" mask="0x1"/>
