@@ -124,7 +124,7 @@ begin
 	pipe_from_us: entity work.sc_trig_link_pipe
 		port map(
 			tx_en => ctrl_en_us_tx,
-			rx_en => ctrl_en_us_rx
+			rx_en => ctrl_en_us_rx,
 			clk125 => clk125,
 			rxd => rxd_us,
 			rxk => rxk_us,
@@ -149,7 +149,7 @@ begin
 	pipe_from_ds: entity work.sc_trig_link_pipe
 		port map(
 			tx_en => ctrl_en_ds_tx,
-			rx_en => ctrl_en_ds_rx
+			rx_en => ctrl_en_ds_rx,
 			clk125 => clk125,
 			rxd => rxd_ds,
 			rxk => rxk_ds,
