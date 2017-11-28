@@ -10,9 +10,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity sc_trig_mgt_wrapper is
 	port(
 		sysclk: in std_logic; -- DRP clock
-		en: in std_logic;
-		tx_rst: in std_logic;
-		rx_rst: in std_logic;
+		tx_en: in std_logic;
+		rx_en: in std_logic;
 		tx_good: out std_logic;
 		rx_good: out std_logic;
 		tx_stat: out std_logic_vector(1 downto 0);
@@ -138,23 +137,27 @@ architecture rtl of sc_trig_mgt_wrapper is
 		);
 	end component;
 
-	signal tx_rst_i, rx_rst_i, pll_lock, pll_rst: std_logic;
+	signal tx_rst, rx_rst, tx_good_i, pll_lock, pll_rst: std_logic;
 	signal rx_aligned, rx_rdy: std_logic;
 	type state_t is (ST_START, ST_UP, ST_ERR);
 	signal state: state_t;
+	signal srst_a, srst_b: std_logic;
+	
+	attribute ASYNC_REG: string;
+	attribute ASYNC_REG of srst_a: signal is "yes";
 	
 begin
 
-	tx_rst_i <= tx_rst or not en;
-	rx_rst_i <= rx_rst or not en;
+	tx_rst <= not tx_en;
+	rx_rst <= not rx_en;
 
 	sc_trig_link_mgt_i: sc_trig_link_mgt
 		port map(
 			SYSCLK_IN => sysclk,
-			SOFT_RESET_TX_IN => tx_rst_i,
-			SOFT_RESET_RX_IN => rx_rst_i,
+			SOFT_RESET_TX_IN => tx_rst,
+			SOFT_RESET_RX_IN => rx_rst,
 			DONT_RESET_ON_DATA_ERROR_IN => '0',
-			GT0_TX_FSM_RESET_DONE_OUT => tx_good,
+			GT0_TX_FSM_RESET_DONE_OUT => tx_good_i,
 			GT0_RX_FSM_RESET_DONE_OUT => rx_rdy,
 			GT0_DRP_BUSY_OUT => open,
 			GT0_DATA_VALID_IN => '1',
@@ -223,13 +226,18 @@ begin
 		);
 		
 	pll_lock <= not pll_rst; -- Needed to fool tx reset fsm into working, when PLL is shared with ethernet core
+	tx_good <= tx_good_i and tx_en; -- CDC
 	
 -- Link state
 
 	process(clk125)
 	begin
 		if rising_edge(clk125) then
-			if rx_rst = '1' then -- CDC, but long pulse on rx_rst
+		
+			srst_a <= rx_rst; -- Sync registers
+			srst_b <= srst_a;
+
+			if srst_b = '1' then
 				state <= ST_START;
 			else
 				case state is

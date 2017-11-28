@@ -14,7 +14,8 @@ use unisim.VComponents.all;
 
 entity sc_trig_link_pipe is
 	port(
-		en: in std_logic;
+		tx_en: in std_logic;
+		rx_en: in std_logic;
 		clk125: in std_logic;
 		rxd: in std_logic_vector(15 downto 0);
 		rxk: in std_logic_vector(1 downto 0);
@@ -46,12 +47,24 @@ architecture rtl of sc_trig_link_pipe is
 	signal f: std_logic_vector(15 downto 0);
 	signal up, fail, cause, tb: std_logic;
 	signal cctr: unsigned(8 downto 0);
-
+	signal rx_rst_b, rx_rst, tx_rst_b, tx_rst: std_logic;
+	
+	attribute ASYNC_REG: string;
+	attribute ASYNC_REG of rx_rst_b, tx_rst_b: signal is "yes";
+	
 begin
 
+-- Reset sync
+
+	rx_rst_b <= rst40 or not rx_en or not link_good when rising_edge(clk40); -- sync reg
+	rx_rst <= rx_rst_b when rising_edge(clk40);
+	
+	tx_rst_b <= rst40 or not tx_en when rising_edge(clk40); -- sync reg
+	tx_rst <= tx_rst_b when rising_edge(clk40);
+	
 -- Input FIFO
 
-	rx_valid <= '1' when rxk = "00" and link_good = '1' else '0';
+	rx_valid <= '1' when rxk = "00" and rx_rst = '0' else '0';
 	di_rx <= X"0000" & rxd;
 	
 	rx_fifo: FIFO18E1
@@ -68,7 +81,7 @@ begin
 			rdclk => clk40,
 			rden => ren_rx,
 			regce => '1',
-			rst => rst40,
+			rst => rx_rst,
 			rstreg => '0',
 			wrclk => clk125,
 			wren => rx_valid
@@ -77,7 +90,7 @@ begin
 	q <= do_rx(15 downto 0);
 	qv <= up and not empty_rx;
 	stat_rx(1 downto 0) <= full_rx & empty_rx;
-	ren_rx <= (ack or tb or not up) and en;
+	ren_rx <= (ack or tb or not up) and not rx_rst;
 	
 -- Data checker: rx
 
@@ -86,7 +99,7 @@ begin
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
-			if rst40 = '1' or en = '0' or link_good = '0' then -- CDC, en is on clk_ipb, but ~static level
+			if rx_rst = '1' then -- CDC, en is on clk_ipb, but ~static level
 				up <= '0';
 				fail <= '0';
 				cause <= '0';
@@ -153,7 +166,7 @@ begin
 			rdclk => clk125,
 			rden => ren_tx,
 			regce => '1',
-			rst => rst40,
+			rst => tx_rst,
 			rstreg => '0',
 			wrclk => clk40,
 			wren => wen_tx
@@ -161,7 +174,7 @@ begin
 
 	stat_tx <= full_tx & empty_tx;
 	ren_tx <= not empty_tx and not v;
-	wen_tx <= dv or not or_reduce(sctr(7 downto 0));
+	wen_tx <= (dv or not or_reduce(sctr(7 downto 0))) and not tx_rst;
 	
 -- Link output select
 
@@ -184,7 +197,7 @@ begin
 	process(clk125)
 	begin
 		if rising_edge(clk125) then
-			if en = '0' or link_good = '0' then
+			if rx_rst = '1' then
 				remote_id <= (others => '0');
 			elsif rxk = "10" then
 				remote_id <= rxd(7 downto 0);
