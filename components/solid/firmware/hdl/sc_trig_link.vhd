@@ -38,7 +38,8 @@ architecture rtl of sc_trig_link is
 
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(1 downto 0);
-	signal ctrl_en_us, ctrl_en_ds, ctrl_rst_tx, ctrl_rst_rx: std_logic;
+	signal ctrl_en_us_tx_phy, ctrl_en_us_rx_phy, ctrl_en_us_tx, ctrl_en_us_rx: std_logic;
+	signal ctrl_en_ds_tx_phy, ctrl_en_ds_rx_phy, ctrl_en_ds_tx, ctrl_en_ds_rx: std_logic;
 	signal ctrl_loopback_us, ctrl_loopback_ds: std_logic_vector(2 downto 0);
 	signal rdy_us_tx, rdy_us_rx, rdy_ds_tx, rdy_ds_rx: std_logic;
 	signal stat_us_tx, stat_ds_tx: std_logic_vector(1 downto 0);
@@ -83,9 +84,8 @@ begin
 	mgt_us: entity work.sc_trig_mgt_wrapper
 		port map(
 			sysclk => clk,
-			en => ctrl_en_us,
-			tx_rst => ctrl_rst_tx,
-			rx_rst => ctrl_rst_rx,
+			tx_en => ctrl_en_us_tx_phy,
+			rx_en => ctrl_en_us_rx_phy,
 			tx_good => rdy_us_tx,
 			rx_good => rdy_us_rx,
 			tx_stat => stat_us_tx,
@@ -103,9 +103,8 @@ begin
 	mgt_ds: entity work.sc_trig_mgt_wrapper
 		port map(
 			sysclk => clk,
-			en => ctrl_en_ds,
-			tx_rst => ctrl_rst_tx,
-			rx_rst => ctrl_rst_rx,
+			tx_en => ctrl_en_ds_tx_phy,
+			rx_en => ctrl_en_ds_rx_phy,
 			tx_good => rdy_ds_tx,
 			rx_good => rdy_ds_rx,
 			tx_stat => stat_ds_tx,
@@ -124,7 +123,8 @@ begin
 
 	pipe_from_us: entity work.sc_trig_link_pipe
 		port map(
-			en => ctrl_en_us,
+			tx_en => ctrl_en_us_tx,
+			rx_en => ctrl_en_us_rx
 			clk125 => clk125,
 			rxd => rxd_us,
 			rxk => rxk_us,
@@ -148,7 +148,8 @@ begin
 
 	pipe_from_ds: entity work.sc_trig_link_pipe
 		port map(
-			en => ctrl_en_ds,
+			tx_en => ctrl_en_ds_tx,
+			rx_en => ctrl_en_ds_rx
 			clk125 => clk125,
 			rxd => rxd_ds,
 			rxk => rxk_ds,
