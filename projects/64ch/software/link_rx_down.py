@@ -18,11 +18,11 @@ for hw in hw_list:
     hw.dispatch()
     print "csr.id", hex(v), "csr.stat", hex(vs)
 
-    print "Enabling rx links"
-    hw.getNode("daq.tlink.ctrl.en_us_rx_phy").write(1)
-    hw.getNode("daq.tlink.ctrl.en_ds_rx_phy").write(1)
+    print "Disabling rx links"
+    hw.getNode("daq.tlink.ctrl.en_us_rx").write(0)
+    hw.getNode("daq.tlink.ctrl.en_ds_rx").write(0)
     hw.dispatch()
 
-    hw.getNode("daq.tlink.ctrl.en_us_rx").write(1)
-    hw.getNode("daq.tlink.ctrl.en_ds_rx").write(1)
+    hw.getNode("daq.tlink.ctrl.en_us_rx_phy").write(0)
+    hw.getNode("daq.tlink.ctrl.en_ds_rx_phy").write(0)
     hw.dispatch()
