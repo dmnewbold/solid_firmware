@@ -72,20 +72,10 @@ architecture rtl of payload is
 	signal trig_in_ds, trig_i,trig_i_masked: std_logic_vector(9 downto 0);
 	signal trig_ir: std_logic;
 	signal ctr: unsigned(BLK_RADIX - 1 downto 0);
-        signal sync_out_ctr, trig_out_ctr , trig_in_ctr : unsigned(31 downto 0) := ( others => '0' );
-        signal trig_ir_d1 , trig_ir_d2 : std_logic := '0';
-        signal rst_counters : std_logic := '0';
+	signal sync_out_ctr, trig_out_ctr , trig_in_ctr : unsigned(31 downto 0) := ( others => '0' );
+	signal trig_ir_d1 , trig_ir_d2 : std_logic := '0';
+	signal rst_counters : std_logic := '0';
 
-    -- mark signals for debugging
-    attribute mark_debug : string;
-    attribute mark_debug of trig_in_ds: signal  is "true";
-    attribute mark_debug of trig_i_masked: signal  is "true";
-    attribute mark_debug of trig_out_us: signal is "true";
-    attribute mark_debug of trig_out_ds: signal is "true";
-    attribute mark_debug of sync_in_us: signal is "true";
-    attribute mark_debug of sync_out_ds: signal is "true";
-    attribute mark_debug of ctrl_force_trig_out: signal is "true";
-    attribute mark_debug of ctrl_en_trig_out: signal is "true";
 begin
 
 -- ipbus address decode
@@ -126,40 +116,34 @@ begin
 	ctrl_layer <= ctrl(0)(4);
 	ctrl_trig_in_mask <= ctrl(0)(15 downto 6);
 
-        -- Status registers
-        stat(0) <= X"a753" & FW_REV;
-        stat(1) <= std_logic_vector(sync_out_ctr);
-        stat(2) <= std_logic_vector(trig_out_ctr);
-        stat(3) <= std_logic_vector(trig_in_ctr);
-        
+	stat(0) <= X"a753" & FW_REV;
+	stat(1) <= std_logic_vector(sync_out_ctr);
+	stat(2) <= std_logic_vector(trig_out_ctr);
+	stat(3) <= std_logic_vector(trig_in_ctr);
 
 -- trigger and sync Counters
-        process(clki)
+
+	process(clki)
 	begin
-          if rising_edge(clki) then
-            if rst_counters = '1' then
-              sync_out_ctr <= (others => '0');
-              trig_out_ctr <= (others => '0');
-              trig_in_ctr <= (others => '0');
-            else
-              if sync_out_ds = '1' then
-                sync_out_ctr <= sync_out_ctr + 1;
-              end if;
-              
-              if trig_out_ds = '1' then 
-                trig_out_ctr <= trig_out_ctr + 1;
-              end if;
-
-              -- look for rising edge of incoming trigger
-              if trig_ir_d1 = '1' and trig_ir_d2 = '0' then
-                trig_in_ctr <= trig_in_ctr + 1;
-              end if;
-            end if;
-
-            trig_ir_d1 <= or_reduce(trig_i and ctrl_trig_in_mask);
-            trig_ir_d2 <= trig_ir_d1;
-            
-          end if;
+		if rising_edge(clki) then
+			if rst_counters = '1' then
+				sync_out_ctr <= (others => '0');
+				trig_out_ctr <= (others => '0');
+				trig_in_ctr <= (others => '0');
+			else
+				if sync_out_ds = '1' then
+					sync_out_ctr <= sync_out_ctr + 1;
+				end if;
+				if trig_out_ds = '1' then
+					trig_out_ctr <= trig_out_ctr + 1;
+				end if;
+				if trig_ir_d1 = '1' and trig_ir_d2 = '0' then
+					trig_in_ctr <= trig_in_ctr + 1;
+				end if;
+			end if;
+			trig_ir_d1 <= or_reduce(trig_i and ctrl_trig_in_mask);
+			trig_ir_d2 <= trig_ir_d1;
+		end if;
 	end process;
         
 -- Sync ctrl
@@ -182,7 +166,7 @@ begin
 	ctrl_en_sync <= sync_ctrl(0)(0);
 	ctrl_en_trig_out <= sync_ctrl(0)(1);
 	ctrl_force_trig_out <= sync_ctrl(0)(2) and stb(0);
-    rst_counters  <= sync_ctrl(0)(3) and stb(0);
+	rst_counters <= sync_ctrl(0)(3) and stb(0);
 
 -- General IO
 
@@ -214,8 +198,9 @@ begin
 		end if;
 	end process;
 
-        -- ctrl_layer =0 --> sync,trig are controlled by local FPGA.
-        -- ctrl_layer=1 --> sync,trig are conrolled from upstream HDMI
+-- ctrl_layer =0 --> sync,trig are controlled by local FPGA.
+-- ctrl_layer=1 --> sync,trig are conrolled from upstream HDMI
+
 	sync_sel <= not ctrl_layer; -- Set sync_sel=1 for output sync to be
                                     -- driven by FPGA. Set sync_sel=0 to be
                                     -- driven from upstream
