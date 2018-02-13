@@ -19,6 +19,7 @@ package top_decl is
 	constant NZS_BLKS: integer := 2; -- Reserve two blocks of space for NZS buffer
 	constant N_TRG: integer := 4; -- Number of trigger types
 	constant N_ZS_THRESH: integer := 4; -- Number of ZS thresholds
+	constant ZS_DEL: integer := 8;
 	constant N_CHAN_TRG: integer := 3; -- Number of channel trigger bits
 	constant FIFO_RADIX: integer := 3; -- 8 FIFO blocks in readout buffer
 	

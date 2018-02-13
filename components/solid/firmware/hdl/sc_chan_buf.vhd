@@ -44,8 +44,7 @@ end sc_chan_buf;
 
 architecture rtl of sc_chan_buf is
 
-	constant NZS_LAST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX - 1;
-	constant ZS_FIRST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX;
+	constant ZS_FIRST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX + ZS_DEL;
 	constant ZS_LAST_ADDR: integer := 2 ** BUF_RADIX - 1;
 
 	signal c: unsigned(1 downto 0);
@@ -125,7 +124,7 @@ begin
 			if (mode = '1' and nzen = '0') or (mode = '0' and nzen_d = '0') then
 				pnz <= to_unsigned(0, pnz'length);
 			else
-				if (mode = '0' and pnz = NZS_LAST_ADDR) or pnz = ZS_LAST_ADDR then
+				if (mode = '0' and pnz = ZS_FIRST_ADDR - 1) or pnz = ZS_LAST_ADDR then
 					pnz <= (others => '0');
 				else
 					pnz <= pnz + 1;

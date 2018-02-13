@@ -219,7 +219,7 @@ begin
 			q(0) => zs_cfg
 		);
 
-	zssel: entity work.sc_zs_sel
+	zssel: entity work.sc_zs_sel_rolling
 		port map(
 			clk40 => clk40,
 			rst40 => rst40,
