@@ -19,6 +19,7 @@ entity sc_local_trig is
 		clk40: in std_logic;
 		rst40: in std_logic;
 		en: in std_logic;
+		coinc_mode: in std_logic;
 		mask: in std_logic_vector(N_TRG - 1 downto 0);
 		hops: in std_logic_vector(31 downto 0);
 		mark: in std_logic;
@@ -55,7 +56,7 @@ begin
 	
 -- Threshold trigger generator
 
-	tg0: entity work.sc_trig_gen_or
+	tg0: entity work.sc_trig_gen_or_coinc
 		generic map(
 			TBIT => 0,
 			DELAY => 2
@@ -63,6 +64,7 @@ begin
 		port map(
 			clk => clk40,
 			en => en,
+			mode => coinc_mode,
 			mark => mark,
 			chan_trig => chan_trig,
 			chan_act => cact(0),
