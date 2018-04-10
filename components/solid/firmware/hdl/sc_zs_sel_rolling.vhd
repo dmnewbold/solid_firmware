@@ -2,8 +2,8 @@
 --
 -- Zero suppression threshold select logic - range of blocks
 -- 
--- zscfg is four bits for each trigger type
--- b3-2: blocks for change threshold for (from start of nzs buffer)
+-- zscfg is eight bits for each trigger type
+-- b7-4: blocks for change threshold for (from start of nzs buffer)
 -- b1-0: ZS threshold ID for this trigger
 --
 -- Dave Newbold, August 2016

@@ -56,7 +56,7 @@ architecture rtl of sc_trig is
 	signal ctrl, ctrl_mask: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(1 downto 0);
 	signal stb: std_logic_vector(0 downto 0);
-	signal ctrl_dtmon_en, ctrl_trig_in_en, ctrl_trig_out_force: std_logic;
+	signal ctrl_dtmon_en, ctrl_trig_in_en, ctrl_trig_out_force, ctrl_coinc_mode: std_logic;
 	signal masks: ipb_reg_v(N_CHAN_TRG * 2 - 1 downto 0);
 	signal trig_mask: std_logic_vector(N_TRG - 1 downto 0);
 	signal hop_cfg: std_logic_vector(31 downto 0);
@@ -109,6 +109,7 @@ begin
 	ctrl_dtmon_en <= ctrl(0)(0);
 	ctrl_trig_in_en <= ctrl(0)(1);
 	ctrl_trig_out_force <= ctrl(0)(2) and stb(0);
+	ctrl_coinc_mode <= ctrl(0)(3);
 	stat(0) <= X"0" & tctr;
 	stat(1) <= X"0000000" & "00" & rveto & err;
 
@@ -183,6 +184,7 @@ begin
 			clk40 => clk40,
 			rst40 => rst40,
 			en => trig_en,
+			coinc_mode => ctrl_coinc_mode,
 			mask => trig_mask,
 			hops => hop_cfg,
 			mark => mark,
