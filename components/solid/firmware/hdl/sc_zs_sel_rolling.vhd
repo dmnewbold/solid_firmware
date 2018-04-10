@@ -11,6 +11,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
+use ieee.std_logic_misc.all;
 
 use work.top_decl.all;
 
@@ -72,7 +73,7 @@ begin
 				t := k;
 			end if;
 		end loop;
-		ts <= t;
+		ts <= std_logic_vector(t);
 	end process;
 	
 -- Pipelining; send new ZS threshold choice at correct time
