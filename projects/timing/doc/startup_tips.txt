@@ -1,0 +1,59 @@
+Startup procedure step 1 (from cold start, i.e power-on)
+
+    Timing board (master first, then slaves)
+        - Reset registers (csr.ctrl.soft_rst)
+        - Set board layer (csr.ctrl.layer)
+        - Reset PLL (csr.ctrl.pll_rst)
+        - Program PLL
+            - Different program for layer 0 and layer 1 boards
+        - Check frequency (freq_ctr)
+        
+    Planes
+        - Reset registers (csr.ctrl.soft_rst)
+        - Disable MMCM (set csr.ctrl.rst_mmcm)
+        - Reset idelayctrl (csr.ctrl.rst_idelayctrl)
+        - Check that idelayctrl is locked (csr.stat.idelayctrl_rdy)
+        - Reset PLL (io.csr.ctrl.clkgen_rst)
+        - Program PLL
+        - Check for PLL lock (io.csr.stat.clkgen_lol)
+        - Check frequency (io.freq_ctr)
+        - Enable MMCM (unset csr.ctrl.rst_mmcm)
+        - Check MMCM lock (csr.stat.mmcm_locked)
+        - {Do setup for channels, triggers, thresholds, sequencer, etc}
+        
+Startup procedure step 2 (from warm start, or following step 1)
+
+    Planes
+        - Enable external sync (set daq.timing.csr.ctrl.en_ext_sync)
+        - Enable pipeline (set daq.timing.csr.ctrl.pipeline_en)
+        - Enable readout buffer (set daq.roc.csr.ctrl.en)
+        
+    Timing board (master)
+        - Issue the sync (set sync_ctrl.en_sync)
+        
+    Planes
+        - {do all the board-by-board trigger link enabling stuff, and check status}
+        
+Starting a run
+
+    Planes
+        - {Enable triggers}
+
+Stopping a run
+
+    Planes
+        - {Disable triggers}
+        - {Wait for buffers to empty}
+        
+Shutdown procedure step 1
+
+    Planes
+        - Disable pipeline (unset daq.timing.csr.ctrl.pipeline_en)
+        - Disable buffer (unset daq.roc.csr.ctrl.en)
+
+[At this point, you can change settings and re-start from startup procedure step 2]
+
+Shutdown procedure step 2 (if you really want to start over without power cycling)
+        
+    All boards
+        - Nuke the suckers (csr.ctrl.nuke for timing, csr.ctrl.nuke for planes)
