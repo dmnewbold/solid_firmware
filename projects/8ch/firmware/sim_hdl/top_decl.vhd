@@ -28,8 +28,8 @@ package top_decl is
 	
 	type sc_ch_array_t is array(N_CHAN / 4 - 1 downto 0) of integer;
 	constant SC_CH_Y0: sc_ch_array_t := (0 => 0);
-	constant SC_CH_Y1: sc_ch_array_t := (0 => 2);
-	constant SC_CH_X0: sc_ch_array_t := (0 => 4);
-	constant SC_CH_X1: sc_ch_array_t := (0 => 6);
+	constant SC_CH_Y1: sc_ch_array_t := (0 => 1);
+	constant SC_CH_X0: sc_ch_array_t := (0 => 2);
+	constant SC_CH_X1: sc_ch_array_t := (0 => 3);
 	
 end top_decl;

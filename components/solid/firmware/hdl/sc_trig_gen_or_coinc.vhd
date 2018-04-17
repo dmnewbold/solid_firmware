@@ -44,9 +44,7 @@ begin
 -- Define the trigger condition
 
 	process(chan_trig)
-	
 	   variable y, x: std_logic;
-	
 	begin
 		y := '0';
 		x := '0';
