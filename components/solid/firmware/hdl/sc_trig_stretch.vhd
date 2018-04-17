@@ -23,7 +23,7 @@ end sc_trig_stretch;
 
 architecture rtl of sc_trig_stretch is
 
-	type r_t: array(2 ** del'width - 1 downto 0) of std_logic_vector(WIDTH - 1 downto 0);
+	type r_t is array(2 ** del'length - 1 downto 0) of std_logic_vector(WIDTH - 1 downto 0);
 	signal r: r_t;
 	
 begin

@@ -27,9 +27,9 @@ package top_decl is
 	type sc_ltrig_array is array(N_TRG - 1 downto 0) of std_logic_vector(N_CHAN - 1 downto 0);
 	
 	type sc_ch_array_t is array(N_CHAN / 4 - 1 downto 0) of integer;
-	constant SC_CH_Y0: sc_ch_array_t: (24, 25, 26, 27, 28, 29, 30, 31, 0, 1, 2, 3, 4, 5, 6, 7);
-	constant SC_CH_Y1: sc_ch_array_t: (39, 38, 37, 36, 35, 34, 33, 32, 63, 62, 61, 60, 59, 58, 57, 56);
-	constant SC_CH_X0: sc_ch_array_t: (23, 22, 21, 20, 19, 18, 17, 16, 47, 46, 45, 44, 43, 42, 41, 40);
-	constant SC_CH_X1: sc_ch_array_t: (8, 9, 10, 11, 12, 13, 14, 15, 48, 49, 50, 51, 52, 53, 54, 55);
+	constant SC_CH_Y0: sc_ch_array_t := (24, 25, 26, 27, 28, 29, 30, 31, 0, 1, 2, 3, 4, 5, 6, 7);
+	constant SC_CH_Y1: sc_ch_array_t := (39, 38, 37, 36, 35, 34, 33, 32, 63, 62, 61, 60, 59, 58, 57, 56);
+	constant SC_CH_X0: sc_ch_array_t := (23, 22, 21, 20, 19, 18, 17, 16, 47, 46, 45, 44, 43, 42, 41, 40);
+	constant SC_CH_X1: sc_ch_array_t := (8, 9, 10, 11, 12, 13, 14, 15, 48, 49, 50, 51, 52, 53, 54, 55);
 	
 end top_decl;

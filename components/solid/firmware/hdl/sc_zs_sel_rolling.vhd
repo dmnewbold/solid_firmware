@@ -80,6 +80,7 @@ begin
 
 	process(clk40)
 	begin
+	  if rising_edge(clk40) then
 		if mark = '1' then
 			scnt <= (others => '0');
 		elsif and_reduce(std_logic_vector(scnt)) = '0' then
@@ -88,6 +89,7 @@ begin
 		if scnt = to_unsigned(ZS_DEL - 1, scnt'length) then
 			sel <= ts;
 		end if;
+	  end if;
 	end process;
 	
 end rtl;

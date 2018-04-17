@@ -34,7 +34,7 @@ end sc_trig_gen_or_coinc;
 
 architecture rtl of sc_trig_gen_or_coinc is
 
-	signal y_or, x_or: std_logic;
+	signal y_or, x_or, y_or_s, x_or_s: std_logic;
 	signal t, m, tc, v: std_logic;
 	signal mark_del: std_logic_vector(DELAY downto 0);
 	signal c: std_logic_vector(N_CHAN - 1 downto 0);
@@ -44,13 +44,18 @@ begin
 -- Define the trigger condition
 
 	process(chan_trig)
+	
+	   variable y, x: std_logic;
+	
 	begin
-		y_or <= '0';
-		x_or <= '0';
-		for i in range N_CHAN / 4 - 1 downto 0 loop
-			y_or <= y_or or chan_trig(TBIT)(SC_CH_Y0(i)) or chan_trig(TBIT)(SC_CH_Y1(i));
-			x_or <= x_or or chan_trig(TBIT)(SC_CH_X0(i)) or chan_trig(TBIT)(SC_CH_X1(i));
+		y := '0';
+		x := '0';
+		for i in N_CHAN / 4 - 1 downto 0 loop
+			y := y or chan_trig(TBIT)(SC_CH_Y0(i)) or chan_trig(TBIT)(SC_CH_Y1(i));
+			x := x or chan_trig(TBIT)(SC_CH_X0(i)) or chan_trig(TBIT)(SC_CH_X1(i));
 		end loop;
+		y_or <= y;
+		x_or <= x;
 	end process;
 	
 	stretch: entity work.sc_trig_stretch
