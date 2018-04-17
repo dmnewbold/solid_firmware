@@ -61,7 +61,7 @@ begin
 		end if;
 	end process;
 	
--- Select highest ZS threshold of active triggers
+-- Select highest-numbered ZS threshold of active triggers
 
 	process(cnt)
 		variable t, k: unsigned(1 downto 0);
