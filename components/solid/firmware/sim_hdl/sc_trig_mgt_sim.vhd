@@ -10,7 +10,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity sc_trig_mgt_wrapper is
 	port(
 		sysclk: in std_logic; -- DRP clock
-		en: in std_logic;
 		tx_en: in std_logic;
 		rx_en: in std_logic;
 		tx_good: out std_logic;
