@@ -122,7 +122,7 @@ begin
 	begin
 		if falling_edge(clk40) then
 			if (mode = '1' and nzen = '0') or (mode = '0' and nzen_d = '0') then
-				pnz <= to_unsigned(0, pnz'length);
+				pnz <= (others => '0');
 			else
 				if (mode = '0' and pnz = ZS_FIRST_ADDR - 1) or pnz = ZS_LAST_ADDR then
 					pnz <= (others => '0');
