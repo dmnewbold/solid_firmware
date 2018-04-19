@@ -27,7 +27,6 @@ entity sc_trig is
 		trig_en: in std_logic;
 		zs_en: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
-		rand: in std_logic_vector(31 downto 0);
 		keep: out std_logic_vector(N_CHAN - 1 downto 0);
 		flush: out std_logic_vector(N_CHAN - 1 downto 0);
 		veto: in std_logic_vector(N_CHAN - 1 downto 0);
@@ -189,7 +188,6 @@ begin
 			hops => hop_cfg,
 			mark => mark,
 			sctr => sctr,
-			rand => rand,
 			chan_trig => ctrig,
 			trig_q => lq,
 			trig_valid => lvalid,

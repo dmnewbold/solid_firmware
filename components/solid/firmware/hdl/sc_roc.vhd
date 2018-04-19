@@ -27,7 +27,6 @@ entity sc_roc is
 		board_id: in std_logic_vector(7 downto 0);
 		clk40: in std_logic;
 		rst40: in std_logic;
-		rand: in std_logic_vector(31 downto 0);
 		d_trig: in std_logic_vector(31 downto 0);
 		blkend_trig: in std_logic;
 		we_trig: in std_logic;

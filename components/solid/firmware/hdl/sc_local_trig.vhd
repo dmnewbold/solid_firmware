@@ -24,7 +24,6 @@ entity sc_local_trig is
 		hops: in std_logic_vector(31 downto 0);
 		mark: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
-		rand: in std_logic_vector(31 downto 0);
 		chan_trig: in sc_trig_array;
 		trig_q: out std_logic_vector(15 downto 0);
 		trig_valid: out std_logic;
@@ -110,7 +109,7 @@ begin
 
 	tg3: entity work.sc_trig_gen
 		generic map(
-			DELAY => 2
+			DELAY => 0
 		)
 		port map(
 			clk => clk40,
