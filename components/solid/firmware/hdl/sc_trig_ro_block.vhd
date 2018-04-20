@@ -72,7 +72,7 @@ begin
 	begin
 		if rising_edge(clk40) then
 			if trig_en = '0' then
-				bctr <= 1;
+				bctr <= to_unsigned(1, bctr'length);
 			elsif mark = '1' then
 				bctr <= bctr + 1;
 			end if;
