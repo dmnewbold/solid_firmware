@@ -37,7 +37,7 @@ architecture rtl of sc_trig_ro_block is
 	signal tctr_i: unsigned(27 downto 0);
 	signal go, blkend: std_logic;
 	signal chen, keep_c: std_logic_vector(63 downto 0);
-	signal bctr: unsigned(47 - BLK_RADIX downto 0);
+	signal bctr: unsigned(31 - BLK_RADIX downto 0);
 
 begin
 	
