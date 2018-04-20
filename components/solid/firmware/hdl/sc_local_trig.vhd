@@ -183,7 +183,7 @@ begin
 
 	with ro_ctr select ro_q <=
 		X"100" & "00" & last_gasp & hoorah & (15 downto N_TRG => '0') & tc when X"00", -- Type 1
-		std_logic_vector(sctr(31 downto BLK_RADIX)) & (BLK_RADIX - 1 downto 0 => '0') when X"01",
+		std_logic_vector(unsigned(sctr(31 downto BLK_RADIX)) - 1) & (BLK_RADIX - 1 downto 0 => '0') when X"01",
 		X"0000" & std_logic_vector(sctr(47 downto 32)) when X"02",
 		X"00000000" when X"03",
 		b when others;

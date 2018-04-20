@@ -37,6 +37,7 @@ architecture rtl of sc_trig_ro_block is
 	signal tctr_i: unsigned(27 downto 0);
 	signal go, blkend: std_logic;
 	signal chen, keep_c: std_logic_vector(63 downto 0);
+	signal bctr: unsigned(47 - BLK_RADIX downto 0);
 
 begin
 	
@@ -46,7 +47,7 @@ begin
 	begin
 		if rising_edge(clk40) then
 			if trig_en = '0' then
-				tctr_i <= (others => '0');
+				tctr_i <= (others => '1');
 			elsif mark = '1' and or_reduce(keep) = '1' then
 				tctr_i <= tctr_i + 1;
 			end if;
@@ -65,9 +66,22 @@ begin
 	ro_valid <= go;
 	ro_blkend <= blkend;
 	
+-- Block counter
+
+	process(clk40)
+	begin
+		if rising_edge(clk40) then
+			if trig_en = '0' then
+				bctr <= 1;
+			elsif mark = '1' then
+				bctr <= bctr + 1;
+			end if;
+		end if;
+	end process;
+	
 	with ro_ctr select ro_q <=
 		X"0" & std_logic_vector(tctr_i) when X"00", -- Type 0
-		std_logic_vector(unsigned(sctr(31 downto 1) & '0')) when X"01", -- Hack so that counter is taken at start-of-block
+		std_logic_vector(bctr) & (BLK_RADIX - 1 downto 0 => '0') when X"01",
 		X"0000" & std_logic_vector(sctr(47 downto 32)) when X"02",
 		chen(31 downto 0) when X"03", -- Corresponds to CH_WORD = 3 in sc_roc
 		chen(63 downto 32) when X"04",
