@@ -45,7 +45,6 @@ end sc_chan_buf;
 
 architecture rtl of sc_chan_buf is
 
-	constant ZS_FIRST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX + ZS_DEL;
 	constant ZS_LAST_ADDR: integer := 2 ** BUF_RADIX - 1;
 
 	signal c: unsigned(1 downto 0);
