@@ -151,7 +151,7 @@ begin
 			if zs_en_d = '0' then
 				zctr <= (others => '0');
 			else
-				q_nzs <= q_ram(15) & '0' & q_ram(13 downto 0);
+				q_nzs <= q_ram;
 				z1 <= z0;
 				if z0 = '0' or zb = '1' then
 					zctr <= (others => '0');
@@ -161,7 +161,7 @@ begin
 			end if;
 			wez <= ((not (z0 and z1)) or zb) and zs_en_dd and not mode and not buf_full_i;
 			if z1 = '1' and zctr /= 0 then
-				d_zs <= "01" & (13 - BLK_RADIX downto 0 => '0') & std_logic_vector(zctr);
+				d_zs <= zb & '1' & (13 - BLK_RADIX downto 0 => '0') & std_logic_vector(zctr);
 			else
 				d_zs <= q_nzs;
 			end if;
