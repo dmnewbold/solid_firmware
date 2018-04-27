@@ -54,7 +54,7 @@ architecture rtl of sc_chan_buf is
 	signal pnz, pzw, pzr, zs_first_addr: unsigned(BUF_RADIX - 1 downto 0);
 	signal cap_run, cap_done: std_logic;
 	signal zctr: unsigned(BLK_RADIX - 1 downto 0);
-	signal z0, z1, zb: std_logic;
+	signal z0, z1: std_logic;
 	signal zs_en_d, zs_en_dd, nzen, nzen_d, wenz, wez, rez, wez_d: std_logic;
 	signal go, zs_run, zs_keep, buf_full_i, p, q_blkend_i: std_logic;
 	
@@ -143,7 +143,6 @@ begin
 -- Zero suppression
 		
 	z0 <= '1' when unsigned(q_ram(13 downto 0)) < unsigned(zs_thresh) else '0';
-	zb <= q_ram(15);
 
 	process(clk160)
 	begin
@@ -153,13 +152,13 @@ begin
 			else
 				q_nzs <= q_ram;
 				z1 <= z0;
-				if z0 = '0' or zb = '1' then
+				if z0 = '0' or q_ram(15) = '1' then
 					zctr <= (others => '0');
 				elsif z1 = '1' then
 					zctr <= zctr + 1;
 				end if;
 			end if;
-			wez <= ((not (z0 and z1)) or zb) and zs_en_dd and not mode and not buf_full_i;
+			wez <= ((not (z0 and z1)) or q_nzs(15)) and zs_en_dd and not mode and not buf_full_i;
 			if z1 = '1' then
 				d_zs <= q_nzs(15) & '1' & (13 - BLK_RADIX downto 0 => '0') & std_logic_vector(zctr);
 			else
