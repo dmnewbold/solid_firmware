@@ -60,8 +60,7 @@ architecture rtl of sc_chan is
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(0 downto 0);		
 	signal d_in, d_in_i, d_buf: std_logic_vector(15 downto 0);
-	signal d_c: std_logic_vector(1 downto 0);
-	signal slip_l, slip_h, chan_rst, cap, inc: std_logic;
+	signal slip_l, slip_h, cap, inc: std_logic;
 	signal act_slip: unsigned(7 downto 0);
 	signal cntout: std_logic_vector(4 downto 0);
 	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert, ctrl_swap: std_logic;
@@ -195,7 +194,7 @@ begin
 
 	process(clk40)
 	begin
-		if rising_edge(clk40) and blkend = '1' then
+		if rising_edge(clk40) then
 			if zs_sel_i < N_ZS_THRESH then
 				zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0);
 			else
