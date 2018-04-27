@@ -160,8 +160,8 @@ begin
 				end if;
 			end if;
 			wez <= ((not (z0 and z1)) or zb) and zs_en_dd and not mode and not buf_full_i;
-			if z1 = '1' and zctr /= 0 then
-				d_zs <= '0' & '1' & (13 - BLK_RADIX downto 0 => '0') & std_logic_vector(zctr);
+			if z1 = '1' then
+				d_zs <= zb & '1' & (13 - BLK_RADIX downto 0 => '0') & std_logic_vector(zctr);
 			else
 				d_zs <= q_nzs;
 			end if;
