@@ -22,6 +22,7 @@ entity sc_chan_buf is
 		ipb_in: in ipb_wbus; -- clk dom
 		ipb_out: out ipb_rbus; -- clk dom
 		mode: in std_logic; -- buffer counter mode; clk dom
+		nzs_blks: in std_logic_vector(3 downto 0); -- number of blocks in NZS buffer
 		clk40: in std_logic;
 		clk160: in std_logic;
 		buf_rst: in std_logic; -- general reset; clk40 dom
@@ -51,7 +52,7 @@ architecture rtl of sc_chan_buf is
 	signal we: std_logic;
 	signal d_ram, q_ram, d_nzs, q_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
 	signal a_ram: std_logic_vector(BUF_RADIX - 1 downto 0);
-	signal pnz, pzw, pzr: unsigned(BUF_RADIX - 1 downto 0);
+	signal pnz, pzw, pzr, zs_first_addr: unsigned(BUF_RADIX - 1 downto 0);
 	signal cap_run, cap_done: std_logic;
 	signal zctr: unsigned(BLK_RADIX - 1 downto 0);
 	signal z0, z1: std_logic;
@@ -59,6 +60,8 @@ architecture rtl of sc_chan_buf is
 	signal go, zs_run, zs_keep, buf_full_i, p, q_blkend_i: std_logic;
 	
 begin
+
+	zs_first_addr <= shift_left(unsigned((BUF_RADIX - 1 downto 4 => '0') & nzs_blks), BLK_RADIX) + ZS_DEL;
 
 -- NZS / ZS buffer
 
@@ -124,7 +127,7 @@ begin
 			if (mode = '1' and nzen = '0') or (mode = '0' and nzen_d = '0') then
 				pnz <= (others => '0');
 			else
-				if (mode = '0' and pnz = ZS_FIRST_ADDR - 1) or pnz = ZS_LAST_ADDR then
+				if (mode = '0' and pnz = zs_first_addr - 1) or pnz = ZS_LAST_ADDR then
 					pnz <= (others => '0');
 				else
 					pnz <= pnz + 1;
@@ -171,19 +174,19 @@ begin
 	begin
 		if rising_edge(clk40) then
 			if zs_en = '0' then
-				pzw <= to_unsigned(ZS_FIRST_ADDR, pzw'length);
-				pzr <= to_unsigned(ZS_FIRST_ADDR, pzr'length);
+				pzw <= zs_first_addr;
+				pzr <= zs_first_addr;
 			elsif buf_full_i = '0' then
 				if wez = '1' then
 					if pzw = ZS_LAST_ADDR then
-						pzw <= to_unsigned(ZS_FIRST_ADDR, pzw'length);
+						pzw <= zs_first_addr;
 					else
 						pzw <= pzw + 1;
 					end if;
 				end if;
 				if rez = '1' then
 					if pzr = ZS_LAST_ADDR then
-						pzr <= to_unsigned(ZS_FIRST_ADDR, pzr'length);
+						pzr <= zs_first_addr;
 					else
 						pzr <= pzr + 1;
 					end if;

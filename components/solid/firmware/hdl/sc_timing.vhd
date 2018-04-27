@@ -36,7 +36,8 @@ entity sc_timing is
 		trig_en: out std_logic;
 		nzs_en: out std_logic;
 		zs_en: out std_logic;
-		rand: out std_logic_vector(31 downto 0)
+		rand: out std_logic_vector(31 downto 0);
+		nzs_blks: out std_logic_vector(3 downto 0)
 	);
 
 end sc_timing;
@@ -51,6 +52,7 @@ architecture rtl of sc_timing is
 	signal ctrl_rst_ctr, ctrl_cap_ctr, ctrl_en_sync, ctrl_force_sync, ctrl_pipeline_en, ctrl_send_sync: std_logic;
 	signal ctrl_chan_slip_l, ctrl_chan_slip_h, ctrl_chan_rst_buf, ctrl_chan_cap, ctrl_chan_inc: std_logic;
 	signal ctrl_zs_blks: std_logic_vector(7 downto 0);
+	signal ctrl_nzs_blks: std_logic_vector(3 downto 0);
 	signal sync, wait_sync, sync_err, io_err: std_logic;
 	signal sync_in_r, trig_in_r, trig_in_r_d: std_logic;
 	signal sync_ctr, trig_ctr: unsigned(31 downto 0);
@@ -111,6 +113,7 @@ begin
 	ctrl_chan_cap <= ctrl(0)(14);
 	ctrl_chan_inc <= ctrl(0)(15);
 	ctrl_zs_blks <= ctrl(0)(23 downto 16);
+	ctrl_nzs_blks <= ctrl(0)(27 downto 24);
 	stat(0) <= X"0000000" & "00"  & sync_err & wait_sync;
 	stat(1) <= std_logic_vector(sctr_s(31 downto 0));
 	stat(2) <= X"0000" & std_logic_vector(sctr_s(47 downto 32));
@@ -195,12 +198,15 @@ begin
 			rst40 => rst40_i,
 			en => ctrl_pipeline_en,
 			zs_blks => ctrl_zs_blks,
+			nzs_blks => ctrl_nzs_blks,
 			sync => sync,
 			sctr => sctr_i,
 			nzs_en => nzs_en,
 			zs_en => zs_en,
 			trig_en => trig_en
 		);
+
+	nzs_blks <= ctrl_nzs_blks;
 	
 -- Channel sync control
 

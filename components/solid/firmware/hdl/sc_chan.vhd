@@ -36,7 +36,8 @@ entity sc_chan is
 		sync_ctrl: in std_logic_vector(3 downto 0);
 		zs_sel: in std_logic_vector(1 downto 0);
 		sctr: in std_logic_vector(47 downto 0);		
-		fake: in std_logic_vector(13 downto 0);		
+		fake: in std_logic_vector(13 downto 0);
+		nzs_blks: in std_logic_vector(3 downto 0);
 		nzs_en: in std_logic;
 		zs_en: in std_logic;
 		keep: in std_logic;
@@ -214,6 +215,7 @@ begin
 			ipb_in => ipbw(N_SLV_BUF),
 			ipb_out => ipbr(N_SLV_BUF),
 			mode => ctrl_mode,
+			nzs_blks => nzs_blks,
 			clk40 => clk40,
 			clk160 => clk160,
 			buf_rst => rst40,
