@@ -60,7 +60,8 @@ architecture rtl of sc_chan_buf is
 	
 begin
 
-	zs_first_addr <= shift_left(unsigned(std_logic_vector'(BUF_RADIX - 1 downto 4 => '0') & nzs_blks), BLK_RADIX) + ZS_DEL;
+--	zs_first_addr <= shift_left(unsigned(std_logic_vector'(BUF_RADIX - 1 downto 4 => '0') & nzs_blks), BLK_RADIX) + ZS_DEL;
+	zs_first_addr <= unsigned(std_logic_vector'(BUF_RADIX - 1 downto 4 => '0') & nzs_blks);
 
 -- NZS / ZS buffer
 
