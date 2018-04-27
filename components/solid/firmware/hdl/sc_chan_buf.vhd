@@ -152,7 +152,7 @@ begin
 			else
 				q_nzs <= q_ram;
 				z1 <= z0;
-				if z0 = '0' or q_ram(15) = '1' then
+				if z0 = '0' or q_nzs(15) = '1' then
 					zctr <= (others => '0');
 				elsif z1 = '1' then
 					zctr <= zctr + 1;
