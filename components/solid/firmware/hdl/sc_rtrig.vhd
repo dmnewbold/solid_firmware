@@ -55,7 +55,7 @@ begin
 	ctrl_div <= q(0)(13 downto 8);
 	
 	mgen: for i in mask'range generate
-		mask(i) <= '0' when i => to_integer(unsigned(ctrl_div)) else '1';
+		mask(i) <= '0' when i >= to_integer(unsigned(ctrl_div)) else '1';
 	end generate;
 
 	force <= ((not ctrl_mode and not or_reduce(rand(mask'range) and mask)) or
