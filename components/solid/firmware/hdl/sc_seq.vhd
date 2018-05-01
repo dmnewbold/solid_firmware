@@ -80,7 +80,7 @@ begin
 
 	td <= d_loc when valid_loc = '1' else d_ext;
 	tv <= (valid_loc or valid_ext) and not rseq and zs_en;
-	tv_d <= tv when rising_edge(clk40);
+	tv_d <= tv and not tv_d when rising_edge(clk40);
 	ack_loc <= valid_loc and tv_d;
 	ack_ext <= valid_ext and not valid_loc and tv_d;
 	
