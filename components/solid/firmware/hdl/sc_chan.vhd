@@ -73,8 +73,7 @@ architecture rtl of sc_chan is
 	signal zs_thresh: std_logic_vector(13 downto 0);
 	signal sctr_p: std_logic_vector(11 downto 0);
 	signal dr_d: std_logic_vector(31 downto 0);
-	signal ro_en, keep_i, flush_i, err_i, req, blkend, dr_blkend, dr_wen: std_logic;
-	signal ctrl_tt: std_logic;
+	signal ro_en, keep_i, flush_i, err_i, blkend, dr_blkend, dr_wen: std_logic;
 	
 begin
 
