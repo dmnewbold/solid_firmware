@@ -175,7 +175,7 @@ begin
 		
 -- State machine
 
-	nzs_en_d <= nzs_en when rising_edge(clk40)
+	nzs_en_d <= nzs_en when rising_edge(clk40);
 
 	enb <= ctrl_en_buf when rising_edge(clk40); -- CDC, synchroniser for ctrl_en_buf
 	enb_d <= enb when rising_edge(clk40);
