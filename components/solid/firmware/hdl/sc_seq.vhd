@@ -35,8 +35,8 @@ entity sc_seq is
 		d_ext: in std_logic_vector(15 downto 0);
 		valid_ext: in std_logic;
 		ack_ext: out std_logic;
-		keep: out std_logic_vector(N_CHAN - 1 downto 0);
-		flush: out std_logic_vector(N_CHAN - 1 downto 0);
+		keep: out std_logic;
+		flush: out std_logic;
 		err: out std_logic
 	);
 
@@ -196,7 +196,7 @@ begin
 		end if;
 	end process;
 
-	keep <= (keep'range => keep_i);
-	flush <= not (flush'range => keep_i);
+	keep <= keep_i;
+	flush <= not keep_i;
 	
 end rtl;

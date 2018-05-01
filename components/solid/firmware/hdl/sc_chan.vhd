@@ -42,8 +42,8 @@ entity sc_chan is
 		zs_en: in std_logic;
 		keep: in std_logic;
 		flush: in std_logic;
+		kack: out std_logic;
 		err: out std_logic;
-		veto: out std_logic;
 		trig: out std_logic_vector(N_CHAN_TRG - 1 downto 0);
 		clk_dr: in std_logic;
 		q: out std_logic_vector(31 downto 0);
@@ -73,7 +73,7 @@ architecture rtl of sc_chan is
 	signal zs_thresh: std_logic_vector(13 downto 0);
 	signal sctr_p: std_logic_vector(11 downto 0);
 	signal dr_d: std_logic_vector(31 downto 0);
-	signal ro_en, keep_i, flush_i, err_i, blkend, dr_blkend, dr_wen: std_logic;
+	signal ro_en, err_i, blkend, dr_blkend, dr_wen: std_logic;
 	
 begin
 
@@ -171,9 +171,7 @@ begin
 	err_i <= buf_full or dr_full;
 	err <= err_i;
 	ro_en <= not (ctrl_mode or err_i) and ctrl_en_buf;
-	keep_i <= keep and ro_en;
-	flush_i <= flush and ro_en;
-	veto <= dr_warn or not ro_en;
+--	veto <= dr_warn or not ro_en;
 	
 -- ZS thresholds
 
@@ -226,8 +224,9 @@ begin
 			zs_thresh => zs_thresh,
 			zs_en => zs_en,
 			buf_full => buf_full,
-			keep => keep_i,
-			flush => flush_i,
+			keep => keep,
+			flush => flush,
+			kack => kack,
 			q => dr_d,
 			q_blkend => dr_blkend,
 			wen => dr_wen

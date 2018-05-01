@@ -19,8 +19,8 @@ entity sc_trig_ro_block is
 		trig_en: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
 		mark: in std_logic;
-		keep: in std_logic_vector(N_CHAN - 1 downto 0);
-		veto: in std_logic_vector(N_CHAN - 1 downto 0);
+		keep: in std_logic;
+		kack: in std_logic_vector(N_CHAN - 1 downto 0);
 		tctr: out std_logic_vector(27 downto 0);
 		ro_q: out std_logic_vector(31 downto 0);
 		ro_valid: out std_logic;
@@ -58,8 +58,7 @@ begin
 	
 -- Block data to ROC
 	
-	chen <= (63 downto N_CHAN => '0') & (keep and not veto); -- Assumption on 64 channels max here...
-	keep_c <= (63 downto N_CHAN => '0') & keep; 
+	keep_c <= (63 downto N_CHAN => '0') & kack; 
 
 	go <= (go or (ro_go and or_reduce(keep) and not rveto)) and not blkend and trig_en when rising_edge(clk40);
 	blkend <= '1' when ro_ctr = X"06" else '0';
@@ -83,9 +82,7 @@ begin
 		X"0" & std_logic_vector(tctr_i) when X"00", -- Type 0
 		std_logic_vector(bctr) & (BLK_RADIX - 1 downto 0 => '0') when X"01",
 		X"0000" & std_logic_vector(sctr(47 downto 32)) when X"02",
-		chen(31 downto 0) when X"03", -- Corresponds to CH_WORD = 3 in sc_roc
-		chen(63 downto 32) when X"04",
-		keep_c(31 downto 0) when X"05",
+		keep_c(31 downto 0) when X"03",
 		keep_c(63 downto 32) when others;
 
 end rtl;

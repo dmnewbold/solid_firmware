@@ -36,6 +36,7 @@ entity sc_chan_buf is
 		buf_full: out std_logic; -- buffer err flag; clk40 dom
 		keep: in std_logic; -- block transfer cmd; clk40 dom
 		flush: in std_logic; -- block discard cmd; clk40 dom
+		kack: out std_logic;
 		q: out std_logic_vector(31 downto 0); -- output to derand; clk40 dom
 		q_blkend: out std_logic;
 		wen: out std_logic -- derand write enable
@@ -210,6 +211,7 @@ begin
 
 -- Readout to derand
 
+	kack <= keep;
 	go <= keep or flush;
 
 	process(clk40)

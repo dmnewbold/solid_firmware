@@ -27,9 +27,9 @@ entity sc_trig is
 		trig_en: in std_logic;
 		zs_en: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
-		keep: out std_logic_vector(N_CHAN - 1 downto 0);
-		flush: out std_logic_vector(N_CHAN - 1 downto 0);
-		veto: in std_logic_vector(N_CHAN - 1 downto 0);
+		keep: out std_logic;
+		flush: out std_logic;
+		kack: in std_logic_vector(N_CHAN - 1 downto 0);
 		zs_sel: out std_logic_vector(1 downto 0);
 		trig: in sc_trig_array;
 		force: in std_logic;
@@ -255,20 +255,8 @@ begin
 			
 -- Channel interface
 
-	veto_p <= veto or (veto'range => rveto);
-	keep <= keep_i and not veto_p when mark = '1' else (others => '0');
-	flush <= not keep_i or veto_p when mark = '1' else (others => '0');
-	
-	process(clk40)
-	begin
-		if rising_edge(clk40) then
-			if trig_en = '0' then
-				veto_i <= (others => '0');
-			elsif mark = '1' then
-				veto_i <= veto_p;
-			end if;
-		end if;
-	end process;
+	keep <= keep_i and mark;
+	flush <= flush_i and mark;
 			
 -- Readout header to ROC
 
@@ -280,7 +268,7 @@ begin
 			sctr => sctr,
 			mark => mark,
 			keep => keep_i,
-			veto => veto_i,
+			kack => kack,
 			tctr => tctr,
 			ro_q => b_q,
 			ro_valid => b_valid,
@@ -313,21 +301,23 @@ begin
 
 -- Deadtime monitor
 
-	dmon: entity work.sc_deadtime_mon
-		port map(
-			clk => clk,
-			rst => rst,
-			ipb_in => ipbw(N_SLV_DTMON),
-			ipb_out => ipbr(N_SLV_DTMON),
-			en => ctrl_dtmon_en,
-			clk40 => clk40,
-			rst40 => rst40,
-			clk160 => clk160,
-			mark => mark,
-			sctr => sctr(BLK_RADIX - 1 downto 0),
-			keep => keep_i,
-			veto => veto_i
-		);
+--	dmon: entity work.sc_deadtime_mon
+--		port map(
+--			clk => clk,
+--			rst => rst,
+--			ipb_in => ipbw(N_SLV_DTMON),
+--			ipb_out => ipbr(N_SLV_DTMON),
+--			en => ctrl_dtmon_en,
+--			clk40 => clk40,
+--			rst40 => rst40,
+--			clk160 => clk160,
+--			mark => mark,
+--			sctr => sctr(BLK_RADIX - 1 downto 0),
+--			keep => keep_i,
+--			veto => veto_i
+--		);
+
+	ipbr(N_SLV_DTMON) <= IPB_RBUS_NULL;
 		
 -- Ext trigger
 
