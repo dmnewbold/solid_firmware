@@ -48,7 +48,7 @@ begin
 		if rising_edge(clk40) then
 			if trig_en = '0' then
 				tctr_i <= (others => '1');
-			elsif mark = '1' and or_reduce(keep) = '1' then
+			elsif mark = '1' and keep = '1' then
 				tctr_i <= tctr_i + 1;
 			end if;
 		end if;
@@ -60,7 +60,7 @@ begin
 	
 	keep_c <= (63 downto N_CHAN => '0') & kack; 
 
-	go <= (go or (ro_go and or_reduce(keep) and not rveto)) and not blkend and trig_en when rising_edge(clk40);
+	go <= (go or (ro_go and keep and not rveto)) and not blkend and trig_en when rising_edge(clk40);
 	blkend <= '1' when ro_ctr = X"06" else '0';
 	ro_valid <= go;
 	ro_blkend <= blkend;
