@@ -61,7 +61,7 @@ begin
 	keep_c <= (63 downto N_CHAN => '0') & kack when mark = '1' and rising_edge(clk40); 
 
 	go <= (go or (ro_go and keep and not rveto)) and not blkend and trig_en when rising_edge(clk40);
-	blkend <= '1' when ro_ctr = X"06" else '0';
+	blkend <= '1' when ro_ctr = X"04" else '0';
 	ro_valid <= go;
 	ro_blkend <= blkend;
 	
