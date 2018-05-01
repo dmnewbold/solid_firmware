@@ -22,7 +22,7 @@ entity sc_timing_startup is
 		sctr: in unsigned(47 downto 0);
 		nzs_en: out std_logic;
 		zs_en: out std_logic;
-		trig_en: out std_logic
+		dr_en: out std_logic
 	);
 
 end sc_timing_startup;
@@ -40,7 +40,7 @@ begin
 				up <= '0';
 				nzs_en <= '0';
 				zs_en <= '0';
-				trig_en <= '0';
+				dr_en <= '0';
 			else
 				if sync = '1' then
 					up <= '1';
@@ -51,7 +51,7 @@ begin
 					elsif unsigned(sctr(3 + BLK_RADIX downto BLK_RADIX)) = unsigned(nzs_blks) + 1 and sctr(BLK_RADIX - 1 downto 0) = to_unsigned(ZS_DEL - 1, BLK_RADIX) then
 						zs_en <= '1';
 					elsif unsigned(sctr(7 + BLK_RADIX downto BLK_RADIX)) = unsigned(nzs_blks) + 1 + unsigned(zs_blks) then
-						trig_en <= '1';
+						dr_en <= '1';
 					end if;
 				end if;
 			end if;

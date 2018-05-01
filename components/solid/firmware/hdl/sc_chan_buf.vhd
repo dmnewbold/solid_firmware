@@ -34,8 +34,8 @@ entity sc_chan_buf is
 		zs_thresh: in std_logic_vector(13 downto 0); -- ZS threshold; clk40 dom
 		zs_en: in std_logic; -- enable zs buffer; clk40 dom
 		buf_full: out std_logic; -- buffer err flag; clk40 dom
+		dr_en: in std_logic;
 		keep: in std_logic; -- block transfer cmd; clk40 dom
-		flush: in std_logic; -- block discard cmd; clk40 dom
 		kack: out std_logic;
 		q: out std_logic_vector(31 downto 0); -- output to derand; clk40 dom
 		q_blkend: out std_logic;
@@ -211,9 +211,9 @@ begin
 
 -- Readout to derand
 
-	kack <= keep;
-	go <= keep or flush;
-
+	go <= blkend and dr_en;
+	kack <= go and keep;
+	
 	process(clk40)
 	begin
 		if rising_edge(clk40) then

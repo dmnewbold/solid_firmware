@@ -36,7 +36,6 @@ entity sc_seq is
 		valid_ext: in std_logic;
 		ack_ext: out std_logic;
 		keep: out std_logic;
-		flush: out std_logic;
 		err: out std_logic
 	);
 
@@ -197,6 +196,5 @@ begin
 	end process;
 
 	keep <= keep_i;
-	flush <= not keep_i;
 	
 end rtl;

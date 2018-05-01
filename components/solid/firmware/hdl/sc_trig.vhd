@@ -28,7 +28,6 @@ entity sc_trig is
 		zs_en: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
 		keep: out std_logic;
-		flush: out std_logic;
 		kack: in std_logic_vector(N_CHAN - 1 downto 0);
 		zs_sel: out std_logic_vector(1 downto 0);
 		trig: in sc_trig_array;
@@ -249,14 +248,10 @@ begin
 			valid_ext => d_valid,
 			ack_ext => d_ack,
 			keep => keep_i,
-			flush => flush_i,
 			err => err
 		);
-			
--- Channel interface
 
-	keep <= keep_i and mark;
-	flush <= flush_i and mark;
+	keep <= keep_i;
 			
 -- Readout header to ROC
 

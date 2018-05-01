@@ -36,8 +36,8 @@ entity sc_channels is
 		nzs_blks: in std_logic_vector(3 downto 0);
 		nzs_en: in std_logic;
 		zs_en: in std_logic;
+		dr_en: in std_logic;
 		keep: in std_logic;
-		flush: in std_logic;
 		kack: out std_logic_vector(N_CHAN - 1 downto 0);
 		err: out std_logic;
 		trig: out sc_trig_array;
@@ -113,8 +113,8 @@ begin
 				nzs_blks => nzs_blks,
 				nzs_en => nzs_en,
 				zs_en => zs_en,
+				dr_en => dr_en,
 				keep => keep,
-				flush => flush,
 				kack => kack(i),
 				err => chan_err(i),
 				trig => ltrig,

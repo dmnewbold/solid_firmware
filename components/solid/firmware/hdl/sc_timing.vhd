@@ -33,7 +33,7 @@ entity sc_timing is
 		led: out std_logic; -- LED flash out
 		sctr: out std_logic_vector(47 downto 0); -- sample counter
 		chan_sync_ctrl: out std_logic_vector(3 downto 0); -- Timing signals to channels
-		trig_en: out std_logic;
+		dr_en: out std_logic;
 		nzs_en: out std_logic;
 		zs_en: out std_logic;
 		rand: out std_logic_vector(31 downto 0);
@@ -203,7 +203,7 @@ begin
 			sctr => sctr_i,
 			nzs_en => nzs_en,
 			zs_en => zs_en,
-			trig_en => trig_en
+			dr_en => dr_en
 		);
 
 	nzs_blks <= ctrl_nzs_blks;
