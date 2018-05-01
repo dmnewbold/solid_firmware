@@ -111,7 +111,7 @@ begin
 	process(params_freq_div)
 	begin
 		for i in mask'range loop
-			if i > to_integer(unsigned(params_freq_div)) then
+			if i >= to_integer(unsigned(params_freq_div)) then
 				mask(i) <= '0';
 			else
 				mask(i) <= '1';
