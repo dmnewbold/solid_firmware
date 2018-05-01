@@ -63,7 +63,7 @@ architecture rtl of sc_trig is
 	signal lq: std_logic_vector(15 downto 0);
 	signal rveto, lvalid, lack, mark, err: std_logic;
 	signal zs_cfg: std_logic_vector(31 downto 0);
-	signal veto_p, veto_i, keep_i, flush_i: std_logic_vector(N_CHAN - 1 downto 0);
+	signal keep_i, flush_i: std_logic;
 	signal b_q, t_q: std_logic_vector(31 downto 0);
 	signal b_go, t_go, b_valid, t_valid, b_blkend, t_blkend, blkend: std_logic;
 	signal tctr: std_logic_vector(27 downto 0);
