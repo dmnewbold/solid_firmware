@@ -35,6 +35,7 @@ entity sc_chan_buf is
 		zs_en: in std_logic; -- enable zs buffer; clk40 dom
 		buf_full: out std_logic; -- buffer err flag; clk40 dom
 		dr_en: in std_logic;
+		suppress: in std_logic;
 		keep: in std_logic; -- block transfer cmd; clk40 dom
 		kack: out std_logic;
 		q: out std_logic_vector(31 downto 0); -- output to derand; clk40 dom
@@ -212,7 +213,7 @@ begin
 -- Readout to derand
 
 	go <= blkend and dr_en;
-	kack <= go and keep;
+	kack <= go and keep and not (q_zs_b(15) and q_zs_b(14) and suppress);
 	
 	process(clk40)
 	begin
