@@ -5,10 +5,16 @@ import time
 import sys
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-manager = uhal.ConnectionManager("file://connections.xml")
 hw_list = []
-for a in sys.argv[1:]:
-    hw_list.append(manager.getDevice(a))
+#manager = uhal.ConnectionManager("file://connections.xml")
+#for a in sys.argv[1:]:
+#    hw_list.append(manager.getDevice(a))
+
+sys.path.append('/home/dsaunder/workspace/go_projects/src/bitbucket.org/solidexperiment/readout-software/scripts')
+import detector_config_tools
+ips = detector_config_tools.currentIPs(False)
+for ip in ips:
+    hw_list.append(uhal.getDevice("board", "ipbusudp-2.0://192.168.235." + str(ip) + ":50001", "file://addrtab/top.xml"))
 
 for hw in hw_list:
     print hw.id()

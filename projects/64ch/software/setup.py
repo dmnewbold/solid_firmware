@@ -11,14 +11,19 @@ import detector_config_tools
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
 
 ips = detector_config_tools.currentIPs(False)
-slaveReadoutBoards = False
+slaveReadoutBoards = True
+#ips = [92, 50, 88, 100, 86, 69, 53, 75, 60, 82] # Module Edgar.
+ips = [92]
+
 hw_list = []
 for ip in ips:
     print 'Setting up readout board ip:', ip
     hw_list.append(uhal.getDevice("board", "ipbusudp-2.0://192.168.235." + str(ip) + ":50001", "file://addrtab/top.xml"))
 
+ihw = -1
 for hw in hw_list:
-
+    ihw += 1
+    print 'IP:', ips[ihw]
     hw.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
     hw.dispatch()
 
@@ -34,8 +39,10 @@ for hw in hw_list:
     hw.getNode("io.freq_ctr.ctrl.en_crap_mode").write(0);
     hw.dispatch()
 
+ihw = -1
 for hw in hw_list:
-
+    ihw += 1
+    print 'IP:', ips[ihw]
     print hw.id()
     ver = hw.getNode("csr.id").read()
     hw.dispatch()
