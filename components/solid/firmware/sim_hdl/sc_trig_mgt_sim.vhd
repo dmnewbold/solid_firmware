@@ -10,9 +10,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity sc_trig_mgt_wrapper is
 	port(
 		sysclk: in std_logic; -- DRP clock
-		en: in std_logic;
-		tx_rst: in std_logic;
-		rx_rst: in std_logic;
+		tx_en: in std_logic;
+		rx_en: in std_logic;
 		tx_good: out std_logic;
 		rx_good: out std_logic;
 		tx_stat: out std_logic_vector(1 downto 0);
@@ -33,8 +32,8 @@ architecture rtl of sc_trig_mgt_wrapper is
 
 begin
 
-	tx_good <= en;
-	rx_good <= en;
+	tx_good <= tx_en;
+	rx_good <= rx_en;
 	tx_stat <= "00";
 	rx_stat <= "000";
 	rxd <= txd when rising_edge(clk125);

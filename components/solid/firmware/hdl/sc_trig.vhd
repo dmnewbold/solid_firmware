@@ -27,10 +27,8 @@ entity sc_trig is
 		trig_en: in std_logic;
 		zs_en: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
-		rand: in std_logic_vector(31 downto 0);
-		keep: out std_logic_vector(N_CHAN - 1 downto 0);
-		flush: out std_logic_vector(N_CHAN - 1 downto 0);
-		veto: in std_logic_vector(N_CHAN - 1 downto 0);
+		keep: out std_logic;
+		kack: in std_logic_vector(N_CHAN - 1 downto 0);
 		zs_sel: out std_logic_vector(1 downto 0);
 		trig: in sc_trig_array;
 		force: in std_logic;
@@ -56,7 +54,7 @@ architecture rtl of sc_trig is
 	signal ctrl, ctrl_mask: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(1 downto 0);
 	signal stb: std_logic_vector(0 downto 0);
-	signal ctrl_dtmon_en, ctrl_trig_in_en, ctrl_trig_out_force: std_logic;
+	signal ctrl_dtmon_en, ctrl_trig_in_en, ctrl_trig_out_force, ctrl_coinc_mode: std_logic;
 	signal masks: ipb_reg_v(N_CHAN_TRG * 2 - 1 downto 0);
 	signal trig_mask: std_logic_vector(N_TRG - 1 downto 0);
 	signal hop_cfg: std_logic_vector(31 downto 0);
@@ -64,7 +62,7 @@ architecture rtl of sc_trig is
 	signal lq: std_logic_vector(15 downto 0);
 	signal rveto, lvalid, lack, mark, err: std_logic;
 	signal zs_cfg: std_logic_vector(31 downto 0);
-	signal veto_p, veto_i, keep_i, flush_i: std_logic_vector(N_CHAN - 1 downto 0);
+	signal keep_i, flush_i: std_logic;
 	signal b_q, t_q: std_logic_vector(31 downto 0);
 	signal b_go, t_go, b_valid, t_valid, b_blkend, t_blkend, blkend: std_logic;
 	signal tctr: std_logic_vector(27 downto 0);
@@ -109,6 +107,7 @@ begin
 	ctrl_dtmon_en <= ctrl(0)(0);
 	ctrl_trig_in_en <= ctrl(0)(1);
 	ctrl_trig_out_force <= ctrl(0)(2) and stb(0);
+	ctrl_coinc_mode <= ctrl(0)(3);
 	stat(0) <= X"0" & tctr;
 	stat(1) <= X"0000000" & "00" & rveto & err;
 
@@ -183,11 +182,11 @@ begin
 			clk40 => clk40,
 			rst40 => rst40,
 			en => trig_en,
+			coinc_mode => ctrl_coinc_mode,
 			mask => trig_mask,
 			hops => hop_cfg,
 			mark => mark,
 			sctr => sctr,
-			rand => rand,
 			chan_trig => ctrig,
 			trig_q => lq,
 			trig_valid => lvalid,
@@ -219,7 +218,7 @@ begin
 			q(0) => zs_cfg
 		);
 
-	zssel: entity work.sc_zs_sel
+	zssel: entity work.sc_zs_sel_rolling
 		port map(
 			clk40 => clk40,
 			rst40 => rst40,
@@ -249,26 +248,10 @@ begin
 			valid_ext => d_valid,
 			ack_ext => d_ack,
 			keep => keep_i,
-			flush => flush_i,
 			err => err
 		);
-			
--- Channel interface
 
-	veto_p <= veto or (veto'range => rveto);
-	keep <= keep_i and not veto_p when mark = '1' else (others => '0');
-	flush <= not keep_i or veto_p when mark = '1' else (others => '0');
-	
-	process(clk40)
-	begin
-		if rising_edge(clk40) then
-			if trig_en = '0' then
-				veto_i <= (others => '0');
-			elsif mark = '1' then
-				veto_i <= veto_p;
-			end if;
-		end if;
-	end process;
+	keep <= keep_i;
 			
 -- Readout header to ROC
 
@@ -280,7 +263,7 @@ begin
 			sctr => sctr,
 			mark => mark,
 			keep => keep_i,
-			veto => veto_i,
+			kack => kack,
 			tctr => tctr,
 			ro_q => b_q,
 			ro_valid => b_valid,
@@ -313,21 +296,23 @@ begin
 
 -- Deadtime monitor
 
-	dmon: entity work.sc_deadtime_mon
-		port map(
-			clk => clk,
-			rst => rst,
-			ipb_in => ipbw(N_SLV_DTMON),
-			ipb_out => ipbr(N_SLV_DTMON),
-			en => ctrl_dtmon_en,
-			clk40 => clk40,
-			rst40 => rst40,
-			clk160 => clk160,
-			mark => mark,
-			sctr => sctr(BLK_RADIX - 1 downto 0),
-			keep => keep_i,
-			veto => veto_i
-		);
+--	dmon: entity work.sc_deadtime_mon
+--		port map(
+--			clk => clk,
+--			rst => rst,
+--			ipb_in => ipbw(N_SLV_DTMON),
+--			ipb_out => ipbr(N_SLV_DTMON),
+--			en => ctrl_dtmon_en,
+--			clk40 => clk40,
+--			rst40 => rst40,
+--			clk160 => clk160,
+--			mark => mark,
+--			sctr => sctr(BLK_RADIX - 1 downto 0),
+--			keep => keep_i,
+--			veto => veto_i
+--		);
+
+	ipbr(N_SLV_DTMON) <= IPB_RBUS_NULL;
 		
 -- Ext trigger
 

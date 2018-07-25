@@ -47,10 +47,12 @@ architecture rtl of sc_daq is
 	signal clk40_i, rst40_i, clk160, clk280: std_logic;
 	signal sync_ctrl: std_logic_vector(3 downto 0);
 	signal sctr: std_logic_vector(47 downto 0);
-	signal trig_en, nzs_en, zs_en: std_logic;
-	signal trig_keep, trig_flush, trig_veto: std_logic_vector(N_CHAN - 1 downto 0);
+	signal dr_en, nzs_en, zs_en: std_logic;
+	signal trig_keep, trig_flush: std_logic;
+	signal trig_kack: std_logic_vector(N_CHAN - 1 downto 0);
 	signal fake: std_logic_vector(13 downto 0);
 	signal force_trig, thresh_hit: std_logic;
+	signal nzs_blks: std_logic_vector(3 downto 0);
 	signal zs_sel: std_logic_vector(1 downto 0);
 	signal chan_trig: sc_trig_array;
 	signal link_d, link_q: std_logic_vector(15 downto 0);
@@ -98,10 +100,11 @@ begin
 			led => led_out,
 			sctr => sctr,
 			chan_sync_ctrl => sync_ctrl,
-			trig_en => trig_en,
+			dr_en => dr_en,
 			nzs_en => nzs_en,
 			zs_en => zs_en,
-			rand => rand
+			rand => rand,
+			nzs_blks => nzs_blks
 		);
 		
 	clk40 <= clk40_i;
@@ -155,12 +158,13 @@ begin
 			zs_sel => zs_sel,
 			sctr => sctr,
 			fake => fake,
+			nzs_blks => nzs_blks,
 			nzs_en => nzs_en,
 			zs_en => zs_en,
+			dr_en => dr_en,
 			keep => trig_keep,
-			flush => trig_flush,
+			kack => trig_kack,
 			err => chan_err,
-			veto => trig_veto,
 			trig => chan_trig,
 			dr_chan => ro_chan,
 			clk_dr => ipb_clk,
@@ -181,13 +185,11 @@ begin
 			clk40 => clk40_i,
 			rst40 => rst40_i,
 			clk160 => clk160,
-			trig_en => trig_en,
+			trig_en => dr_en,
 			zs_en => zs_en,
 			sctr => sctr,
-			rand => rand,
 			keep => trig_keep,
-			flush => trig_flush,
-			veto => trig_veto,
+			kack => trig_kack,
 			zs_sel => zs_sel,
 			trig => chan_trig,
 			force => force_trig,
@@ -239,7 +241,6 @@ begin
 			board_id => board_id,
 			clk40 => clk40_i,
 			rst40 => rst40_i,
-			rand => rand,
 			d_trig => trig_d,
 			blkend_trig => trig_blkend,
 			we_trig => trig_we,

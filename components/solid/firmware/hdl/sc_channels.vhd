@@ -33,12 +33,13 @@ entity sc_channels is
 		zs_sel: in std_logic_vector(1 downto 0);
 		sctr: in std_logic_vector(47 downto 0);
 		fake: in std_logic_vector(13 downto 0);
+		nzs_blks: in std_logic_vector(3 downto 0);
 		nzs_en: in std_logic;
 		zs_en: in std_logic;
-		keep: in std_logic_vector(N_CHAN - 1 downto 0);
-		flush: in std_logic_vector(N_CHAN - 1 downto 0);
+		dr_en: in std_logic;
+		keep: in std_logic;
+		kack: out std_logic_vector(N_CHAN - 1 downto 0);
 		err: out std_logic;
-		veto: out std_logic_vector(N_CHAN - 1 downto 0);
 		trig: out sc_trig_array;
 		dr_chan: in std_logic_vector(7 downto 0);
 		clk_dr: in std_logic;
@@ -109,12 +110,13 @@ begin
 				zs_sel => zs_sel,
 				sctr => sctr,
 				fake => fake,
+				nzs_blks => nzs_blks,
 				nzs_en => nzs_en,
 				zs_en => zs_en,
-				keep => keep(i),
-				flush => flush(i),
+				dr_en => dr_en,
+				keep => keep,
+				kack => kack(i),
 				err => chan_err(i),
-				veto => veto(i),
 				trig => ltrig,
 				clk_dr => clk_dr,
 				q => chan_q(i),

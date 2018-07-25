@@ -13,7 +13,7 @@ use work.top_decl.all;
 
 entity sc_trig_gen is
 	generic(
-		DELAY: positive := 1
+		DELAY: natural := 0
 	);
 	port(
 		clk: in std_logic;

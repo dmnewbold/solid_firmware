@@ -19,8 +19,8 @@ entity sc_trig_ro_block is
 		trig_en: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
 		mark: in std_logic;
-		keep: in std_logic_vector(N_CHAN - 1 downto 0);
-		veto: in std_logic_vector(N_CHAN - 1 downto 0);
+		keep: in std_logic;
+		kack: in std_logic_vector(N_CHAN - 1 downto 0);
 		tctr: out std_logic_vector(27 downto 0);
 		ro_q: out std_logic_vector(31 downto 0);
 		ro_valid: out std_logic;
@@ -37,6 +37,7 @@ architecture rtl of sc_trig_ro_block is
 	signal tctr_i: unsigned(27 downto 0);
 	signal go, blkend: std_logic;
 	signal chen, keep_c: std_logic_vector(63 downto 0);
+	signal bctr: unsigned(31 - BLK_RADIX downto 0);
 
 begin
 	
@@ -46,8 +47,8 @@ begin
 	begin
 		if rising_edge(clk40) then
 			if trig_en = '0' then
-				tctr_i <= (others => '0');
-			elsif mark = '1' and or_reduce(keep) = '1' then
+				tctr_i <= (others => '1');
+			elsif mark = '1' and keep = '1' then
 				tctr_i <= tctr_i + 1;
 			end if;
 		end if;
@@ -57,21 +58,31 @@ begin
 	
 -- Block data to ROC
 	
-	chen <= (63 downto N_CHAN => '0') & (keep and not veto); -- Assumption on 64 channels max here...
-	keep_c <= (63 downto N_CHAN => '0') & keep; 
+	keep_c <= (63 downto N_CHAN => '0') & kack when mark = '1' and rising_edge(clk40); 
 
-	go <= (go or (ro_go and or_reduce(keep) and not rveto)) and not blkend and trig_en when rising_edge(clk40);
-	blkend <= '1' when ro_ctr = X"06" else '0';
+	go <= (go or (ro_go and keep and not rveto)) and not blkend and trig_en when rising_edge(clk40);
+	blkend <= '1' when ro_ctr = X"04" else '0';
 	ro_valid <= go;
 	ro_blkend <= blkend;
 	
+-- Block counter
+
+	process(clk40)
+	begin
+		if rising_edge(clk40) then
+			if trig_en = '0' then
+				bctr <= (others => '0');
+			elsif mark = '1' then
+				bctr <= bctr + 1;
+			end if;
+		end if;
+	end process;
+	
 	with ro_ctr select ro_q <=
 		X"0" & std_logic_vector(tctr_i) when X"00", -- Type 0
-		std_logic_vector(unsigned(sctr(31 downto 1) & '0')) when X"01", -- Hack so that counter is taken at start-of-block
+		std_logic_vector(bctr) & (BLK_RADIX - 1 downto 0 => '0') when X"01",
 		X"0000" & std_logic_vector(sctr(47 downto 32)) when X"02",
-		chen(31 downto 0) when X"03", -- Corresponds to CH_WORD = 3 in sc_roc
-		chen(63 downto 32) when X"04",
-		keep_c(31 downto 0) when X"05",
+		keep_c(31 downto 0) when X"03",
 		keep_c(63 downto 32) when others;
 
 end rtl;

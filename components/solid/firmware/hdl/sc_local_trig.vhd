@@ -19,11 +19,11 @@ entity sc_local_trig is
 		clk40: in std_logic;
 		rst40: in std_logic;
 		en: in std_logic;
+		coinc_mode: in std_logic;
 		mask: in std_logic_vector(N_TRG - 1 downto 0);
 		hops: in std_logic_vector(31 downto 0);
 		mark: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
-		rand: in std_logic_vector(31 downto 0);
 		chan_trig: in sc_trig_array;
 		trig_q: out std_logic_vector(15 downto 0);
 		trig_valid: out std_logic;
@@ -55,7 +55,7 @@ begin
 	
 -- Threshold trigger generator
 
-	tg0: entity work.sc_trig_gen_or
+	tg0: entity work.sc_trig_gen_or_coinc
 		generic map(
 			TBIT => 0,
 			DELAY => 2
@@ -63,6 +63,7 @@ begin
 		port map(
 			clk => clk40,
 			en => en,
+			mode => coinc_mode,
 			mark => mark,
 			chan_trig => chan_trig,
 			chan_act => cact(0),
@@ -108,7 +109,7 @@ begin
 
 	tg3: entity work.sc_trig_gen
 		generic map(
-			DELAY => 2
+			DELAY => 0
 		)
 		port map(
 			clk => clk40,
@@ -182,7 +183,7 @@ begin
 
 	with ro_ctr select ro_q <=
 		X"100" & "00" & last_gasp & hoorah & (15 downto N_TRG => '0') & tc when X"00", -- Type 1
-		std_logic_vector(sctr(31 downto BLK_RADIX)) & (BLK_RADIX - 1 downto 0 => '0') when X"01",
+		std_logic_vector(unsigned(sctr(31 downto BLK_RADIX)) - 1) & (BLK_RADIX - 1 downto 0 => '0') when X"01",
 		X"0000" & std_logic_vector(sctr(47 downto 32)) when X"02",
 		X"00000000" when X"03",
 		b when others;

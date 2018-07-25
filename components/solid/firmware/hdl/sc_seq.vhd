@@ -35,8 +35,7 @@ entity sc_seq is
 		d_ext: in std_logic_vector(15 downto 0);
 		valid_ext: in std_logic;
 		ack_ext: out std_logic;
-		keep: out std_logic_vector(N_CHAN - 1 downto 0);
-		flush: out std_logic_vector(N_CHAN - 1 downto 0);
+		keep: out std_logic;
 		err: out std_logic
 	);
 
@@ -47,7 +46,7 @@ architecture rtl of sc_seq is
 	signal ipbw: ipb_wbus_array(N_SLAVES - 1 downto 0);
 	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
 	signal td: std_logic_vector(15 downto 0);
-	signal tv, terr: std_logic;
+	signal tv, terr, tv_d: std_logic;
 	signal we: std_logic;
 	signal d_ram, q_ram: std_logic_vector(15 downto 0);
 	signal a_ram: std_logic_vector(BUF_RADIX - 1 downto 0);
@@ -80,8 +79,9 @@ begin
 
 	td <= d_loc when valid_loc = '1' else d_ext;
 	tv <= (valid_loc or valid_ext) and not rseq and zs_en;
-	ack_loc <= valid_loc;
-	ack_ext <= valid_ext and not valid_loc;
+	tv_d <= tv and not tv_d when rising_edge(clk40);
+	ack_loc <= valid_loc and tv_d;
+	ack_ext <= valid_ext and not valid_loc and tv_d;
 	
 	process(clk40)
 	begin
@@ -166,7 +166,7 @@ begin
 			addr => a_ram
 		);
 		
-	we <= '1' when (tv = '1' and unsigned(d_ram) > unsigned(q_ram)) or (rseq = '1' and sctr(1 downto 0) = "11") else '0';
+	we <= '1' when (tv_d = '1' and unsigned(d_ram) > unsigned(q_ram)) or (rseq = '1' and sctr(1 downto 0) = "11") else '0';
 	a_ram <= std_logic_vector(ptr + unsigned(q_s_ram(BUF_RADIX - 1 downto 0))) when rseq = '0' else std_logic_vector(ptr);
 	d_ram <= q_s_ram(31 downto 16) when rseq = '0' else (others => '0');
 
@@ -195,7 +195,6 @@ begin
 		end if;
 	end process;
 
-	keep <= (keep'range => keep_i);
-	flush <= not (flush'range => keep_i);
+	keep <= keep_i;
 	
 end rtl;

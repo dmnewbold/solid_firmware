@@ -35,7 +35,6 @@ architecture rtl of sc_rtrig is
 	signal ctrl_en, ctrl_mode: std_logic;
 	signal ctrl_div: std_logic_vector(5 downto 0);
 	signal mask: std_logic_vector(23 downto 0);
-	signal t: std_logic;
 
 begin
 
@@ -56,12 +55,11 @@ begin
 	ctrl_div <= q(0)(13 downto 8);
 	
 	mgen: for i in mask'range generate
-		mask(i) <= '0' when i > to_integer(unsigned(ctrl_div)) else '1';
+		mask(i) <= '0' when i >= to_integer(unsigned(ctrl_div)) else '1';
 	end generate;
 
-	t <= ((not ctrl_mode and not or_reduce(rand(mask'range) and mask)) or
-		(ctrl_mode and not or_reduce(sctr(BLK_RADIX + mask'left downto BLK_RADIX) and mask))) and ctrl_en;
-		
-	force <= t;
+	force <= ((not ctrl_mode and not or_reduce(rand(mask'range) and mask)) or
+		(ctrl_mode and not or_reduce(sctr(BLK_RADIX + mask'left downto BLK_RADIX) and mask))) and
+			ctrl_en and not or_reduce(sctr(BLK_RADIX - 1 downto 0));
 
 end rtl;

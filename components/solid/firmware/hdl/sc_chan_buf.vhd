@@ -22,6 +22,7 @@ entity sc_chan_buf is
 		ipb_in: in ipb_wbus; -- clk dom
 		ipb_out: out ipb_rbus; -- clk dom
 		mode: in std_logic; -- buffer counter mode; clk dom
+		nzs_blks: in std_logic_vector(3 downto 0); -- number of blocks in NZS buffer
 		clk40: in std_logic;
 		clk160: in std_logic;
 		buf_rst: in std_logic; -- general reset; clk40 dom
@@ -33,8 +34,10 @@ entity sc_chan_buf is
 		zs_thresh: in std_logic_vector(13 downto 0); -- ZS threshold; clk40 dom
 		zs_en: in std_logic; -- enable zs buffer; clk40 dom
 		buf_full: out std_logic; -- buffer err flag; clk40 dom
+		dr_en: in std_logic;
+		suppress: in std_logic;
 		keep: in std_logic; -- block transfer cmd; clk40 dom
-		flush: in std_logic; -- block discard cmd; clk40 dom
+		kack: out std_logic;
 		q: out std_logic_vector(31 downto 0); -- output to derand; clk40 dom
 		q_blkend: out std_logic;
 		wen: out std_logic -- derand write enable
@@ -44,15 +47,13 @@ end sc_chan_buf;
 
 architecture rtl of sc_chan_buf is
 
-	constant NZS_LAST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX - 1;
-	constant ZS_FIRST_ADDR: integer := NZS_BLKS * 2 ** BLK_RADIX;
 	constant ZS_LAST_ADDR: integer := 2 ** BUF_RADIX - 1;
 
 	signal c: unsigned(1 downto 0);
 	signal we: std_logic;
 	signal d_ram, q_ram, d_nzs, q_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
 	signal a_ram: std_logic_vector(BUF_RADIX - 1 downto 0);
-	signal pnz, pzw, pzr: unsigned(BUF_RADIX - 1 downto 0);
+	signal pnz, pzw, pzr, zs_first_addr: unsigned(BUF_RADIX - 1 downto 0);
 	signal cap_run, cap_done: std_logic;
 	signal zctr: unsigned(BLK_RADIX - 1 downto 0);
 	signal z0, z1: std_logic;
@@ -60,6 +61,8 @@ architecture rtl of sc_chan_buf is
 	signal go, zs_run, zs_keep, buf_full_i, p, q_blkend_i: std_logic;
 	
 begin
+
+	zs_first_addr <= shift_left(unsigned(std_logic_vector'((BUF_RADIX - 1 downto 4 => '0') & nzs_blks)), BLK_RADIX) + ZS_DEL;
 
 -- NZS / ZS buffer
 
@@ -123,9 +126,9 @@ begin
 	begin
 		if falling_edge(clk40) then
 			if (mode = '1' and nzen = '0') or (mode = '0' and nzen_d = '0') then
-				pnz <= to_unsigned(0, pnz'length);
+				pnz <= (others => '0');
 			else
-				if (mode = '0' and pnz = NZS_LAST_ADDR) or pnz = ZS_LAST_ADDR then
+				if (mode = '0' and pnz = zs_first_addr - 1) or pnz = ZS_LAST_ADDR then
 					pnz <= (others => '0');
 				else
 					pnz <= pnz + 1;
@@ -141,7 +144,7 @@ begin
 	
 -- Zero suppression
 		
-	z0 <= '1' when unsigned(q_ram(13 downto 0)) < unsigned(zs_thresh) and q_ram(15) = '0' else '0';
+	z0 <= '1' when unsigned(q_ram(13 downto 0)) < unsigned(zs_thresh) else '0';
 
 	process(clk160)
 	begin
@@ -149,17 +152,17 @@ begin
 			if zs_en_d = '0' then
 				zctr <= (others => '0');
 			else
-				q_nzs <= q_ram(15) & '0' & q_ram(13 downto 0);
+				q_nzs <= q_ram;
 				z1 <= z0;
-				if z0 = '0' then
+				if z0 = '0' or q_nzs(15) = '1' then
 					zctr <= (others => '0');
-				else
+				elsif z1 = '1' then
 					zctr <= zctr + 1;
 				end if;
 			end if;
-			wez <= (not (z0 and z1)) and zs_en_dd and not mode and not buf_full_i;
-			if z1 = '1' and zctr /= 1 then
-				d_zs <= "01" & (13 - BLK_RADIX downto 0 => '0') & std_logic_vector(zctr);
+			wez <= ((not (z0 and z1)) or q_nzs(15)) and zs_en_dd and not mode and not buf_full_i;
+			if z1 = '1' then
+				d_zs <= q_nzs(15) & '1' & (13 - BLK_RADIX downto 0 => '0') & std_logic_vector(zctr);
 			else
 				d_zs <= q_nzs;
 			end if;
@@ -172,19 +175,19 @@ begin
 	begin
 		if rising_edge(clk40) then
 			if zs_en = '0' then
-				pzw <= to_unsigned(ZS_FIRST_ADDR, pzw'length);
-				pzr <= to_unsigned(ZS_FIRST_ADDR, pzr'length);
+				pzw <= zs_first_addr;
+				pzr <= zs_first_addr;
 			elsif buf_full_i = '0' then
 				if wez = '1' then
 					if pzw = ZS_LAST_ADDR then
-						pzw <= to_unsigned(ZS_FIRST_ADDR, pzw'length);
+						pzw <= zs_first_addr;
 					else
 						pzw <= pzw + 1;
 					end if;
 				end if;
 				if rez = '1' then
 					if pzr = ZS_LAST_ADDR then
-						pzr <= to_unsigned(ZS_FIRST_ADDR, pzr'length);
+						pzr <= zs_first_addr;
 					else
 						pzr <= pzr + 1;
 					end if;
@@ -209,8 +212,9 @@ begin
 
 -- Readout to derand
 
-	go <= keep or flush;
-
+	go <= blkend and dr_en;
+	kack <= go and keep and not (q_zs_b(15) and q_zs_b(14) and suppress);
+	
 	process(clk40)
 	begin
 		if rising_edge(clk40) then

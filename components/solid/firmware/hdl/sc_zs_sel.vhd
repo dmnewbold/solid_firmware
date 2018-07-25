@@ -1,6 +1,6 @@
 -- sc_zs_sel
 --
--- Random and external trigger generator
+-- Zero suppression threshold select logic - triggered block only
 --
 -- Dave Newbold, August 2016
 

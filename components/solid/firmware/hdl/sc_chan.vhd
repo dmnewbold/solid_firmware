@@ -36,13 +36,14 @@ entity sc_chan is
 		sync_ctrl: in std_logic_vector(3 downto 0);
 		zs_sel: in std_logic_vector(1 downto 0);
 		sctr: in std_logic_vector(47 downto 0);		
-		fake: in std_logic_vector(13 downto 0);		
+		fake: in std_logic_vector(13 downto 0);
+		nzs_blks: in std_logic_vector(3 downto 0);
 		nzs_en: in std_logic;
 		zs_en: in std_logic;
+		dr_en: in std_logic;
 		keep: in std_logic;
-		flush: in std_logic;
+		kack: out std_logic;
 		err: out std_logic;
-		veto: out std_logic;
 		trig: out std_logic_vector(N_CHAN_TRG - 1 downto 0);
 		clk_dr: in std_logic;
 		q: out std_logic_vector(31 downto 0);
@@ -60,11 +61,10 @@ architecture rtl of sc_chan is
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(0 downto 0);		
 	signal d_in, d_in_i, d_buf: std_logic_vector(15 downto 0);
-	signal d_c: std_logic_vector(1 downto 0);
-	signal slip_l, slip_h, chan_rst, cap, inc: std_logic;
+	signal slip_l, slip_h, cap, inc: std_logic;
 	signal act_slip: unsigned(7 downto 0);
 	signal cntout: std_logic_vector(4 downto 0);
-	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert, ctrl_swap: std_logic;
+	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert, ctrl_swap, ctrl_suppress: std_logic;
 	signal ctrl_mode: std_logic;
 	signal ctrl_src: std_logic_vector(1 downto 0);
 	signal cap_full, buf_full, dr_full, dr_warn: std_logic;
@@ -73,8 +73,14 @@ architecture rtl of sc_chan is
 	signal zs_thresh: std_logic_vector(13 downto 0);
 	signal sctr_p: std_logic_vector(11 downto 0);
 	signal dr_d: std_logic_vector(31 downto 0);
-	signal ro_en, keep_i, flush_i, err_i, req, blkend, dr_blkend, dr_wen: std_logic;
-	signal ctrl_tt: std_logic;
+	signal blkend, dr_blkend, dr_wen: std_logic;
+	type state_t is (ST_DIS, ST_WAIT, ST_RUN, ST_VETO, ST_ERR);
+	signal state: state_t;
+	signal nzs_en_d, dr_empty, enb, enb_d, zs_en_i, dr_en_i: std_logic;
+	signal state_dec: std_logic_vector(2 downto 0);
+	
+	attribute ASYNC_REG: string;
+	attribute ASYNC_REG of enb, enb_d: signal is "yes";
 	
 begin
 
@@ -114,6 +120,7 @@ begin
 	ctrl_invert <= ctrl(0)(2);
 	ctrl_swap <= ctrl(0)(3);
 	ctrl_mode <= ctrl(0)(4);
+	ctrl_suppress <= ctrl(0)(5);
 	ctrl_src <= ctrl(0)(7 downto 6);
 	
 	slip_l <= sync_ctrl(0) and ctrl_en_sync; -- CDC
@@ -121,7 +128,7 @@ begin
 	cap <= sync_ctrl(2) and ctrl_en_sync; -- CDC
 	inc <= sync_ctrl(3) and ctrl_en_sync; -- CDC
 	
-	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & "000" & err_i & dr_warn & dr_full & buf_full & cap_full; -- CDC
+	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & '0' & state_dec & dr_warn & dr_full & buf_full & cap_full; -- CDC
 
 -- Keep track of slips and taps for debug
 
@@ -167,14 +174,67 @@ begin
 		"0000" & sctr_p when "10",
 		"00" & fake when others;
 		
--- Channel status
+-- State machine
 
-	err_i <= buf_full or dr_full;
-	err <= err_i;
-	ro_en <= not (ctrl_mode or err_i) and ctrl_en_buf;
-	keep_i <= keep and ro_en;
-	flush_i <= flush and ro_en;
-	veto <= dr_warn or not ro_en;
+	nzs_en_d <= nzs_en when rising_edge(clk40);
+
+	enb <= ctrl_en_buf when rising_edge(clk40); -- CDC, synchroniser for ctrl_en_buf
+	enb_d <= enb when rising_edge(clk40);
+	
+	process(clk40)
+	begin
+		if rising_edge(clk40) then
+			if rst40 = '1' or enb_d = '0' then
+				state <= ST_DIS;
+			else		
+				case state is
+				
+				when ST_DIS => -- Starting state
+					if ctrl_mode = '0' then
+						state <= ST_WAIT;
+					end if;
+
+				when ST_WAIT => -- Wait for sync
+					if nzs_en = '1' and nzs_en_d = '0' then
+						state <= ST_RUN;
+					end if;
+				
+				when ST_RUN => -- Normal running
+					if buf_full = '1' or dr_full = '1' then
+						state <= ST_ERR;
+					elsif dr_warn = '1' then
+						state <= ST_VETO;
+					end if;
+
+				when ST_VETO => -- Normal running
+					if buf_full = '1' or dr_full = '1' then
+						state <= ST_ERR;
+					elsif dr_empty = '1' then
+						state <= ST_RUN;
+					end if;
+					
+				when ST_ERR => -- Stuck now, sucker					
+					
+				end case;
+			end if;
+		end if;
+	end process;
+	
+	err <= '1' when state = ST_ERR else '0';
+	
+	with state select state_dec <=
+		"000" when ST_DIS,
+		"001" when ST_WAIT,
+		"010" when ST_RUN,
+		"011" when ST_VETO,
+		"100" when others;
+
+	zs_en_i <= '0' when state = ST_DIS else zs_en;
+	dr_en_i <= dr_en when state = ST_RUN else '0';
+	
+-- Veto counters
+
+-- TBD
 	
 -- ZS thresholds
 
@@ -195,7 +255,7 @@ begin
 
 	process(clk40)
 	begin
-		if rising_edge(clk40) and blkend = '1' then
+		if rising_edge(clk40) then
 			if zs_sel_i < N_ZS_THRESH then
 				zs_thresh <= zs_thresh_v(zs_sel_i)(13 downto 0);
 			else
@@ -215,6 +275,7 @@ begin
 			ipb_in => ipbw(N_SLV_BUF),
 			ipb_out => ipbr(N_SLV_BUF),
 			mode => ctrl_mode,
+			nzs_blks => nzs_blks,
 			clk40 => clk40,
 			clk160 => clk160,
 			buf_rst => rst40,
@@ -224,10 +285,12 @@ begin
 			cap => cap,
 			cap_full => cap_full,
 			zs_thresh => zs_thresh,
-			zs_en => zs_en,
+			zs_en => zs_en_i,
 			buf_full => buf_full,
-			keep => keep_i,
-			flush => flush_i,
+			dr_en => dr_en_i,
+			suppress => ctrl_suppress,
+			keep => keep,
+			kack => kack,
 			q => dr_d,
 			q_blkend => dr_blkend,
 			wen => dr_wen
@@ -245,11 +308,13 @@ begin
 			clk_r => clk_dr,
 			q => q,
 			q_blkend => q_blkend,
-			empty => q_empty,
+			empty => dr_empty,
 			ren => ren,
 			warn => dr_warn,
 			full => dr_full
 		);
+		
+	q_empty <= dr_empty;
 	
 -- Local triggers
 	
