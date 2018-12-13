@@ -76,6 +76,9 @@ architecture rtl of sc_chan is
 	signal ro_en, keep_i, flush_i, err_i, req, blkend, dr_blkend, dr_wen: std_logic;
 	signal ctrl_tt: std_logic;
 	
+	attribute mark_debug : string;
+    -- attribute keep : string;
+    attribute mark_debug of d_in : signal is "true";
 begin
 
 -- ipbus address decode

@@ -78,14 +78,14 @@ begin
 			c => clk,
 			regrst => '0',
 			ld => rst,
-			ce => inc,
+			ce => inc, --! Enable increment/decrement function.
 			inc => '1',
 			cinvctrl => '0',
 			cntvaluein => "00000",
 			idatain => d_h,
-			datain => '0',
+			datain => '0', --! Data input for IDELAY from the IBUF.
 			ldpipeen => '0',
-			dataout => d_hd,
+			dataout => d_hd, --! Delayed data from DATAIN
 			cntvalueout => open
 		);
 

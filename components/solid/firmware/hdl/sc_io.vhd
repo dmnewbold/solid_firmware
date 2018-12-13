@@ -54,6 +54,10 @@ architecture rtl of sc_io is
 	signal adc_d: std_logic_vector(11 downto 0);
 	signal adc_v: std_logic;
 
+    attribute mark_debug : string;
+    attribute keep : string;
+    attribute mark_debug of adc_cs , adc_ss ,adc_miso_i , adc_miso , adc_mosi , adc_sclk : signal is "true";
+    
 begin
 
 -- ipbus address decode
@@ -140,7 +144,10 @@ begin
 			sclk => adc_sclk 
 		);
 
-	adc_cs <= not adc_ss;
+	--adc_cs <= not adc_ss;
+	-- Don't need an inversion stage - the SPI controller does this for us.
+	adc_cs <= adc_ss;
+	
 	adc_miso_i <= and_reduce(adc_miso);
 	
 -- Clock frequency counter
