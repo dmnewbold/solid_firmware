@@ -15,6 +15,8 @@ operating system (e.g. Centos7) is required.
 	cd build
 	ipbb add git https://github.com/ipbus/ipbus-firmware.git -b enhancement/46
 	ipbb add git https://your_id@bitbucket.org/solidexperiment/solid_firmware.git -b v19_8chan_01
+	# Or, if you have an SSH key uploaded to Bitbucket use..
+	# ipbb add git git@bitbucket.org:solidexperiment/solid_firmware.git -b v19_8chan_01
 	ipbb proj create vivado 8chan solid_firmware:projects/8ch
 	cd proj/8chan
 	ipbb vivado project
