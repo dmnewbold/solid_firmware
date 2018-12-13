@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<connections>
+  <connection id="MAROC_64CH" uri="ipbusudp-2.0://192.168.235.50:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="SIM" uri="ipbusudp-2.0://192.168.235.16:50001"
+   address_table="file://addrtab/top_sim.xml" />
+  <connection id="BEK_8CH" uri="ipbusudp-2.0://192.168.235.1:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_51" uri="ipbusudp-2.0://192.168.235.51:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_52" uri="ipbusudp-2.0://192.168.235.52:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_53" uri="ipbusudp-2.0://192.168.235.53:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_74" uri="ipbusudp-2.0://192.168.235.74:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_72" uri="ipbusudp-2.0://192.168.235.72:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_62" uri="ipbusudp-2.0://192.168.235.62:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_70" uri="ipbusudp-2.0://192.168.235.70:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_71" uri="ipbusudp-2.0://192.168.235.71:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_87" uri="ipbusudp-2.0://192.168.235.87:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_94" uri="ipbusudp-2.0://192.168.235.94:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_85" uri="ipbusudp-2.0://192.168.235.83:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_83" uri="ipbusudp-2.0://192.168.235.83:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_89" uri="ipbusudp-2.0://192.168.235.89:50001"
+   address_table="file://addrtab/top.xml" />
+  <connection id="BR2_68" uri="ipbusudp-2.0://192.168.235.68:50001"
+   address_table="file://addrtab/top.xml" />
+</connections>
