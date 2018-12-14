@@ -59,41 +59,29 @@ def adc_ReadData(board,cap_len):
 
 def adc_SetTiming(board,chan,slip,tap):
 
-    board.getNode("csr.ctrl.chan").write(chan) # Talk to correct channel
-#    board.getNode("daq.chan.csr.ctrl.invert").write(0x0) # Don't invert
-#    board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
+    debug = False
+    if debug:
+        raw_input("Press enter to set csr.ctrl.chan to "+hex(i_chan))
+
+    board.getNode("csr.ctrl.chan").write(i_chan) # Talk to correct channel
+    board.getNode("daq.chan.csr.ctrl.en_sync").write(0x1) # Enable sync commands
+    board.getNode("daq.chan.csr.ctrl.invert").write(0x0) # Don't invert
+    board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
     board.dispatch()
 
-    debug = True
-    cap_len = 0x10
-
-#    board.getNode("csr.ctrl.chan").write(i_chan) # Talk to correct channel
-#    board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
-#    board.getNode("daq.chan.csr.ctrl.src").write(0x0) # Set source to ADC
-#    board.getNode("daq.chan.csr.ctrl.en_sync").write(0x1) # Enable sync commands
-#    board.getNode("daq.chan.csr.ctrl.invert").write(0x0) # Don't invert
-#    board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
-#    board.dispatch()
-
     swap = 0
-    taps_per_slip = 32
+
+    for i_tap in range(tap):
+
+        if debug:
+            print "Writing to chan_inc for chan , i_tap = ", i_chan , i_tap
+            raw_input("Press enter to continue ")
+        board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
+        board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
+        board.dispatch()
+
 
     for i_slip in range(slip):
-        if ( i_slip == slip-1): # if the last time through then don't run thorugh all taps...
-            taps_range = tap
-        else:
-            taps_range = taps_per_slip
-
-        for i_tap in range(taps_range):
-
-            # adc_ReadData(board,cap_len)
-
-            if debug:
-                print "Writing to chan_inc for chan , i_tap = ", i_chan , i_tap
-            board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
-            board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
-            board.dispatch()
-
         if swap == 0:
             swap = 1
             if debug:
@@ -105,12 +93,17 @@ def adc_SetTiming(board,chan,slip,tap):
             if debug:
                 print "Writing to slip_l for chan , i_slip , swap = ", i_chan , i_slip , swap
             board.getNode("daq.timing.csr.ctrl.chan_slip_l").write(0x1) # Increment slip
-            board.getNode("daq.timing.csr.ctrl.chan_slip_l").write(0x0)            
-        board.getNode("daq.chan.csr.ctrl.swap").write(swap)
+            board.getNode("daq.timing.csr.ctrl.chan_slip_l").write(0x0)
         board.dispatch()
 
+    if debug:
+        raw_input("swap. = " +hex(swap)+ " Press enter to continue ")
+    board.getNode("daq.chan.csr.ctrl.swap").write(swap)
+    board.dispatch()
 
-
+    board.getNode("daq.chan.csr.ctrl.en_sync").write(0x0) # Disable sync commands
+    board.getNode("daq.chan.csr.ctrl.en_buf").write(0x0) # Disable this channel
+    board.dispatch()
 
 debug = True
 
@@ -132,10 +125,13 @@ time.sleep(1)
 
 chans = range(0x08)
 
-patt = 0x0ABC
-patt = patt & 0x3FF # mask off all but bottom 14 bits
-
 #patt = 0x0010
+#patt = 0x2ABC
+#patt = 0x2AAA
+patt = 0x1555
+patt = patt & 0x3FFF # mask off all but bottom 14 bits
+
+
 print "Test pattern = ", hex(patt)
 
 cap_len = 0x10
@@ -170,6 +166,10 @@ slip = 3
 debug = True
 
 for i_chan in chans:
+    raw_input("Press enter to align chanel "+hex(i_chan))
+    adc_SetTiming(board,i_chan,slip,tap)
+
+for i_chan in chans:
 
     board.getNode("csr.ctrl.chan").write(i_chan) # Talk to correct channel
     board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
@@ -179,7 +179,7 @@ for i_chan in chans:
     board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
     board.dispatch()
 
-    adc_SetTiming(board,i_chan,slip,tap)
+#    adc_SetTiming(board,i_chan,slip,tap)
 
     board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
     board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
@@ -197,7 +197,7 @@ for i_chan in chans:
     print "length of data block = ", len(d)
     for w in d:
         #if int(w) & 0x3ff == patt:
-        if (w & 0x3ff) == patt:
+        if (w & 0x3fff) == patt:
             c += 1
 
             # Debug....
@@ -208,4 +208,4 @@ for i_chan in chans:
             status = "OK"
         else:
             status = "Bad!"
-        print "Test status ( chan, data[0], #pass, status )" , hex(i_chan), hex(d[0] & 0x3ff ) , c , status
+        print "Test status ( chan, data[0], #pass, status )" , hex(i_chan), hex(d[0] & 0x3fff ) , c , status
