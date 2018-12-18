@@ -123,7 +123,7 @@ def adc_Setup(board,slip,tap,patt,chans, debug=True):
         if debug:
             print "Configuring SPI slave = ",slave
 
-        spi_config(spi, 0xf, 0x2410, slave) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
+        # spi_config(spi, 0xf, 0x2410, slave) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
 
         #    spi_write(spi, 0x1, 0x10) # Sleep
         spi_write(spi, 0x2, 0x05) # 14b 1 lane mode
