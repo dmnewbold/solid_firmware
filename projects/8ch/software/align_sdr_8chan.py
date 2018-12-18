@@ -38,7 +38,8 @@ def spi_read(spi, addr):
         print "SPI read error", hex(addr)
     return d & 0xffff
 
-debug = True
+# debug = True
+debug = False
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
 manager = uhal.ConnectionManager("file://connections.xml")
@@ -47,6 +48,7 @@ board.getClient().setTimeoutPeriod(10000)
 
 v = board.getNode("csr.id").read()
 board.dispatch()
+print "csr.id = ",v
 
 board.getNode("daq.timing.csr.ctrl.rst").write(1) # Hold clk40 domain in reset
 board.dispatch()

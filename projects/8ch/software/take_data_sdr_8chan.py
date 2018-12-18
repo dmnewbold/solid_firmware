@@ -1,11 +1,12 @@
 #!/usr/bin/python
 #
-# Tests that alignment works....
-# Aligns slip and tap values for LTM9007 deserializer in SoLiD 8 channel firmware.
-# This 8 channel version based on 64 channel version.
-# by Dave Newbold
+# Take data from ADC
 #
-# 8 channel hacks, David Cussans, December 2018
+# Aligns slip and tap values for LTM9007 deserializer in SoLiD 8 channel firmware using slip_h and slip_l ( v19 firmware?)
+#
+# Based on code by Dave Newbold
+#
+# David Cussans, December 2018
 
 import uhal
 import time
@@ -63,7 +64,7 @@ def adc_SetTiming(board,chan,slip,tap):
     if debug:
         raw_input("Press enter to set csr.ctrl.chan to "+hex(i_chan))
 
-    board.getNode("csr.ctrl.chan").write(i_chan) # Talk to correct channel
+    board.getNode("csr.ctrl.chan").write(chan) # Talk to correct channel
     board.getNode("daq.chan.csr.ctrl.en_sync").write(0x1) # Enable sync commands
     board.getNode("daq.chan.csr.ctrl.invert").write(0x0) # Don't invert
     board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
@@ -105,102 +106,61 @@ def adc_SetTiming(board,chan,slip,tap):
     board.getNode("daq.chan.csr.ctrl.en_buf").write(0x0) # Disable this channel
     board.dispatch()
 
-debug = True
+def adc_Setup(board,slip,tap,patt,chans, debug=True):
+    spi = board.getNode("io.spi")
+    slaves = [1,2]
 
-uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-manager = uhal.ConnectionManager("file://connections.xml")
-board = manager.getDevice(sys.argv[1])
-board.getClient().setTimeoutPeriod(10000)
+    for slave in slaves:
 
-v = board.getNode("csr.id").read()
-board.dispatch()
-print "csr.id = ",v
+        if debug:
+            print "Resetting ADC= ",slave
 
-board.getNode("daq.timing.csr.ctrl.rst").write(1) # Hold clk40 domain in reset
-board.dispatch()
+        spi_config(spi, 0xf, 0x2410, slave) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
+        spi_write(spi, 0x0, 0x80) # Reset ADC
 
-board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
-board.dispatch()
+    for slave in slaves:
 
-time.sleep(1)
+        if debug:
+            print "Configuring SPI slave = ",slave
 
-chans = range(0x08)
+        spi_config(spi, 0xf, 0x2410, slave) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
 
-#patt = 0x0010
-#patt = 0x2ABC
-#patt = 0x2AAA
-patt = 0x1555
-patt = patt & 0x3FFF # mask off all but bottom 14 bits
+        #    spi_write(spi, 0x1, 0x10) # Sleep
+        spi_write(spi, 0x2, 0x05) # 14b 1 lane mode
+        csrVal = spi_read(spi,0x2)
+        if debug:
+            print "Value read back from CSR = ",csrVal
 
-
-print "Test pattern = ", hex(patt)
-
-cap_len = 0x10
-
-spi = board.getNode("io.spi")
-slaves = [1,2]
-
-for slave in slaves:
-
-    print "Resetting ADC= ",slave
-
-    spi_config(spi, 0xf, 0x2410, slave) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
-    spi_write(spi, 0x0, 0x80) # Reset ADC
-
-for slave in slaves:
-
-    print "Configuring SPI slave = ",slave
-
-    spi_config(spi, 0xf, 0x2410, slave) # Divide 31.25MHz ipbus clock by 32; 16b transfer length, auto CSN; Enable SPI slave 0
-
-    #    spi_write(spi, 0x1, 0x10) # Sleep
-    spi_write(spi, 0x2, 0x05) # 14b 1 lane mode
-    csrVal = spi_read(spi,0x2)
-    print "Value read back from CSR = ",csrVal
-
-    spi_write(spi, 0x3, 0x80 + (patt >> 8)) # Test pattern
-    spi_write(spi, 0x4, patt & 0xff) # Test pattern
-
-settings = []
-tap = 6
-slip = 3
-debug = True
-
-board.getNode("daq.timing.csr.ctrl.rst").write(1) # Hold clk40 domain in reset
-board.dispatch()
-
-board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
-board.dispatch()
+        if patt != None:
+            spi_write(spi, 0x3, 0x80 + (patt >> 8)) # Test pattern
+            spi_write(spi, 0x4, patt & 0xff) # Test pattern
+        else:
+            spi_write(spi, 0x3, 0x00) # Disable Test pattern
 
 
-for i_chan in chans:
-#    raw_input("Press enter to align chanel "+hex(i_chan))
-    adc_SetTiming(board,i_chan,slip,tap)
-
-for i_chan in chans:
-
-    board.getNode("csr.ctrl.chan").write(i_chan) # Talk to correct channel
-    board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
-    board.getNode("daq.chan.csr.ctrl.src").write(0x0) # Set source to ADC
-    board.getNode("daq.chan.csr.ctrl.en_sync").write(0x1) # Enable sync commands
-    board.getNode("daq.chan.csr.ctrl.invert").write(0x0) # Don't invert
-    board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
+    board.getNode("daq.timing.csr.ctrl.rst").write(1) # Hold clk40 domain in reset
     board.dispatch()
 
-#    adc_SetTiming(board,i_chan,slip,tap)
-
-    board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
-    board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
+    board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
     board.dispatch()
-    time.sleep(0.0001)
-    while True:
-        r = board.getNode("daq.chan.csr.stat").read()
-        board.getNode("daq.chan.buf.addr").write(0x0)
-        d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
+
+
+    for i_chan in chans:
+    #    raw_input("Press enter to align chanel "+hex(i_chan))
+        adc_SetTiming(board,i_chan,slip,tap)
+
+    for i_chan in chans:
+
+        board.getNode("csr.ctrl.chan").write(i_chan) # Talk to correct channel
+        board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
+        board.getNode("daq.chan.csr.ctrl.src").write(0x0) # Set source to ADC
+        board.getNode("daq.chan.csr.ctrl.en_sync").write(0x1) # Enable sync commands
+        board.getNode("daq.chan.csr.ctrl.invert").write(0x0) # Don't invert
+        board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
         board.dispatch()
-        if r & 0x1 == 1:
-            break
-        print "Crap no capture", hex(i_chan), hex(i_slip), hex(i_tap), hex(r), time.clock()
+
+def adc_checkData(d,patt,debug=True):
+
     c = 0
     print "length of data block = ", len(d)
     for w in d:
@@ -217,3 +177,82 @@ for i_chan in chans:
         else:
             status = "Bad!"
         print "Test status ( chan, data[0], #pass, status )" , hex(i_chan), hex(d[0] & 0x3fff ) , c , status
+
+def adc_printData(chan,d):
+    for w in d:
+        print chan, hex(w & 0x3FF)
+
+
+
+#
+# -----------------------------------------------------------------------------------
+#
+
+debug = True
+
+uhal.setLogLevelTo(uhal.LogLevel.ERROR)
+manager = uhal.ConnectionManager("file://connections.xml")
+board = manager.getDevice(sys.argv[1])
+board.getClient().setTimeoutPeriod(10000)
+
+v = board.getNode("csr.id").read()
+board.dispatch()
+print "csr.id = ",v
+
+#patt = 0x0010
+#patt = 0x2ABC
+#patt = 0x2AAA
+#patt = 0x1555
+#patt = patt & 0x3FFF # mask off all but bottom 14 bits
+patt = None
+
+if patt != None:
+    print "Test pattern = ", hex(patt)
+else:
+    print "No test pattern - taking ADC data"
+
+cap_len = 0x200
+
+
+debug = True
+settings = []
+tap = 6
+slip = 3
+
+
+board.getNode("daq.timing.csr.ctrl.rst").write(1) # Hold clk40 domain in reset
+board.dispatch()
+
+board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
+board.dispatch()
+
+time.sleep(1)
+
+chans = range(0x08)
+
+adc_Setup(board,slip,tap,patt,chans)
+
+
+board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
+board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
+board.dispatch()
+
+for i_chan in chans:
+
+    board.getNode("csr.ctrl.chan").write(i_chan) # Talk to correct channel
+    board.dispatch()
+ 
+    time.sleep(0.0001)
+    while True:
+        r = board.getNode("daq.chan.csr.stat").read()
+        board.getNode("daq.chan.buf.addr").write(0x0)
+        d = board.getNode("daq.chan.buf.data").readBlock(cap_len)
+        board.dispatch()
+        if r & 0x1 == 1:
+            break
+        print "Crap no capture", hex(i_chan), hex(r), time.clock()
+
+    if patt != None:
+        adc_checkData(d,patt)
+
+    adc_printData(i_chan,d)

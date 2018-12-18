@@ -78,6 +78,8 @@ architecture rtl of payload is
 	signal ctrl_board_id: std_logic_vector(7 downto 0);
 	signal chan_err, led, daq_led: std_logic;
 
+    attribute mark_debug: string;
+    attribute mark_debug of ctrl_chan : signal is "true";
 begin
 
 -- ipbus address decode

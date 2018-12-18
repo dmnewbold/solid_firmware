@@ -60,6 +60,10 @@ architecture rtl of sc_channels is
 	signal chan_q_blkend, chan_q_empty, chan_ren: std_logic_vector(N_CHAN - 1 downto 0);
 	signal sel: integer range N_CHAN - 1 downto 0 := 0;
 
+    attribute mark_debug: string;
+    attribute mark_debug of chan : signal is "true";
+    attribute mark_debug of dr_chan : signal is "true";
+    
 begin
 
 -- ipbus address decode
