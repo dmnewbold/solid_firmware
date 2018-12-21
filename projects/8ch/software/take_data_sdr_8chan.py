@@ -180,7 +180,7 @@ def adc_checkData(d,patt,debug=True):
 
 def adc_printData(chan,d):
     for w in d:
-        print chan, hex(w & 0x3FF)
+        print chan, hex(w & 0x3FFF)
 
 
 
