@@ -3,6 +3,6 @@ src sc_trig_gen.vhd sc_trig_gen_or.vhd sc_trig_gen_or_coinc.vhd sc_trig_stretch.
 include sc_seq.dep
 src ipbus_decode_sc_trig.vhd
 addrtab -t sc_trig.xml
-include -c ipbus-firmware:components/ipbus_slaves syncreg_v.dep
+include -c ipbus-firmware:components/ipbus_slaves ipbus_syncreg_v.dep
 src -c ipbus-firmware:components/ipbus_slaves ipbus_reg_types.vhd
 src -c ipbus-firmware:components/ipbus_core ipbus_package.vhd

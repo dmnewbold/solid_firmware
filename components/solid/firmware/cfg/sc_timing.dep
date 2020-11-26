@@ -1,6 +1,6 @@
 src sc_timing.vhd sc_timing_startup.vhd
 addrtab sc_timing.xml
 src sc_clocks.vhd
-include -c ipbus-firmware:components/ipbus_slaves syncreg_v.dep
+include -c ipbus-firmware:components/ipbus_slaves ipbus_syncreg_v.dep
 src -c components/mp7_ttc rng_wrapper.vhd rng_n1024_r32_t5_k32_s1c48.vhd
 src -c ipbus-firmware:components/ipbus_slaves ipbus_reg_types.vhd
