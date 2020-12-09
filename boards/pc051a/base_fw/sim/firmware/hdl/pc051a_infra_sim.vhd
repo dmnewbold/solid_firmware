@@ -8,6 +8,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 use work.ipbus.all;
+use work.ipbus_trans_decl.all;
 
 entity pc051a_infra_sim is
 	port(
