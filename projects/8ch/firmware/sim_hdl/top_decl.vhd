@@ -9,9 +9,7 @@ use IEEE.STD_LOGIC_1164.all;
 
 package top_decl is
   
-	constant MAC_ADDR: std_logic_vector(47 downto 0) := X"020ddba11503";
-	constant IP_ADDR: std_logic_vector(31 downto 0) := X"c0a8eb10";
-	constant FW_REV: std_logic_vector(15 downto 0) := X"010d";
+	constant FW_REV: std_logic_vector(15 downto 0) := X"111f";
 
 	constant N_CHAN: integer := 4;
 	constant BLK_RADIX: integer := 8; -- 256 sample blocks
