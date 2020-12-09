@@ -2,9 +2,8 @@
 
 import uhal
 import time
-import sys
-import random
-from I2CuHal import I2CCore
+#import sys
+#from I2CuHal import I2CCore
 import dataset
 
 
@@ -21,46 +20,46 @@ manager = uhal.ConnectionManager("file://solidfpga.xml")
 
 # Setup connections with all planes
 
-hw_list = []
+board_list = []
 result = run_db.query('SELECT ip FROM Configuration WHERE configID=(SELECT MAX(configID) from Configuration)')
 for row in result:
     ip=row['ip']
-    hw_list.append(manager.getDevice('SDB'+str(ip)))
+    board_list.append(manager.getDevice('SDB'+str(ip)))
 run_db = None
 
 
-for hw in hw_list:
+for board in board_list:
 
-'''
-spi = hw.getNode("io.spi")
-spi.getNode("divider").write(0xf) # Divide 31.25MHz ipbus clock by 32
-spi.getNode("ctrl").write(0x2410) # 16b transfer length, auto CSN
-spi.getNode("ss").write(0x1) # Enable SPI slave 0
-hw.dispatch()
-
-for i in range(0x10000):
-
-    ci = random.randint(0x0, 0xf)
-    di = random.randint(0x00,0xff)
-
-    hw.getNode("csr.ctrl.io_sel").write(ci) # Select ADC bank to talk to
-    spi.getNode("d0").write(0x0400 + di) # Write 0xa5 into register 0x4
-    spi.getNode("ctrl").write(0x2510) # Do it
+    # Check firmware version of the board
+    fw = board.getNode("csr.id").read()
     hw.dispatch()
+    print "Firmware version", fw&0xffff
 
-#       d = spi.getNode("d0").read()
-#       c = spi.getNode("ctrl").read()
-#       hw.dispatch()
-#       print hex(d), hex(c)
+    # Check the status of the clock and synchronisation
+    se = board.getNode("daq.timing.csr.stat").read()
+    board.dispatch()
+    # The script check_sync.py does some more reading. Not sure if this is useful?
 
-    spi.getNode("d0").write(0x8400) # Read from register 0x4
-    spi.getNode("ctrl").write(0x2510) # Do it
+
+    # Check the status of the board to board links
+    # Check status on up link, I think?
+    vu = board.getNode("daq.tlink.us_stat").read()
+    # Check status on down link, I think?
+    vd = board.getNode("daq.tlink.ds_stat").read()
     hw.dispatch()
+    # Copied from the script test_links.py, but do we need all this info?
+    #print "us -- rdy_tx, buf_tx, stat_tx:", (vu & 0x1), hex((vu & 0xc) >> 2), hex((vu & 0x300) >> 8)
+    #print "us -- rdy_rx, buf_rx, stat_rx:", (vu & 0x2) >> 1, hex((vu & 0x70) >> 4), hex((vu & 0x7c00) >> 10)
+    #print "us -- remote_id", hex((vu & 0xff0000) >> 16)
+    #print "ds -- rdy_tx, buf_tx, stat_tx:", (vd & 0x1), hex((vd & 0xc) >> 2), hex((vd & 0x300) >> 8)
+    #print "ds -- rdy_rx, buf_rx, stat_rx:", (vd & 0x2) >> 1, hex((vd & 0x70) >> 4), hex((vd & 0x7c00) >> 10)
+    #print "ds -- remote_id", hex((vd & 0xff0000) >> 16)
 
-    d = spi.getNode("d0").read()
-    c = spi.getNode("ctrl").read()
-    hw.dispatch()
 
-    if di != (d & 0xff) or (c & 0x100) != 0:
-        print "Error:", hex(i), hex(ci), hex(di), hex(d), hex(c)
-'''
+    # Control / status registers for the channels
+    # Loop over the channels
+    for chan in range(64):
+        board.getNode("csr.ctrl.chan").write(i)
+        bf = baord.getNode("daq.chan.csr.stat").read()
+        board.dispatch()
+        
