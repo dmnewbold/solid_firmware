@@ -37,8 +37,7 @@ begin
 	clocks: entity work.clock_sim
 		port map(
 			clko125 => clk125_o,
-			clko_ipb => clk_ipb_i,
-			locked => open,
+			clko25 => clk_ipb_i,
 			nuke => nuke,
 			soft_rst => soft_rst,
 			rsto => rst,
