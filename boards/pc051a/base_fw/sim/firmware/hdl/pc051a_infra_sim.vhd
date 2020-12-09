@@ -26,6 +26,8 @@ end pc051a_infra_sim;
 architecture rtl of pc051a_infra_sim is
 
 	signal clk_ipb, clk_ipb_i, rst, rsti: std_logic;
+	signal trans_in: ipbus_trans_in;
+	signal trans_out: ipbus_trans_out;
 	
 begin
 
