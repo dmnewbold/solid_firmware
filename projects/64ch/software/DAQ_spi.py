@@ -2,10 +2,12 @@
 
 import uhal
 import time
-#import sys
+import sys
 #from I2CuHal import I2CCore
 import dataset
-
+import pandas as pd # Very usefriendely, structured similarly as mysql and, according to the internet, it is the fastest way for reading/writing to files in python
+import os
+import datetime
 
 # General settings
 
@@ -15,11 +17,30 @@ db_run = 'mysql://DAQGopher:gogogadgetdatabase@localhost/SoLid_Phase2_running'
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
 # Board Connections
 manager = uhal.ConnectionManager("file://DAQ_symlink/solidfpga.xml")
+# id of this spi run
+spi_id = 0 #TODO get the id from the argument or get last id from database if this script will contain the infinite loop
 
 
+# Function to determine whethere the DAQ is taking data
 
-# Setup connections with all planes
+def isTakingData():
+    pids = [pid for pid in os.listdir('/proc') if pid.isdigit()]
+    for pid in pids:
+        try:
+            proc_name = open(os.path.join('/proc', pid, 'cmdline'), 'rb').read()
+            if 'DAQ_symlink/rundetector' in proc_name:
+                return True
 
+        except IOError: # proc has already terminated
+            continue
+    return False
+
+if(not isTakingData()):
+    print("DAQ is not taking data atm")
+    sys.exit()
+
+
+# Setup connections to all planes
 board_list = []
 run_db = dataset.connect(db_run)
 result = run_db.query('SELECT ip FROM Configuration WHERE configID=(SELECT MAX(configID) from Configuration)')
@@ -29,47 +50,67 @@ for row in result:
 run_db = None
 
 
-for board in board_list:
+# Dictionaries to store all the information
+infoGen = {'spi_id':[],'timestamp':[]} # If this script will contain the infinite loop, this can stay
+infoPla = {'ip':[],'fw':[],'sync_stat':[],'us_stat':[],'ds_stat':[],'spi_id':[]}
+infoCha = {'channel':[],'chan_stat':[],'spi_id':[],'ip':[]}
 
-    print board
+
+infoGen['spi_id'].append(spi_id)
+infoGen['timestamp'].append(datetime.datetime.utcnow().strftime("%Y_%m_%d"))
+
+for board in board_list:
 
     # Check firmware version of the board
     fw = board.getNode("csr.id").read()
     board.dispatch()
-    print "Firmware version", fw&0xffff
 
     # TODO Check the voltages/currents on the fpga
 
     # Check the status of the clock and synchronisation
-    se = board.getNode("daq.timing.csr.stat").read()
+    sync_stat = board.getNode("daq.timing.csr.stat").read()
     board.dispatch()
-    print se
     # The script check_sync.py does some more reading. Not sure if this is useful?
 
 
     # Check the status of the board to board links
     # Check status on up link, I think?
-    vu = board.getNode("daq.tlink.us_stat").read()
+    us_stat = board.getNode("daq.tlink.us_stat").read()
     # Check status on down link, I think?
-    vd = board.getNode("daq.tlink.ds_stat").read()
+    ds_stat = board.getNode("daq.tlink.ds_stat").read()
     board.dispatch()
-    print vu,vd
-    # Copied from the script test_links.py, but do we need all this info?
-    #print "us -- rdy_tx, buf_tx, stat_tx:", (vu & 0x1), hex((vu & 0xc) >> 2), hex((vu & 0x300) >> 8)
-    #print "us -- rdy_rx, buf_rx, stat_rx:", (vu & 0x2) >> 1, hex((vu & 0x70) >> 4), hex((vu & 0x7c00) >> 10)
-    #print "us -- remote_id", hex((vu & 0xff0000) >> 16)
-    #print "ds -- rdy_tx, buf_tx, stat_tx:", (vd & 0x1), hex((vd & 0xc) >> 2), hex((vd & 0x300) >> 8)
-    #print "ds -- rdy_rx, buf_rx, stat_rx:", (vd & 0x2) >> 1, hex((vd & 0x70) >> 4), hex((vd & 0x7c00) >> 10)
-    #print "ds -- remote_id", hex((vd & 0xff0000) >> 16)
+    # test_links.py shows a bit on how to interpret this output
+
+    # Put the plane info in the dictionary
+    infoPla['ip'].append(int(board.id()[3:]))
+    infoPla['fw'].append(int(fw&0xffff)) # To be consistent, we should better not do the bitwise comparison here
+    infoPla['sync_stat'].append(int(sync_stat))
+    infoPla['us_stat'].append(int(us_stat))
+    infoPla['ds_stat'].append(int(ds_stat))
+    infoPla['spi_id'].append(int(spi_id))
 
 
     # Control / status registers for the channels
     # Loop over the channels
     for chan in range(64):
-        print chan
         board.getNode("csr.ctrl.chan").write(chan)
-        bf = board.getNode("daq.chan.csr.stat").read()
+        chan_stat = board.getNode("daq.chan.csr.stat").read()
         board.dispatch()
-        print bf
+        infoCha['channel'].append(chan)
+        infoCha['chan_stat'].append(int(chan_stat))
+        infoCha['spi_id'].append(int(spi_id))
+        infoCha['ip'].append(int(board.id()[3:]))
 
-    break
+
+# Convert dictionaries to pandas objects
+dfGen = pd.DataFrame(data=infoGen)
+dfPla = pd.DataFrame(data=infoPla)
+dfCha = pd.DataFrame(data=infoCha)
+
+dfGen.set_index('spi_id',inplace=True)
+
+# Put all the info in the h5 file 
+fOut = 'dfSpiResults.h5'
+dfGen.to_hdf(fOut, key='GeneralTable', mode='w')
+dfPla.to_hdf(fOut, key='PlaneTable')
+dfCha.to_hdf(fOut, key='ChannelTable')
