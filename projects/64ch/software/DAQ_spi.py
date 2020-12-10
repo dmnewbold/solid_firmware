@@ -14,13 +14,14 @@ db_run = 'mysql://DAQGopher:gogogadgetdatabase@localhost/SoLid_Phase2_running'
 # LogLevel
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
 # Board Connections
-manager = uhal.ConnectionManager("file://solidfpga.xml")
+manager = uhal.ConnectionManager("file://DAQ_symlink/solidfpga.xml")
 
 
 
 # Setup connections with all planes
 
 board_list = []
+run_db = dataset.connect(db_run)
 result = run_db.query('SELECT ip FROM Configuration WHERE configID=(SELECT MAX(configID) from Configuration)')
 for row in result:
     ip=row['ip']
@@ -30,14 +31,19 @@ run_db = None
 
 for board in board_list:
 
+    print board
+
     # Check firmware version of the board
     fw = board.getNode("csr.id").read()
-    hw.dispatch()
+    board.dispatch()
     print "Firmware version", fw&0xffff
+
+    # TODO Check the voltages/currents on the fpga
 
     # Check the status of the clock and synchronisation
     se = board.getNode("daq.timing.csr.stat").read()
     board.dispatch()
+    print se
     # The script check_sync.py does some more reading. Not sure if this is useful?
 
 
@@ -46,7 +52,8 @@ for board in board_list:
     vu = board.getNode("daq.tlink.us_stat").read()
     # Check status on down link, I think?
     vd = board.getNode("daq.tlink.ds_stat").read()
-    hw.dispatch()
+    board.dispatch()
+    print vu,vd
     # Copied from the script test_links.py, but do we need all this info?
     #print "us -- rdy_tx, buf_tx, stat_tx:", (vu & 0x1), hex((vu & 0xc) >> 2), hex((vu & 0x300) >> 8)
     #print "us -- rdy_rx, buf_rx, stat_rx:", (vu & 0x2) >> 1, hex((vu & 0x70) >> 4), hex((vu & 0x7c00) >> 10)
@@ -59,7 +66,10 @@ for board in board_list:
     # Control / status registers for the channels
     # Loop over the channels
     for chan in range(64):
-        board.getNode("csr.ctrl.chan").write(i)
-        bf = baord.getNode("daq.chan.csr.stat").read()
+        print chan
+        board.getNode("csr.ctrl.chan").write(chan)
+        bf = board.getNode("daq.chan.csr.stat").read()
         board.dispatch()
-        
+        print bf
+
+    break
