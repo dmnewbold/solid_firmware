@@ -52,7 +52,7 @@ run_db = None
 
 # Dictionaries to store all the information
 infoGen = {'spi_id':[],'timestamp':[]} # If this script will contain the infinite loop, this can stay
-infoPla = {'ip':[],'fw':[],'sync_stat':[],'us_stat':[],'ds_stat':[],'spi_id':[]}
+infoPla = {'ip':[],'fw':[],'sync_stat':[],'us_stat':[],'ds_stat':[],'sctr_l':[],'sctr_h':[],'trig_stat':[],'evt_ctr':[],'spi_id':[]}
 infoCha = {'channel':[],'chan_stat':[],'spi_id':[],'ip':[]}
 
 
@@ -66,20 +66,30 @@ for board in board_list:
     board.dispatch()
 
     # TODO Check the voltages/currents on the fpga
+    #clock_I2C = I2CCore(board, 10, 5, "i2c", None)
 
     # Check the status of the clock and synchronisation
     sync_stat = board.getNode("daq.timing.csr.stat").read()
     board.dispatch()
     # The script check_sync.py does some more reading. Not sure if this is useful?
 
+    # Check the current timestamp
+    board.getNode('daq.timing.csr.ctrl.cap_ctr').write(1)
+    sctr_l = board.getNode('daq.timing.csr.sctr_l').read()
+    sctr_h = board.getNode('daq.timing.csr.sctr_h').read()
+    board.dispatch()
 
     # Check the status of the board to board links
-    # Check status on up link, I think?
+    # Check status upstream
     us_stat = board.getNode("daq.tlink.us_stat").read()
-    # Check status on down link, I think?
+    # Check status downstream
     ds_stat = board.getNode("daq.tlink.ds_stat").read()
     board.dispatch()
-    # test_links.py shows a bit on how to interpret this output
+
+    # Check something of the trigger
+    trig_stat = board.getNode('daq.trig.csr.stat').read()
+    evt_ctr = board.getNode('daq.trig.csr.evt_ctr').read()
+    board.dispatch()
 
     # Put the plane info in the dictionary
     infoPla['ip'].append(int(board.id()[3:]))
@@ -87,6 +97,10 @@ for board in board_list:
     infoPla['sync_stat'].append(int(sync_stat))
     infoPla['us_stat'].append(int(us_stat))
     infoPla['ds_stat'].append(int(ds_stat))
+    infoPla['sctr_l'].append(int(sctr_l))
+    infoPla['sctr_h'].append(int(sctr_h))
+    infoPla['trig_stat'].append(int(trig_stat))
+    infoPla['evt_ctr'].append(int(evt_ctr))
     infoPla['spi_id'].append(int(spi_id))
 
 
@@ -110,7 +124,7 @@ dfCha = pd.DataFrame(data=infoCha)
 dfGen.set_index('spi_id',inplace=True)
 
 # Put all the info in the h5 file 
-fOut = 'dfSpiResults.h5'
+fOut = 'dfSpiResults_'+str(spi_id)+'.h5'
 dfGen.to_hdf(fOut, key='GeneralTable', mode='w')
 dfPla.to_hdf(fOut, key='PlaneTable')
 dfCha.to_hdf(fOut, key='ChannelTable')
