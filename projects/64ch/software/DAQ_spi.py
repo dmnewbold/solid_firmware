@@ -52,7 +52,7 @@ run_db = None
 
 # Dictionaries to store all the information
 infoGen = {'spi_id':[],'timestamp':[]} # If this script will contain the infinite loop, this can stay
-infoPla = {'ip':[],'fw':[],'sync_stat':[],'us_stat':[],'ds_stat':[],'sctr_l':[],'sctr_h':[],'trig_stat':[],'evt_ctr':[],'spi_id':[]}
+infoPla = {'ip':[],'fw':[],'sync_stat':[],'us_stat':[],'ds_stat':[],'sctr_l':[],'sctr_h':[],'hop_cfg':[],'trig_stat':[],'evt_ctr':[],'spi_id':[]}
 infoCha = {'channel':[],'chan_stat':[],'spi_id':[],'ip':[]}
 
 
@@ -61,44 +61,47 @@ infoGen['timestamp'].append(datetime.datetime.utcnow().strftime("%Y_%m_%d"))
 
 for board in board_list:
 
-    # Check firmware version of the board
-    fw = board.getNode("csr.id").read()
-    board.dispatch()
+    try:
+        # Check firmware version of the board
+        fw = board.getNode("csr.id").read()
+        board.dispatch()
+    except e:
+        print "Skipped plane"
+        continue
 
     # TODO Check the voltages/currents on the fpga
-    #clock_I2C = I2CCore(board, 10, 5, "i2c", None)
 
-    # Check the status of the clock and synchronisation
-    sync_stat = board.getNode("daq.timing.csr.stat").read()
-    board.dispatch()
-    # The script check_sync.py does some more reading. Not sure if this is useful?
-
-    # Check the current timestamp
+    # Check some timing information
     board.getNode('daq.timing.csr.ctrl.cap_ctr').write(1)
     sctr_l = board.getNode('daq.timing.csr.sctr_l').read()
     sctr_h = board.getNode('daq.timing.csr.sctr_h').read()
+    sync_stat = board.getNode("daq.timing.csr.stat").read()
     board.dispatch()
 
     # Check the status of the board to board links
-    # Check status upstream
+    # Check status upstream link
     us_stat = board.getNode("daq.tlink.us_stat").read()
-    # Check status downstream
+    # Check status downstream link
     ds_stat = board.getNode("daq.tlink.ds_stat").read()
     board.dispatch()
 
-    # Check something of the trigger
+    # Check things of the trigger
+    hop_cfg = board.getNode("daq.trig.hop_cfg").read()
     trig_stat = board.getNode('daq.trig.csr.stat').read()
     evt_ctr = board.getNode('daq.trig.csr.evt_ctr').read()
     board.dispatch()
 
+    #clock_I2C = I2CCore(board, 10, 5, "i2c", None)
+
     # Put the plane info in the dictionary
     infoPla['ip'].append(int(board.id()[3:]))
-    infoPla['fw'].append(int(fw&0xffff)) # To be consistent, we should better not do the bitwise comparison here
+    infoPla['fw'].append(int(fw))
     infoPla['sync_stat'].append(int(sync_stat))
     infoPla['us_stat'].append(int(us_stat))
     infoPla['ds_stat'].append(int(ds_stat))
     infoPla['sctr_l'].append(int(sctr_l))
     infoPla['sctr_h'].append(int(sctr_h))
+    infoPla['hop_cfg'].append(int(hop_cfg))
     infoPla['trig_stat'].append(int(trig_stat))
     infoPla['evt_ctr'].append(int(evt_ctr))
     infoPla['spi_id'].append(int(spi_id))
@@ -128,3 +131,5 @@ fOut = 'dfSpiResults_'+str(spi_id)+'.h5'
 dfGen.to_hdf(fOut, key='GeneralTable', mode='w')
 dfPla.to_hdf(fOut, key='PlaneTable')
 dfCha.to_hdf(fOut, key='ChannelTable')
+
+# For now, the interpretation of this data is done in sdqm2/RC_func.py
