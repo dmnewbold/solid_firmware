@@ -1,4 +1,4 @@
-src sc_channels.vhd sc_chan.vhd sc_input_serdes.vhd sc_chan_buf.vhd sc_derand.vhd
+src sc_channels.vhd sc_chan.vhd sc_input_serdes.vhd sc_chan_buf.vhd sc_zs.vhd sc_derand.vhd
 src sc_chan_trig.vhd sc_ctrig_npeaks.vhd sc_ctrig_tot.vhd sc_ctrig_window.vhd sc_ctrig_thresh.vhd
 src -c ipbus-firmware:components/ipbus_core ipbus_fabric_sel.vhd
 src -c ipbus-firmware:components/ipbus_slaves ipbus_ported_dpram.vhd

@@ -49,7 +49,7 @@ architecture rtl of sc_chan_buf is
 	signal pnz, pzw, pzr, zs_first_addr: unsigned(BUF_RADIX - 1 downto 0);
 	signal zctr: unsigned(BLK_RADIX - 1 downto 0);
 	signal z0, z1: std_logic;
-	signal zs_en_d, zs_en_dd, nzen, nzen_d, wenz, wez, rez, wez_d: std_logic;
+	signal zs_en_d, nzen_d, wenz, wez, rez, wez_d, zs_clken: std_logic;
 	signal go, zs_run, zs_keep, buf_full_i, p, q_blkend_i: std_logic;
 	
 begin
@@ -102,14 +102,11 @@ begin
 	
 -- NZS pointer control
 
-	nzen <= nzs_en;
-	
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
-			nzen_d <= nzen;
+			nzen_d <= nzs_en;
 			zs_en_d <= zs_en;
-			zs_en_dd <= zs_en_d;
 		end if;
 	end process;
 	
@@ -132,32 +129,23 @@ begin
 	d_nzs <= blkend & '0' & d(13 downto 0);
 	
 -- Zero suppression
-		
-	z0 <= '1' when unsigned(q_ram(13 downto 0)) < unsigned(zs_thresh) else '0';
 
-	process(clk160)
-	begin
-		if rising_edge(clk160) and c = "00" then
-			if zs_en_d = '0' then
-				zctr <= (others => '0');
-			else
-				q_nzs <= q_ram;
-				z1 <= z0;
-				if z0 = '0' or q_nzs(15) = '1' then
-					zctr <= (others => '0');
-				elsif z1 = '1' then
-					zctr <= zctr + 1;
-				end if;
-			end if;
-			wez <= ((not (z0 and z1)) or q_nzs(15)) and zs_en_dd and not buf_full_i;
-			if z1 = '1' then
-				d_zs <= q_nzs(15) & '1' & (13 - BLK_RADIX downto 0 => '0') & std_logic_vector(zctr);
-			else
-				d_zs <= q_nzs;
-			end if;
-		end if;
-	end process;
-	
+	zs_clken <= '1' when c = "00" else '0';
+		
+	zs: entity work.sc_zs
+		generic map(
+			CTR_W => BLOCK_RADIX
+		)
+		port map(
+			clk => clk160,
+			clken => zs_clken,
+			en => zs_en_d,
+			thresh => zs_thresh,
+			d => q_ram,
+			q => d_zs,
+			we => wez
+		);
+
 -- ZS pointer control
 
 	process(clk40)
