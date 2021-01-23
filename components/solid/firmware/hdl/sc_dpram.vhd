@@ -36,7 +36,7 @@ begin
 	dpram: xpm_memory_tdpram
 		generic map(
 			ADDR_WIDTH_A => ADDR_WIDTH,
-			ADDR_WIDTH_B => ADDR_WIDTH.
+			ADDR_WIDTH_B => ADDR_WIDTH,
 			MEMORY_SIZE => 2 ** ADDR_WIDTH * 16,
 			READ_DATA_WIDTH_A => 16,
 			READ_DATA_WIDTH_B => 16,
