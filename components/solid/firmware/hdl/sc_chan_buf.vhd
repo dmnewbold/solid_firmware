@@ -44,11 +44,9 @@ architecture rtl of sc_chan_buf is
 
 	signal c: unsigned(1 downto 0);
 	signal we: std_logic;
-	signal d_ram, q_ram, d_nzs, q_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
+	signal d_ram, q_ram, d_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
 	signal a_ram: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr, zs_first_addr: unsigned(BUF_RADIX - 1 downto 0);
-	signal zctr: unsigned(BLK_RADIX - 1 downto 0);
-	signal z0, z1: std_logic;
 	signal zs_en_d, nzen_d, wenz, wez, rez, wez_d, zs_clken: std_logic;
 	signal go, zs_run, zs_keep, buf_full_i, p, q_blkend_i: std_logic;
 	
@@ -134,7 +132,7 @@ begin
 		
 	zs: entity work.sc_zs
 		generic map(
-			CTR_W => BLOCK_RADIX
+			CTR_W => BLK_RADIX
 		)
 		port map(
 			clk => clk160,
