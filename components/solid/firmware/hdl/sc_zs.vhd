@@ -32,7 +32,7 @@ architecture rtl of sc_zs is
 	
 begin
 
-	z0 <= '1' when unsigned(d(13 downto 0)) < unsigned(zs_thresh) else '0';
+	z0 <= '1' when unsigned(d(13 downto 0)) < unsigned(thresh) else '0';
 	
 	process(clk)
 	begin
@@ -42,7 +42,7 @@ begin
 				ctr <= (others => '0');
 			elsif z1 = '1' then
 				ctr <= ctr + 1;
-			endif;
+			end if;
 			di <= d;
 			z1 <= z0;
 			we <= ((not (z0 and z1)) or di(15)) and en_d;
