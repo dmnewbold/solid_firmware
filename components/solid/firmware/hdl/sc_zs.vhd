@@ -16,7 +16,7 @@ entity sc_zs is
 		clk: in std_logic;
 		clken: in std_logic;
 		en: in std_logic;
-		thresh: in std_logic(13 downto 0);
+		thresh: in std_logic_vector(13 downto 0);
 		d: in std_logic_vector(15 downto 0);
 		q: out std_logic_vector(15 downto 0);
 		we: out std_logic
