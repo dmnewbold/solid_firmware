@@ -17,6 +17,7 @@ entity sc_zs is
 		clken: in std_logic;
 		en: in std_logic;
 		thresh: in std_logic_vector(13 downto 0);
+		supp: in std_logic;
 		d: in std_logic_vector(15 downto 0);
 		q: out std_logic_vector(15 downto 0);
 		we: out std_logic
@@ -32,7 +33,7 @@ architecture rtl of sc_zs is
 	
 begin
 
-	z0 <= '1' when unsigned(d(13 downto 0)) < unsigned(thresh) else '0';
+	z0 <= '1' when unsigned(d(13 downto 0)) < unsigned(thresh) or supp = '1' else '0';
 	
 	process(clk)
 	begin
@@ -51,7 +52,7 @@ begin
 			end if;
 			we <= ((not (z0 and z1)) or di(15)) and en_d;
 			if z1 = '1' then
-				q <= di(15) & '1' & (13 - CTR_W downto 0 => '0') & std_logic_vector(ctr);
+				q <= di(15) & '1' & (12 - CTR_W downto 0 => '0') & supp & std_logic_vector(ctr);
 			else
 				q <= di;
 			end if;

@@ -29,6 +29,7 @@ entity sc_chan_buf is
 		buf_full: out std_logic; -- buffer err flag; clk40 dom
 		dr_en: in std_logic;
 		suppress: in std_logic;
+		soft: in std_logic;
 		keep: in std_logic; -- block transfer cmd; clk40 dom
 		kack: out std_logic;
 		q: out std_logic_vector(31 downto 0); -- output to derand; clk40 dom
@@ -41,19 +42,21 @@ end sc_chan_buf;
 architecture rtl of sc_chan_buf is
 
 	constant ZS_LAST_ADDR: integer := 2 ** BUF_RADIX - 1;
+	constant MARGIN: integer := 4;
 
 	signal c: unsigned(1 downto 0);
 	signal we: std_logic;
 	signal d_ram, q_ram, d_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
 	signal a_ram: std_logic_vector(BUF_RADIX - 1 downto 0);
-	signal pnz, pzw, pzr, zs_first_addr: unsigned(BUF_RADIX - 1 downto 0);
-	signal zs_en_d, nzen_d, wenz, wez, rez, wez_d, zs_clken: std_logic;
-	signal go, zs_run, zs_keep, buf_full_i, p, q_blkend_i: std_logic;
+	signal pnz, pzw, pzr, zs_first_addr, ctr, max_cont: unsigned(BUF_RADIX - 1 downto 0);
+	signal zs_en_d, nzen_d, wenz, wez, wezu, rez, zs_clken: std_logic;
+	signal go, zs_run, zs_keep, buf_doom, buf_full_i, p, q_blkend_i: std_logic;
 	
 begin
 
 	zs_first_addr <= shift_left(unsigned(std_logic_vector'((BUF_RADIX - 1 downto 4 => '0') & nzs_blks)), BLK_RADIX) + ZS_DEL;
-
+	max_cont <= ZS_LAST_ADDR - zs_first_addr - MARGIN;
+	
 -- NZS / ZS buffer
 
 	ram: entity work.ipbus_ported_dpram
@@ -139,10 +142,13 @@ begin
 			clken => zs_clken,
 			en => zs_en_d,
 			thresh => zs_thresh,
+			supp => buf_doom,
 			d => q_ram,
 			q => d_zs,
-			we => wez
+			we => wezu
 		);
+		
+	wez <= wezu and (soft or not buf_doom);
 
 -- ZS pointer control
 
@@ -152,7 +158,8 @@ begin
 			if zs_en = '0' then
 				pzw <= zs_first_addr;
 				pzr <= zs_first_addr;
-			elsif buf_full_i = '0' then
+				ctr <= (others => '0');
+			else
 				if wez = '1' then
 					if pzw = ZS_LAST_ADDR then
 						pzw <= zs_first_addr;
@@ -167,19 +174,25 @@ begin
 						pzr <= pzr + 1;
 					end if;
 				end if;
+				if wez = '1' and rez = '0' then
+					ctr <= ctr + 1;
+				elsif wez = '0' and rez = '1' then
+					ctr <= ctr - 1;
+				end if;
 			end if;
 		end if;
 	end process;
+	
+	buf_doom <= '1' when ctr > max_cont else '0';
 	
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
 			if zs_en = '0' then
 				buf_full_i <= '0';
-			elsif pzw = pzr and wez_d = '1' then
+			elsif buf_doom = '1' and soft = '0' then
 				buf_full_i <= '1';
 			end if;
-			wez_d <= wez;
 		end if;
 	end process;
 	

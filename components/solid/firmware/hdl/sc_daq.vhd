@@ -161,6 +161,7 @@ begin
 			nzs_blks => nzs_blks,
 			nzs_en => nzs_en,
 			zs_en => zs_en,
+			soft_en => soft_en,
 			dr_en => dr_en,
 			keep => trig_keep,
 			kack => trig_kack,

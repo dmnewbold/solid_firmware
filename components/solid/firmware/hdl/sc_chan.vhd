@@ -64,7 +64,7 @@ architecture rtl of sc_chan is
 	signal slip_l, slip_h, inc: std_logic;
 	signal act_slip: unsigned(7 downto 0);
 	signal cntout: std_logic_vector(4 downto 0);
-	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert, ctrl_swap, ctrl_suppress: std_logic;
+	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert, ctrl_swap, ctrl_soft_en, ctrl_suppress: std_logic;
 	signal ctrl_src: std_logic_vector(1 downto 0);
 	signal buf_full, dr_full, dr_warn: std_logic;
 	signal zs_thresh_v: ipb_reg_v(N_ZS_THRESH - 1 downto 0);
@@ -118,6 +118,7 @@ begin
 	ctrl_en_buf <= ctrl(0)(1);
 	ctrl_invert <= ctrl(0)(2);
 	ctrl_swap <= ctrl(0)(3);
+	ctrl_soft_en <= ctrl(0)(4);
 	ctrl_suppress <= ctrl(0)(5);
 	ctrl_src <= ctrl(0)(7 downto 6);
 	
@@ -268,6 +269,7 @@ begin
 			buf_full => buf_full,
 			dr_en => dr_en_i,
 			suppress => ctrl_suppress,
+			soft => ctrl_soft_en,
 			keep => keep,
 			kack => kack,
 			q => dr_d,
