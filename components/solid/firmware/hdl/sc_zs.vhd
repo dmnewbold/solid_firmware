@@ -28,7 +28,7 @@ end sc_zs;
 architecture rtl of sc_zs is
 
 	signal ctr: unsigned(CTR_W - 1 downto 0);
-	signal z0, z1, en_d: std_logic;
+	signal z0, z1, en_d, sd: std_logic;
 	signal di: std_logic_vector(15 downto 0);
 	
 begin
@@ -39,6 +39,7 @@ begin
 	begin
 		if rising_edge(clk) and clken = '1' then
 			en_d <= en;
+			sd <= supp;
 			if en = '0' then
 				ctr <= (others => '0');
 			else
@@ -50,9 +51,9 @@ begin
 					ctr <= ctr + 1;
 				end if;
 			end if;
-			we <= ((not (z0 and z1)) or di(15)) and en_d;
+			we <= ((not (z0 and z1)) or di(15) or (supp xor sd)) and en_d;
 			if z1 = '1' then
-				q <= di(15) & '1' & (12 - CTR_W downto 0 => '0') & supp & std_logic_vector(ctr);
+				q <= di(15) & '1' & supp & (12 - CTR_W downto 0 => '0') & std_logic_vector(ctr);
 			else
 				q <= di;
 			end if;
