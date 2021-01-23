@@ -26,7 +26,7 @@ entity sc_timing is
 		clk_in_n: in std_logic;
 		clk40: out std_logic; -- chip 40MHz clock
 		rst40: out std_logic; -- clk40 domain reset
-		clk160: out std_logic; -- chip 160MHz clock
+		clk80: out std_logic; -- chip 80MHz clock
 		clk280: out std_logic; -- chip 280MHz clock
 		sync_in: in std_logic; -- external sync signal in
 		trig_in: in std_logic; -- external trigger in
@@ -44,7 +44,7 @@ end sc_timing;
 
 architecture rtl of sc_timing is
 
-	signal clk40_a,  rst40_a, clk160_a, clk280_a, clk40_i, rst40_i: std_logic;
+	signal clk40_a,  rst40_a, clk80_a, clk280_a, clk40_i, rst40_i: std_logic;
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(4 downto 0);
 	signal stb: std_logic_vector(0 downto 0);
@@ -69,7 +69,7 @@ begin
 			clk_in_p => clk_in_p,
 			clk_in_n => clk_in_n,
 			clk40 => clk40_a,
-			clk160 => clk160_a,
+			clk80 => clk80_a,
 			clk280 => clk280_a,
 			locked => locked,
 			rst_mmcm => rst_mmcm,
@@ -81,7 +81,7 @@ begin
 	clk40 <= clk40_a;
 	rst40_i <= rst40_a;
 	rst40 <= rst40_a;
-	clk160 <= clk160_a;
+	clk80 <= clk80_a;
 	clk280 <= clk280_a;
 
 -- Control register

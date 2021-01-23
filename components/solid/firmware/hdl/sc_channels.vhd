@@ -25,7 +25,7 @@ entity sc_channels is
 		chan: in std_logic_vector(7 downto 0);
 		clk40: in std_logic;
 		rst40: in std_logic;
-		clk160: in std_logic;
+		clk80: in std_logic;
 		clk280: in std_logic;
 		d_p: in std_logic_vector(N_CHAN - 1 downto 0);
 		d_n: in std_logic_vector(N_CHAN - 1 downto 0);
@@ -102,7 +102,7 @@ begin
 				ipb_out => ipbr(i),
 				clk40 => clk40,
 				rst40 => rst40,
-				clk160 => clk160,
+				clk80 => clk80,
 				clk280 => clk280,				
 				d_p => d_p(i),
 				d_n => d_n(i),

@@ -23,7 +23,6 @@ entity sc_trig is
 		ipb_out: out ipb_rbus;
 		clk40: in std_logic;
 		rst40: in std_logic;
-		clk160: in std_logic;
 		trig_en: in std_logic;
 		zs_en: in std_logic;
 		sctr: in std_logic_vector(47 downto 0);
@@ -294,23 +293,7 @@ begin
 	blkend <= (b_blkend and b_valid) or (t_blkend and t_valid);
 	ro_blkend <= blkend;
 
--- Deadtime monitor
-
---	dmon: entity work.sc_deadtime_mon
---		port map(
---			clk => clk,
---			rst => rst,
---			ipb_in => ipbw(N_SLV_DTMON),
---			ipb_out => ipbr(N_SLV_DTMON),
---			en => ctrl_dtmon_en,
---			clk40 => clk40,
---			rst40 => rst40,
---			clk160 => clk160,
---			mark => mark,
---			sctr => sctr(BLK_RADIX - 1 downto 0),
---			keep => keep_i,
---			veto => veto_i
---		);
+-- Deadtime monitor (now removed from design)
 
 	ipbr(N_SLV_DTMON) <= IPB_RBUS_NULL;
 		

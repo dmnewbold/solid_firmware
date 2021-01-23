@@ -17,7 +17,6 @@ entity sc_clocks is
 		clk_in_n: in std_logic;
 		clk40: out std_logic; -- Sample clock (nominally 40MHz)
 		clk80: out std_logic; -- Processing clock (2 * clk_s)
-		clk160: out std_logic; -- Processing clock (4 * clk_s)
 		clk280: out std_logic; -- iserdes clock (7 * clk_s)
 		locked: out std_logic;
 		rst_mmcm: in std_logic;
@@ -30,7 +29,7 @@ end sc_clocks;
 architecture rtl of sc_clocks is
 
 	signal clk_in_ub, clk_in, clkfb: std_logic;
-	signal clk40_u, clk40_i, clk80_u, clk160_u, clk280_u: std_logic;
+	signal clk40_u, clk40_i, clk80_u, clk280_u: std_logic;
 	signal locked_i: std_logic;
 
 begin
@@ -52,16 +51,14 @@ begin
 			CLKFBOUT_MULT_F => 28.0,
 			CLKOUT0_DIVIDE_F => 28.0, 
 			CLKOUT1_DIVIDE => 14,
-			CLKOUT2_DIVIDE => 7,
-			CLKOUT3_DIVIDE => 4
+			CLKOUT2_DIVIDE => 4
 		)
 		port map(
 			clkin1 => clk_in,
 			clkfbin => clkfb,
 			clkout0 => clk40_u,
 			clkout1 => clk80_u,
-			clkout2 => clk160_u,
-			clkout3 => clk280_u,
+			clkout2 => clk280_u,
 			clkfbout => clkfb,
 			locked => locked_i,
 			rst => rst_mmcm,
@@ -89,12 +86,6 @@ begin
 		port map(
 			i => clk80_u,
 			o => clk80
-		);
-		
-	bufg160: BUFG
-		port map(
-			i => clk160_u,
-			o => clk160
 		);
 
 	bufg280: BUFG

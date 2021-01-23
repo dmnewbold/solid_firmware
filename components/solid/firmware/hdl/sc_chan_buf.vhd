@@ -18,7 +18,7 @@ use work.top_decl.all;
 entity sc_chan_buf is
 	port(
 		clk40: in std_logic;
-		clk160: in std_logic;
+		clk80: in std_logic;
 		nzs_blks: in std_logic_vector(3 downto 0); -- number of blocks in NZS buffer
 		buf_rst: in std_logic; -- general reset; clk40 dom
 		d: in std_logic_vector(15 downto 0); -- data in; clk40 dom
@@ -44,10 +44,9 @@ architecture rtl of sc_chan_buf is
 	constant ZS_LAST_ADDR: integer := 2 ** BUF_RADIX - 1;
 	constant MARGIN: integer := 4;
 
-	signal c: unsigned(1 downto 0);
-	signal we: std_logic;
-	signal d_ram, q_ram, d_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
-	signal a_ram: std_logic_vector(BUF_RADIX - 1 downto 0);
+	signal c: std_logic;
+	signal d_nzs, q_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
+	signal addra, addrb: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr, zs_first_addr, ctr, max_cont: unsigned(BUF_RADIX - 1 downto 0);
 	signal zs_en_d, nzen_d, wenz, wez, wezu, rez, zs_clken: std_logic;
 	signal go, zs_run, zs_keep, buf_doom, buf_full_i, p, q_blkend_i: std_logic;
@@ -64,68 +63,34 @@ begin
 			ADDR_WIDTH => BUF_RADIX
 		)
 		port map(
-			clk => clk160,
-			wea => we,
-			da => d_ram,
-			qa => q_ram,
-			addra => a_ram,
-			web => '0',
-			db => (others => '0'),
-			qb => open,
-			addrb => (others => '0')
+			clk => clk80,
+			wea => c,
+			da => d_nzs, -- NZS data in on r/e of clk40
+			qa => q_nzs, -- NZS data out on r/e of clk40
+			addra => addra,
+			web => c,
+			db => d_ramb, -- ZS data in on r/e of clk40
+			qb => q_ramb, -- ZS data out on f/e of clk40
+			addrb => addrb
 		);
 
---	ram: entity work.ipbus_ported_dpram
---		generic map(
---			ADDR_WIDTH => BUF_RADIX,
---			DATA_WIDTH => 16
---		)
---		port map(
---			clk => '0',
---			rst => '0',
---			ipb_in => IPB_WBUS_NULL,
---			ipb_out => open,
---			rclk => clk160,
---			we => we,
---			d => d_ram,
---			q => q_ram,
---			addr => a_ram
---		);
-
-	process(clk160)
+	process(clk80)
 	begin
-		if rising_edge(clk160) then
+		if rising_edge(clk80) then
 			if buf_rst = '1' then
-				c <= "00";
+				c <= '0';
 			else
-				c <= c + 1;
+				c <= not c;
 			end if;
 		end if;
 	end process;
 	
-	with c select a_ram <=
-		std_logic_vector(pnz) when "11", -- data / to from nzs on 1st edge of clk160 (clk40 rising)
-		std_logic_vector(pzw) when "01", -- data to zs on 3rd edge of clk160
-		std_logic_vector(pzr) when others; -- data from zs on 4th edge of clk160
-	
-	with c select d_ram <=
-		d_nzs when "11",
-		d_zs when others;
-		
-	with c select we <=
-		wenz when "11",
-		wez when "01",
-		'0' when others;
-	
+	addra <= std_logic_vector(pnz);
+	addrb <= std_logic_vector(pzw) when c = '1' else std_logic_vector(pzr);
+
 -- NZS pointer control
 
-	process(clk40)
-	begin
-		if rising_edge(clk40) then
-			nzen_d <= nzs_en;
-			zs_en_d <= zs_en;
-		end if;
-	end process;
+	nzen_d <= nzs_en when rising_edge(clk40);
 	
 	process(clk40)
 	begin
@@ -147,19 +112,19 @@ begin
 	
 -- Zero suppression
 
-	zs_clken <= '1' when c = "00" else '0';
+	zs_en_d <= zs_en when rising_edge(clk40);
 		
 	zs: entity work.sc_zs
 		generic map(
 			CTR_W => BLK_RADIX
 		)
 		port map(
-			clk => clk160,
-			clken => zs_clken,
+			clk => clk40,
+			clken => '1',
 			en => zs_en_d,
 			thresh => zs_thresh,
 			supp => buf_doom,
-			d => q_ram,
+			d => q_nzs,
 			q => d_zs,
 			we => wezu
 		);

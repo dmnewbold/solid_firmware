@@ -28,7 +28,7 @@ entity sc_chan is
 		ipb_out: out ipb_rbus;
 		clk40: in std_logic;
 		rst40: in std_logic;
-		clk160: in std_logic;
+		clk80: in std_logic;
 		clk280: in std_logic;
 		d_p: in std_logic;
 		d_n: in std_logic;
@@ -257,7 +257,7 @@ begin
 	buf: entity work.sc_chan_buf
 		port map(
 			clk40 => clk40,
-			clk160 => clk160,
+			clk80 => clk80,
 			nzs_blks => nzs_blks,
 			buf_rst => rst40,
 			d => d_buf,
