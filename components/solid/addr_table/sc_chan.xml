@@ -10,9 +10,6 @@
 			<node id="src" mask="0xc0"/>
 		</node>
 		<node id="stat" address="0x1">
-			<!--
-			<node id="cap_full" mask="0x1"/>
-			-->
 			<node id="buf_full" mask="0x2"/>
 			<node id="dr_full" mask="0x4"/>
 			<node id="dr_warn" mask="0x8"/>
@@ -21,12 +18,6 @@
 			<node id="tap" mask="0x1f0000"/>
 		</node>
 	</node>
-	<!--
-	<node id="buf" address="0x2" description="channel buffers" fwinfo="endpoint;width=1">
-		<node id="addr" address="0x0"/>
-		<node id="data" address="0x1" mode="port"/>
-	</node>
-	-->
 	<node id="zs_thresh" address="0x4" mode="block" size="0x4" description="zero suppression thresholds" fwinfo="endpoint;width=2"/>
 	<node id="trig_thresh" address="0x8" description="trigger thresholds" fwinfo="endpoint;width=2">
 		<node id="threshold" address="0x0">

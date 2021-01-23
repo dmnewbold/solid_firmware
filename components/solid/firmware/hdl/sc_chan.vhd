@@ -61,13 +61,11 @@ architecture rtl of sc_chan is
 	signal ctrl: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(0 downto 0);		
 	signal d_in, d_in_i, d_buf: std_logic_vector(15 downto 0);
---	signal slip_l, slip_h, cap, inc: std_logic;
 	signal slip_l, slip_h, inc: std_logic;
 	signal act_slip: unsigned(7 downto 0);
 	signal cntout: std_logic_vector(4 downto 0);
 	signal ctrl_en_sync, ctrl_en_buf, ctrl_invert, ctrl_swap, ctrl_suppress: std_logic;
 	signal ctrl_src: std_logic_vector(1 downto 0);
---	signal cap_full, buf_full, dr_full, dr_warn: std_logic;
 	signal buf_full, dr_full, dr_warn: std_logic;
 	signal zs_thresh_v: ipb_reg_v(N_ZS_THRESH - 1 downto 0);
 	signal zs_sel_i: integer range 2 ** zs_sel'length - 1 downto 0 := 0;
@@ -75,7 +73,7 @@ architecture rtl of sc_chan is
 	signal sctr_p: std_logic_vector(11 downto 0);
 	signal dr_d: std_logic_vector(31 downto 0);
 	signal blkend, dr_blkend, dr_wen: std_logic;
-	type state_t is (ST_DIS, ST_WAIT, ST_RUN, ST_VETO, ST_ERR);
+	type state_t is (ST_WAIT, ST_RUN, ST_VETO, ST_ERR);
 	signal state: state_t;
 	signal nzs_en_d, dr_empty, enb, enb_d, zs_en_i, dr_en_i: std_logic;
 	signal state_dec: std_logic_vector(2 downto 0);
@@ -125,10 +123,8 @@ begin
 	
 	slip_l <= sync_ctrl(0) and ctrl_en_sync; -- CDC
 	slip_h <= sync_ctrl(1) and ctrl_en_sync; -- CDC
---	cap <= sync_ctrl(2) and ctrl_en_sync; -- CDC
 	inc <= sync_ctrl(3) and ctrl_en_sync; -- CDC
 	
---	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & '0' & state_dec & dr_warn & dr_full & buf_full & cap_full; -- CDC
 	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & '0' & state_dec & dr_warn & dr_full & buf_full & '0'; -- CDC
 
 -- Keep track of slips and taps for debug
@@ -186,12 +182,9 @@ begin
 	begin
 		if rising_edge(clk40) then
 			if rst40 = '1' or enb_d = '0' then
-				state <= ST_DIS;
+				state <= ST_WAIT;
 			else		
 				case state is
-				
-				when ST_DIS => -- Starting state
-					state <= ST_WAIT;
 
 				when ST_WAIT => -- Wait for sync
 					if nzs_en = '1' and nzs_en_d = '0' then
@@ -231,10 +224,6 @@ begin
 	zs_en_i <= '0' when state = ST_DIS else zs_en;
 	dr_en_i <= dr_en when state = ST_RUN else '0';
 	
--- Veto counters
-
--- TBD
-	
 -- ZS thresholds
 
 	zs_t: entity work.ipbus_reg_v
@@ -269,11 +258,6 @@ begin
 
 	buf: entity work.sc_chan_buf
 		port map(
---			clk => clk,
---			rst => rst,
---			ipb_in => ipbw(N_SLV_BUF),
---			ipb_out => ipbr(N_SLV_BUF),
---			mode => mode_d,
 			clk40 => clk40,
 			clk160 => clk160,
 			nzs_blks => nzs_blks,
@@ -281,8 +265,6 @@ begin
 			d => d_buf,
 			blkend => blkend,	
 			nzs_en => nzs_en,
---			cap => cap,
---			cap_full => cap_full,
 			zs_thresh => zs_thresh,
 			zs_en => zs_en_i,
 			buf_full => buf_full,
