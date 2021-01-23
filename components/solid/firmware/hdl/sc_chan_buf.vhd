@@ -11,26 +11,26 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 use ieee.std_logic_misc.all;
 
-use work.ipbus.all;
+use work.ipbus.all;ca
 
 use work.top_decl.all;
 
 entity sc_chan_buf is
 	port(
-		clk: in std_logic;
-		rst: in std_logic;
-		ipb_in: in ipb_wbus; -- clk dom
-		ipb_out: out ipb_rbus; -- clk dom
-		mode: in std_logic; -- buffer counter mode; clk dom
-		nzs_blks: in std_logic_vector(3 downto 0); -- number of blocks in NZS buffer
+--		clk: in std_logic;
+--		rst: in std_logic;
+--		ipb_in: in ipb_wbus; -- clk dom
+--		ipb_out: out ipb_rbus; -- clk dom
+--		mode: in std_logic; -- buffer counter mode; clk dom
 		clk40: in std_logic;
 		clk160: in std_logic;
+		nzs_blks: in std_logic_vector(3 downto 0); -- number of blocks in NZS buffer
 		buf_rst: in std_logic; -- general reset; clk40 dom
 		d: in std_logic_vector(15 downto 0); -- data in; clk40 dom
 		blkend: in std_logic;
 		nzs_en: in std_logic; -- enable nzs buffer; clk40 dom
-		cap: in std_logic;
-		cap_full: out std_logic;
+--		cap: in std_logic;
+--		cap_full: out std_logic;
 		zs_thresh: in std_logic_vector(13 downto 0); -- ZS threshold; clk40 dom
 		zs_en: in std_logic; -- enable zs buffer; clk40 dom
 		buf_full: out std_logic; -- buffer err flag; clk40 dom
@@ -54,7 +54,7 @@ architecture rtl of sc_chan_buf is
 	signal d_ram, q_ram, d_nzs, q_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
 	signal a_ram: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr, zs_first_addr: unsigned(BUF_RADIX - 1 downto 0);
-	signal cap_run, cap_done: std_logic;
+--	signal cap_run, cap_done: std_logic;
 	signal zctr: unsigned(BLK_RADIX - 1 downto 0);
 	signal z0, z1: std_logic;
 	signal zs_en_d, zs_en_dd, nzen, nzen_d, wenz, wez, rez, wez_d: std_logic;
@@ -74,8 +74,8 @@ begin
 		port map(
 			clk => clk,
 			rst => rst,
-			ipb_in => ipb_in,
-			ipb_out => ipb_out,
+			ipb_in => IPB_RBUS_NULL,
+			ipb_out => open,
 			rclk => clk160,
 			we => we,
 			d => d_ram,
@@ -110,8 +110,9 @@ begin
 	
 -- NZS pointer control
 
-	cap_run <= (cap_run or cap) and not (cap_done or buf_rst) when rising_edge(clk40);
-	nzen <= nzs_en or cap_run;
+--	cap_run <= (cap_run or cap) and not (cap_done or buf_rst) when rising_edge(clk40);
+--	nzen <= nzs_en or cap_run;
+	nzen <= nzs_en;
 	
 	process(clk40)
 	begin
@@ -125,10 +126,10 @@ begin
 	process(clk40)
 	begin
 		if falling_edge(clk40) then
-			if (mode = '1' and nzen = '0') or (mode = '0' and nzen_d = '0') then
+			if nzen_d = '0' then
 				pnz <= (others => '0');
 			else
-				if (mode = '0' and pnz = zs_first_addr - 1) or pnz = ZS_LAST_ADDR then
+				if pnz = zs_first_addr - 1 then
 					pnz <= (others => '0');
 				else
 					pnz <= pnz + 1;
@@ -137,10 +138,11 @@ begin
 		end if;
 	end process;
 	
-	cap_done <= '1' when pnz = ZS_LAST_ADDR else '0';
-	wenz <= (nzs_en and not mode) or cap_run or cap;
-	cap_full <= not nzen;
-	d_nzs <= blkend & '0' & d(13 downto 0) when mode = '0' else d;
+--	cap_done <= '1' when pnz = ZS_LAST_ADDR else '0';
+--	wenz <= nzs_en or cap_run or cap;
+	wenz <= nzs_en;
+--	cap_full <= not nzen;
+	d_nzs <= blkend & '0' & d(13 downto 0);
 	
 -- Zero suppression
 		
@@ -160,7 +162,7 @@ begin
 					zctr <= zctr + 1;
 				end if;
 			end if;
-			wez <= ((not (z0 and z1)) or q_nzs(15)) and zs_en_dd and not mode and not buf_full_i;
+			wez <= ((not (z0 and z1)) or q_nzs(15)) and zs_en_dd and not buf_full_i;
 			if z1 = '1' then
 				d_zs <= q_nzs(15) & '1' & (13 - BLK_RADIX downto 0 => '0') & std_logic_vector(zctr);
 			else
