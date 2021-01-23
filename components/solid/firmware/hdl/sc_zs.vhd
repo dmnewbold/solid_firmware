@@ -9,7 +9,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
 entity sc_zs is
-	generic(
+	generic
 		CTR_W: positive
 	);
 	port(
@@ -38,13 +38,17 @@ begin
 	begin
 		if rising_edge(clk) and clken = '1' then
 			en_d <= en;
-			if en = '0' or z0 = '0' or di(15) = '1' then
+			if en = '0' then
 				ctr <= (others => '0');
-			elsif z1 = '1' then
-				ctr <= ctr + 1;
+			else
+				di <= d;
+				z1 <= z0;
+				if z0 = '0' or di(15) = '1' then
+					ctr <= (others => '0');
+				elsif z1 = '1' then
+					ctr <= ctr + 1;
+				end if;
 			end if;
-			di <= d;
-			z1 <= z0;
 			we <= ((not (z0 and z1)) or di(15)) and en_d;
 			if z1 = '1' then
 				q <= di(15) & '1' & (13 - CTR_W downto 0 => '0') & std_logic_vector(ctr);
