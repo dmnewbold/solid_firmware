@@ -74,7 +74,7 @@ begin
 		port map(
 			clk => '0',
 			rst => '0',
-			ipb_in => IPB_RBUS_NULL,
+			ipb_in => IPB_WBUS_NULL,
 			ipb_out => open,
 			rclk => clk160,
 			we => we,
