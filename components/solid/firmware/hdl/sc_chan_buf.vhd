@@ -1,10 +1,10 @@
--- sc_chan_buf.vhd
+-- sc_chan_buf
 --
 -- The buffer chain for one input channel
 --
--- Seriously, this stuff is mindfuck. If you are reading this, you are doomed.
+-- Seriously, this stuff is mindf**k. If you are reading this, you are doomed.
 --
--- Dave Newbold, May 2016
+-- Dave Newbold, December 2020
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
@@ -59,22 +59,38 @@ begin
 	
 -- NZS / ZS buffer
 
-	ram: entity work.ipbus_ported_dpram
+	ram: entity work.sc_dpram
 		generic map(
-			ADDR_WIDTH => BUF_RADIX,
-			DATA_WIDTH => 16
+			ADDR_WIDTH => BUF_RADIX
 		)
 		port map(
-			clk => '0',
-			rst => '0',
-			ipb_in => IPB_WBUS_NULL,
-			ipb_out => open,
-			rclk => clk160,
-			we => we,
-			d => d_ram,
-			q => q_ram,
-			addr => a_ram
+			clk => clk160,
+			wea => we,
+			da => d_ram,
+			qa => q_ram,
+			addra => a_ram,
+			web => '0',
+			db => (others => '0'),
+			qb => open,
+			addrb => (others => '0')
 		);
+
+--	ram: entity work.ipbus_ported_dpram
+--		generic map(
+--			ADDR_WIDTH => BUF_RADIX,
+--			DATA_WIDTH => 16
+--		)
+--		port map(
+--			clk => '0',
+--			rst => '0',
+--			ipb_in => IPB_WBUS_NULL,
+--			ipb_out => open,
+--			rclk => clk160,
+--			we => we,
+--			d => d_ram,
+--			q => q_ram,
+--			addr => a_ram
+--		);
 
 	process(clk160)
 	begin

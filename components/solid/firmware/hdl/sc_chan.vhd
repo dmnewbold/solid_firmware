@@ -1,11 +1,10 @@
--- sc_chan.vhd
+-- sc_chan
 --
 -- All the stuff belonging to one input channel
 --
--- ctrl_mode: 0 normal; 1 playback / capture
 -- ctrl_src: 0 external; 1 playback buffer; 2 counter; 3 fake data
 --
--- Dave Newbold, February 2016
+-- Dave Newbold, December 2020
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;

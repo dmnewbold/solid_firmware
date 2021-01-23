@@ -1,6 +1,8 @@
--- sc_zs.vhd
+-- sc_zs
 --
--- Channel zero suppression block
+-- Channel zero suppression block.
+--
+-- The logic in here is kind of fiddly; see doc file in repo
 --
 -- Dave Newbold, January 2021
 
