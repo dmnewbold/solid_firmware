@@ -69,8 +69,8 @@ begin
 			qa => q_nzs, -- NZS data out on r/e of clk40
 			addra => addra,
 			web => c,
-			db => d_ramb, -- ZS data in on r/e of clk40
-			qb => q_ramb, -- ZS data out on f/e of clk40
+			db => d_zs, -- ZS data in on r/e of clk40
+			qb => q_zs, -- ZS data out on f/e of clk40
 			addrb => addrb
 		);
 
