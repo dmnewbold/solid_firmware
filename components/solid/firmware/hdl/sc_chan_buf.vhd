@@ -45,7 +45,7 @@ architecture rtl of sc_chan_buf is
 	constant MARGIN: integer := 4;
 
 	signal c: std_logic;
-	signal d_nzs, q_nzs, d_zs, q_zs, q_zs_b: std_logic_vector(15 downto 0);
+	signal d_nzs, q_nzs, d_zs, q_zs, q_zs_d, q_zs_dd: std_logic_vector(15 downto 0);
 	signal addra, addrb: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr, zs_first_addr, ctr, max_cont: unsigned(BUF_RADIX - 1 downto 0);
 	signal zs_en_d, nzen_d, wenz, wez, wezu, rez, zs_clken: std_logic;
@@ -182,7 +182,7 @@ begin
 -- Readout to derand
 
 	go <= blkend and dr_en;
-	kack <= go and keep and not (q_zs_b(15) and q_zs_b(14) and suppress);
+	kack <= go and keep and not (q_zs_dd(15) and q_zs_dd(14) and suppress);
 	
 	process(clk40)
 	begin
@@ -199,15 +199,15 @@ begin
 				end if;
 				p <= not p;
 			end if;
-			q_zs <= q_ram;
-			q_zs_b <= q_zs;
+			q_zs_d <= q_zs;
+			q_zs_dd <= q_zs_d;
 		end if;
 	end process;
 	
-	rez <= go or (zs_run and not (q_zs(15) or (q_zs_b(15) and p)));
-	q_blkend_i <= q_zs(15) or q_zs_b(15);
+	rez <= go or (zs_run and not (q_zs_d(15) or (q_zs_dd(15) and p)));
+	q_blkend_i <= q_zs_d(15) or q_zs_dd(15);
 
-	q <= q_zs & q_zs_b;
+	q <= q_zs_d & q_zs_dd;
 	q_blkend <= q_blkend_i;
 	wen <= zs_run and zs_keep and p;		
 	
