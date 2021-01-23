@@ -19,11 +19,11 @@ entity sc_dpram is
 		clk: in std_logic;
 		wea: in std_logic;
 		da: in std_logic_vector(15 downto 0);
-		qa: out std_logic_vector(15 - 1 downto 0);
+		qa: out std_logic_vector(15 downto 0);
 		addra: in std_logic_vector(ADDR_WIDTH - 1 downto 0);
 		web: in std_logic;
-		db: in std_logic_vector(15 - 1 downto 0);
-		qb: out std_logic_vector(15 - 1 downto 0);
+		db: in std_logic_vector(15 downto 0);
+		qb: out std_logic_vector(15 downto 0);
 		addrb: in std_logic_vector(ADDR_WIDTH - 1 downto 0)	
 	);
 	
