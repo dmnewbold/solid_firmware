@@ -72,8 +72,8 @@ begin
 			DATA_WIDTH => 16
 		)
 		port map(
-			clk => clk,
-			rst => rst,
+			clk => '0',
+			rst => '0',
 			ipb_in => IPB_RBUS_NULL,
 			ipb_out => open,
 			rclk => clk160,
