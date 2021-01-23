@@ -13,11 +13,11 @@ use ieee.numeric_std.all;
 
 package ipbus_decode_sc_daq is
 
-  constant IPBUS_SEL_WIDTH: positive := 5; -- Should be enough for now?
+  constant IPBUS_SEL_WIDTH: positive := 3;
   subtype ipbus_sel_t is std_logic_vector(IPBUS_SEL_WIDTH - 1 downto 0);
   function ipbus_sel_sc_daq(addr : in std_logic_vector(31 downto 0)) return ipbus_sel_t;
 
--- START automatically  generated VHDL the Tue Nov 14 21:11:12 2017 
+-- START automatically  generated VHDL the Sat Jan 23 14:31:26 2021 
   constant N_SLV_CHAN: integer := 0;
   constant N_SLV_TIMING: integer := 1;
   constant N_SLV_FAKE: integer := 2;
@@ -37,7 +37,7 @@ package body ipbus_decode_sc_daq is
     variable sel: ipbus_sel_t;
   begin
 
--- START automatically  generated VHDL the Tue Nov 14 21:11:12 2017 
+-- START automatically  generated VHDL the Sat Jan 23 14:31:26 2021 
     if    std_match(addr, "------------------------0000----") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_CHAN, IPBUS_SEL_WIDTH)); -- chan / base 0x00000000 / mask 0x000000f0
     elsif std_match(addr, "------------------------0001----") then

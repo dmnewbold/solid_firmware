@@ -13,16 +13,15 @@ use ieee.numeric_std.all;
 
 package ipbus_decode_sc_chan is
 
-  constant IPBUS_SEL_WIDTH: positive := 5; -- Should be enough for now?
+  constant IPBUS_SEL_WIDTH: positive := 2;
   subtype ipbus_sel_t is std_logic_vector(IPBUS_SEL_WIDTH - 1 downto 0);
   function ipbus_sel_sc_chan(addr : in std_logic_vector(31 downto 0)) return ipbus_sel_t;
 
--- START automatically  generated VHDL the Thu Jun 15 20:45:58 2017 
+-- START automatically  generated VHDL the Sat Jan 23 14:31:26 2021 
   constant N_SLV_CSR: integer := 0;
-  constant N_SLV_BUF: integer := 1;
-  constant N_SLV_ZS_THRESH: integer := 2;
-  constant N_SLV_TRIG_THRESH: integer := 3;
-  constant N_SLAVES: integer := 4;
+  constant N_SLV_ZS_THRESH: integer := 1;
+  constant N_SLV_TRIG_THRESH: integer := 2;
+  constant N_SLAVES: integer := 3;
 -- END automatically generated VHDL
 
     
@@ -34,11 +33,9 @@ package body ipbus_decode_sc_chan is
     variable sel: ipbus_sel_t;
   begin
 
--- START automatically  generated VHDL the Thu Jun 15 20:45:58 2017 
-    if    std_match(addr, "----------------------------000-") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_CSR, IPBUS_SEL_WIDTH)); -- csr / base 0x00000000 / mask 0x0000000e
-    elsif std_match(addr, "----------------------------001-") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_BUF, IPBUS_SEL_WIDTH)); -- buf / base 0x00000002 / mask 0x0000000e
+-- START automatically  generated VHDL the Sat Jan 23 14:31:26 2021 
+    if    std_match(addr, "----------------------------00--") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_CSR, IPBUS_SEL_WIDTH)); -- csr / base 0x00000000 / mask 0x0000000c
     elsif std_match(addr, "----------------------------01--") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_ZS_THRESH, IPBUS_SEL_WIDTH)); -- zs_thresh / base 0x00000004 / mask 0x0000000c
     elsif std_match(addr, "----------------------------10--") then

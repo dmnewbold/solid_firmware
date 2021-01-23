@@ -13,11 +13,11 @@ use ieee.numeric_std.all;
 
 package ipbus_decode_top_sim is
 
-  constant IPBUS_SEL_WIDTH: positive := 5; -- Should be enough for now?
+  constant IPBUS_SEL_WIDTH: positive := 2;
   subtype ipbus_sel_t is std_logic_vector(IPBUS_SEL_WIDTH - 1 downto 0);
   function ipbus_sel_top_sim(addr : in std_logic_vector(31 downto 0)) return ipbus_sel_t;
 
--- START automatically  generated VHDL the Thu Jun 15 20:48:09 2017 
+-- START automatically  generated VHDL the Sat Jan 23 14:31:26 2021 
   constant N_SLV_CSR: integer := 0;
   constant N_SLV_DAQ: integer := 1;
   constant N_SLAVES: integer := 2;
@@ -32,7 +32,7 @@ package body ipbus_decode_top_sim is
     variable sel: ipbus_sel_t;
   begin
 
--- START automatically  generated VHDL the Thu Jun 15 20:48:09 2017 
+-- START automatically  generated VHDL the Sat Jan 23 14:31:26 2021 
     if    std_match(addr, "-----------------------0--------") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_CSR, IPBUS_SEL_WIDTH)); -- csr / base 0x00000000 / mask 0x00000100
     elsif std_match(addr, "-----------------------1--------") then
