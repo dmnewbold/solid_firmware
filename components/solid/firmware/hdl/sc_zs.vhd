@@ -9,7 +9,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
 entity sc_zs is
-	generic
+	generic(
 		CTR_W: positive
 	);
 	port(
