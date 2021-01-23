@@ -11,7 +11,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 use ieee.std_logic_misc.all;
 
-use work.ipbus.all;ca
+use work.ipbus.all;
 
 use work.top_decl.all;
 
