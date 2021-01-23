@@ -75,8 +75,8 @@ architecture rtl of sc_chan is
 	signal blkend, dr_blkend, dr_wen: std_logic;
 	type state_t is (ST_WAIT, ST_RUN, ST_VETO, ST_ERR);
 	signal state: state_t;
-	signal nzs_en_d, dr_empty, enb, enb_d, zs_en_i, dr_en_i: std_logic;
-	signal state_dec: std_logic_vector(2 downto 0);
+	signal nzs_en_d, dr_empty, enb, enb_d, dr_en_i: std_logic;
+	signal state_dec: std_logic_vector(1 downto 0);
 	
 	attribute ASYNC_REG: string;
 	attribute ASYNC_REG of enb, enb_d: signal is "yes";
@@ -125,7 +125,7 @@ begin
 	slip_h <= sync_ctrl(1) and ctrl_en_sync; -- CDC
 	inc <= sync_ctrl(3) and ctrl_en_sync; -- CDC
 	
-	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & '0' & state_dec & dr_warn & dr_full & buf_full & '0'; -- CDC
+	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & "00" & state_dec & dr_warn & dr_full & buf_full & '0'; -- CDC
 
 -- Keep track of slips and taps for debug
 
@@ -215,13 +215,11 @@ begin
 	err <= '1' when state = ST_ERR else '0';
 	
 	with state select state_dec <=
-		"000" when ST_DIS,
-		"001" when ST_WAIT,
-		"010" when ST_RUN,
-		"011" when ST_VETO,
-		"100" when others;
+		"00" when ST_WAIT,
+		"01" when ST_RUN,
+		"10" when ST_VETO,
+		"11" when others;
 
-	zs_en_i <= '0' when state = ST_DIS else zs_en;
 	dr_en_i <= dr_en when state = ST_RUN else '0';
 	
 -- ZS thresholds
@@ -266,7 +264,7 @@ begin
 			blkend => blkend,	
 			nzs_en => nzs_en,
 			zs_thresh => zs_thresh,
-			zs_en => zs_en_i,
+			zs_en => zs_en,
 			buf_full => buf_full,
 			dr_en => dr_en_i,
 			suppress => ctrl_suppress,

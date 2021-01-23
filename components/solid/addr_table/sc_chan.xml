@@ -13,7 +13,7 @@
 			<node id="buf_full" mask="0x2"/>
 			<node id="dr_full" mask="0x4"/>
 			<node id="dr_warn" mask="0x8"/>
-			<node id="state" mask="0x70"/>
+			<node id="state" mask="0x30"/>
 			<node id="slip" mask="0xff00"/>
 			<node id="tap" mask="0x1f0000"/>
 		</node>
