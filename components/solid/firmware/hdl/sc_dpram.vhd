@@ -37,6 +37,8 @@ begin
 		generic map(
 			ADDR_WIDTH_A => ADDR_WIDTH,
 			ADDR_WIDTH_B => ADDR_WIDTH,
+			BYTE_WRITE_WIDTH_A => 16,
+			BYTE_WRITE_WIDTH_B => 16,
 			MEMORY_SIZE => 2 ** ADDR_WIDTH * 16,
 			READ_DATA_WIDTH_A => 16,
 			READ_DATA_WIDTH_B => 16,
@@ -72,8 +74,8 @@ begin
 			rsta => '0',
 			rstb => '0',
 			sleep => '0',
-			wea => wea,
-			web => web
+			wea(0) => wea,
+			web(0) => web
 		);
 
 end rtl;
