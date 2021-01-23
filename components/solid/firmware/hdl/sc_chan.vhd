@@ -191,9 +191,7 @@ begin
 				case state is
 				
 				when ST_DIS => -- Starting state
-					if ctrl_mode = '0' then
-						state <= ST_WAIT;
-					end if;
+					state <= ST_WAIT;
 
 				when ST_WAIT => -- Wait for sync
 					if nzs_en = '1' and nzs_en_d = '0' then
