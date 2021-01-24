@@ -55,7 +55,7 @@ begin
 			rst => rst_w,
 			sleep => '0',
 			wr_clk => clk_w,
-			wr_en => wen_i,
+			wr_en => wen
 		);
 
 end rtl;
