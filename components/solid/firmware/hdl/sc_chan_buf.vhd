@@ -120,7 +120,6 @@ begin
 		)
 		port map(
 			clk => clk40,
-			clken => '1',
 			en => zs_en_d,
 			thresh => zs_thresh,
 			supp => buf_doom,
