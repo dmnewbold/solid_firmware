@@ -9,7 +9,7 @@ use IEEE.STD_LOGIC_1164.all;
 
 package top_decl is
   
-	constant FW_REV: std_logic_vector(15 downto 0) := X"111f";
+	constant FW_REV: std_logic_vector(15 downto 0) := X"0120";
 
 	constant N_CHAN: integer := 4;
 	constant BLK_RADIX: integer := 8; -- 256 sample blocks
