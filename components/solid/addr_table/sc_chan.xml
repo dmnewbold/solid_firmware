@@ -5,9 +5,9 @@
 			<node id="en_buf" mask="0x2"/>
 			<node id="invert" mask="0x4"/>
 			<node id="swap" mask="0x8"/>
-			<node id="soft_en" mask="0x10"/>
 			<node id="suppress" mask="0x20"/>
 			<node id="src" mask="0xc0"/>
+			<node id="soft_en" mask="0x100"/>
 		</node>
 		<node id="stat" address="0x1">
 			<node id="buf_full" mask="0x2"/>

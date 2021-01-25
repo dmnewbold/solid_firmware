@@ -117,9 +117,9 @@ begin
 	ctrl_en_buf <= ctrl(0)(1);
 	ctrl_invert <= ctrl(0)(2);
 	ctrl_swap <= ctrl(0)(3);
-	ctrl_soft_en <= ctrl(0)(4);
 	ctrl_suppress <= ctrl(0)(5);
 	ctrl_src <= ctrl(0)(7 downto 6);
+	ctrl_soft_en <= ctrl(0)(8);
 	
 	slip_l <= sync_ctrl(0) and ctrl_en_sync; -- CDC
 	slip_h <= sync_ctrl(1) and ctrl_en_sync; -- CDC
