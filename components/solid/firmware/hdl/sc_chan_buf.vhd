@@ -49,7 +49,7 @@ architecture rtl of sc_chan_buf is
 	signal addra, addrb: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr, zs_first_addr, ctr, max_cont: unsigned(BUF_RADIX - 1 downto 0);
 	signal zs_en_d, nzen_d, wenz, wez, wezu, rez, zs_clken: std_logic;
-	signal go, zs_run, zs_keep, buf_doom, buf_full_i, p, q_blkend_i: std_logic;
+	signal go, zs_run, zs_keep, supp, buf_doom, buf_full_i, p, q_blkend_i: std_logic;
 	
 begin
 
@@ -123,7 +123,7 @@ begin
 			clk => clk40,
 			en => zs_en_d,
 			thresh => zs_thresh,
-			supp => buf_doom,
+			supp => supp,
 			d => q_nzs,
 			q => d_zs,
 			we => wezu
