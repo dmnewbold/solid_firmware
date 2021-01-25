@@ -40,14 +40,18 @@ begin
 			FIFO_READ_LATENCY => 0,
 			FIFO_WRITE_DEPTH => DERAND_DEPTH,
 			PROG_FULL_THRESH => 2 ** (BLK_RADIX - 1) + 8,
-			READ_MODE => "fwft"
+			READ_DATA_WIDTH => 33,
+			READ_MODE => "fwft",
+			WRITE_DATA_WIDTH => 33
 		)
 		port map(
-			dout => q,
+			dout(31 downto 0) => q,
+			dout(32) => q_blkend,
 			empty => empty,
 			full => full,
 			prog_full => warn,
-			din => d,
+			din(31 downto 0) => d,
+			din(32) => d_blkend,
 			injectdbiterr => '0',
 			injectsbiterr => '0',
 			rd_clk => clk_r,
