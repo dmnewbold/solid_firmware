@@ -19,6 +19,7 @@ package top_decl is
 	constant N_ZS_THRESH: integer := 4; -- Number of ZS thresholds
 	constant ZS_DEL: integer := 8;
 	constant N_CHAN_TRG: integer := 3; -- Number of channel trigger bits
+	constant DERAND_DEPTH: integer := 1024; -- Number of 32kb FIFOs in the derand buffer	
 	constant FIFO_RADIX: integer := 3; -- 8 FIFO blocks in readout buffer
 	
 	type sc_trig_array is array(N_CHAN_TRG - 1 downto 0) of std_logic_vector(N_CHAN - 1 downto 0);
