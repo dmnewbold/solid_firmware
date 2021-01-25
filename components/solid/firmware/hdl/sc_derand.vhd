@@ -1,6 +1,6 @@
--- sc_chan_buf.vhd
+-- sc_derand
 --
--- The buffer chain for one input channel
+-- Derandomiser buffer
 --
 -- Dave Newbold, May 2016
 
