@@ -113,6 +113,7 @@ begin
 -- Zero suppression
 
 	zs_en_d <= zs_en when rising_edge(clk40);
+	supp <= buf_doom and soft;
 		
 	zs: entity work.sc_zs
 		generic map(
