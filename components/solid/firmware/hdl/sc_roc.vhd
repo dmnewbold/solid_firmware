@@ -46,7 +46,7 @@ architecture rtl of sc_roc is
 	signal ipbw: ipb_wbus_array(N_SLAVES - 1 downto 0);
 	signal ipbr: ipb_rbus_array(N_SLAVES - 1 downto 0);
 	signal ctrl: ipb_reg_v(0 downto 0);
-	signal stat: ipb_reg_v(2 downto 0);
+	signal stat: ipb_reg_v(1 downto 0);
 	signal ctrl_en, ctrl_en_auto, ctrl_occ_freeze, ctrl_occ_clr: std_logic;
 	signal rsti: std_logic;
 	signal hfifo_d, hfifo_q, fifo_d, fifo_q: std_logic_vector(35 downto 0);
@@ -87,7 +87,7 @@ begin
 	csr: entity work.ipbus_ctrlreg_v
 		generic map(
 			N_CTRL => 1,
-			N_STAT => 3
+			N_STAT => 2
 		)
 		port map(
 			clk => clk,
@@ -105,10 +105,9 @@ begin
 	
 	rsti <= not ctrl_en;
 		
-	stat(0) <= X"0000" & werrb & werr & err & rsrc & tfifo_blkend & tfifo_warn & tfifo_full & tfifo_empty &
-		hfifo_q(32) & hfifo_valid & hfifo_full & hfifo_empty & fifo_q(32) & fifo_valid & fifo_full & fifo_empty;
+	stat(0) <= X"0000" & "000" & err & tfifo_blkend & tfifo_warn & tfifo_full & tfifo_empty &
+		'0' & hfifo_valid & hfifo_full & hfifo_empty & '0' & fifo_valid & fifo_full & fifo_empty;
 	stat(1) <= std_logic_vector(dctr);
-	stat(2) <= (others => '0'); -- Remove this
 		
 -- Buffer read side
 
