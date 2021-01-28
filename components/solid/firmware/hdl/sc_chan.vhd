@@ -74,7 +74,7 @@ architecture rtl of sc_chan is
 	signal blkend, dr_blkend, dr_wen: std_logic;
 	type state_t is (ST_WAIT, ST_RUN, ST_VETO, ST_ERR);
 	signal state: state_t;
-	signal nzs_en_d, dr_empty, enb, enb_d, dr_en_i: std_logic;
+	signal nzs_en_d, dr_empty, enb, enb_d, dr_en_i, veto: std_logic;
 	signal state_dec: std_logic_vector(1 downto 0);
 	
 	attribute ASYNC_REG: string;
@@ -117,7 +117,6 @@ begin
 	ctrl_en_buf <= ctrl(0)(1);
 	ctrl_invert <= ctrl(0)(2);
 	ctrl_swap <= ctrl(0)(3);
-	ctrl_suppress <= ctrl(0)(5);
 	ctrl_src <= ctrl(0)(7 downto 6);
 	ctrl_soft_en <= ctrl(0)(8);
 	
@@ -198,7 +197,7 @@ begin
 						state <= ST_VETO;
 					end if;
 
-				when ST_VETO => -- Normal running
+				when ST_VETO => -- Veto new readouts, we are full
 					if buf_full = '1' or dr_full = '1' then
 						state <= ST_ERR;
 					elsif dr_empty = '1' then
@@ -220,7 +219,7 @@ begin
 		"10" when ST_VETO,
 		"11" when others;
 
-	dr_en_i <= dr_en when state = ST_RUN else '0';
+	veto <= '1' when state = ST_VETO else '0';
 	
 -- ZS thresholds
 
@@ -266,8 +265,8 @@ begin
 			zs_thresh => zs_thresh,
 			zs_en => zs_en,
 			buf_full => buf_full,
-			dr_en => dr_en_i,
 			suppress => ctrl_suppress,
+			veto => veto,
 			soft => ctrl_soft_en,
 			keep => keep,
 			kack => kack,
