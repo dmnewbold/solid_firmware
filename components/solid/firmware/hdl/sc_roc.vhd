@@ -245,7 +245,7 @@ begin
 				when ST_TRIG => -- Move trigger data
 					if tfifo_blkend = '1' and fifo_full = '0' then
 						if ttype /= X"0" or or_reduce(mask) = '0' then
-							state <= ST_IDLE;
+							state <= ST_WLEN;
 						else
 							state <= ST_DERAND;
 						end if;
