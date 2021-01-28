@@ -52,19 +52,18 @@ architecture rtl of sc_roc is
 	signal hfifo_d, hfifo_q, fifo_d, fifo_q: std_logic_vector(35 downto 0);
 	signal hfifo_wen, hfifo_full, hfifo_empty, hfifo_ren, hfifo_valid: std_logic;
 	signal fifo_wen, fifo_full, fifo_empty, fifo_ren, fifo_valid: std_logic;
-	signal rctr, evtlen: unsigned(15 downto 0);
+	signal rctr, evtlen, evtlen_r, ectr: unsigned(15 downto 0);
 	signal dctr: unsigned(31 downto 0);
-	signal cyc, brcyc, evtdone, evtdone_d, rsrc, err: std_logic;
+	signal cyc, brcyc, evtdone, rsrc, err: std_logic;
 	signal rdata: std_logic_vector(31 downto 0);
 	signal chan_i: unsigned(7 downto 0);
 	signal ttype: unsigned(3 downto 0);
 	signal q_trig: std_logic_vector(31 downto 0);
 	signal mask: std_logic_vector(63 downto 0);
 	signal tfifo_full, tfifo_empty, tfifo_ren, tfifo_blkend, tfifo_warn: std_logic;
-	type state_t is (ST_IDLE, ST_TRIG, ST_DERAND);
+	type state_t is (ST_IDLE, ST_TRIG, ST_DERAND, ST_WLEN, ST_ERR);
 	signal state: state_t;
 	signal chandone, ren_i, occ_rst: std_logic;
-	signal werr, werrb: std_logic;
 
 begin
 
@@ -126,13 +125,13 @@ begin
 				rctr <= (others => '0');
 				dctr <= (others => '0');
 			elsif brcyc = '1' then
-				if evtdone_d = '1' then
+				if hfifo_wen = '1' then
 					rctr <= rctr + evtlen;
 					dctr <= dctr + evtlen;
 				else
 					rctr <= rctr - 1;
 				end if;
-			elsif evtdone_d = '1' then
+			elsif hfifo_wen = '1' then
 				rctr <= rctr + evtlen + 1;
 				dctr <= dctr + evtlen + 1;
 			end if;
@@ -147,8 +146,13 @@ begin
 			elsif brcyc = '1' then
 				if rsrc = '0' then
 					rsrc <= '1';
-				elsif fifo_q(32) = '1' then
-					rsrc <= '0';
+					evtlen_r <= hfifo_q(15 downto 0);
+					ectr <= to_unsigned(1, ectr'length);
+				else
+					ectr <= ectr + 1;
+					if ectr = evtlen_r then
+						rsrc <= '0';
+					end if;
 				end if;
 			end if;
 		end if;
@@ -176,7 +180,7 @@ begin
 		);
 		
 	hfifo_ren <= brcyc and not rsrc;
-	hfifo_wen <= evtdone_d;
+	hfifo_wen <= '1' when state = ST_WLEN else '0';
 	hfifo_d <= X"0AA" & board_id & std_logic_vector(evtlen);
 	
 -- Data buffer
@@ -199,12 +203,10 @@ begin
 		);
 		
 	fifo_ren <= brcyc and rsrc;
-	fifo_wen <= tfifo_ren or ren_i or (evtdone and not fifo_full);
-	fifo_d(35 downto 32) <= "000" & evtdone;
+	fifo_wen <= tfifo_ren or ren_i;
+	fifo_d(35 downto 32) <= X"0";
 	fifo_d(31 downto 0) <= d when state = ST_DERAND else q_trig;
 	
-	werr <= (werr or (fifo_wen and fifo_full)) and not rsti when rising_edge(clk);
-
 -- Trigger buffer
 
 	tbuf: entity work.sc_derand
@@ -225,11 +227,7 @@ begin
 
 	tfifo_ren <= '1' when state = ST_TRIG and tfifo_empty = '0' and fifo_full = '0' else '0';
 	veto_trig <= tfifo_warn;
-
-	err <= hfifo_full or tfifo_full;
 	
-	werrb <= (werrb or (we_trig and tfifo_full)) and not rsti when rising_edge(clk40); -- CDC
-
 -- State machine
 
 	process(clk)
@@ -256,18 +254,28 @@ begin
 				
 				when ST_DERAND => -- Move event data
 					if evtdone = '1' and fifo_full = '0' then
+						state <= ST_WLEN;
+					end if;
+					
+				when ST_WLEN => -- Write the header 
+					if hfifo_full = '1' or tfifo_full = '1' then
+						state <= ST_ERR;
+					else
 						state <= ST_IDLE;
 					end if;
+					
+				when ST_ERR => -- Stuck
 				
 				end case;
 			end if;
 		end if;
 	end process;
 	
+	err <= '1' when state = ST_ERR else '0';
+	
 	chandone <= '1' when mask(to_integer(chan_i)) = '0' or blkend = '1' else '0';
 	evtdone <= '1' when (chan_i = N_CHAN - 1 and chandone = '1' and state = ST_DERAND) or
 		((ttype /= X"0" or or_reduce(mask) = '0') and tfifo_blkend = '1' and state = ST_TRIG) else '0';
-	evtdone_d <= evtdone and not fifo_full when rising_edge(clk);
 	
 	process(clk)
 	begin
