@@ -145,7 +145,7 @@ begin
 			elsif brcyc = '1' then
 				if rsrc = '0' then
 					rsrc <= '1';
-					evtlen_r <= hfifo_q(15 downto 0);
+					evtlen_r <= unsigned(hfifo_q(15 downto 0));
 					ectr <= to_unsigned(1, ectr'length);
 				else
 					ectr <= ectr + 1;
