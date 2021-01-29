@@ -51,12 +51,12 @@ board.dispatch()
 
 sleep(1)
 
-srcs = [0x3, 0x1, 0x3, 0x2]
-thresh = [0x2000, 0x0, 0x2000, 0x0]
+srcs = 64 * [0x3]
+thresh = 64 * [0x2000]
 
 tap = 0
 slip = 0
-chans = 4
+chans = 64
 for i in range(chans):
     board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
     board.getNode("daq.chan.csr.ctrl.src").write(srcs[i]) # Set source to fake data
@@ -84,9 +84,9 @@ for i in range(chans):
 # Trigger generators
 
 board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
-board.getNode("daq.rtrig.ctrl.div").write(0x2) # Set random trigger rate to 40MHz / 2^11 = 20kHz
-#board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
-board.getNode("daq.rtrig.ctrl.en").write(0x0) # Enable random trigger generator
+board.getNode("daq.rtrig.ctrl.div").write(0x09) # Set random trigger rate to 40MHz / 2^11 = 20kHz
+board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
+#board.getNode("daq.rtrig.ctrl.en").write(0x0) # Enable random trigger generator
 board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
 
 # Sequencer
@@ -123,11 +123,11 @@ evts = 0
 max_evts = 100000
 n_trig = 4
 
-print "Firing triggers"
+#print "Firing triggers"
 
-for i in range(1):
-    board.getNode("daq.trig.csr.ctrl.force").write(0x1)
-    board.dispatch()
+#for i in range(8):
+#    board.getNode("daq.trig.csr.ctrl.force").write(0x1)
+#    board.dispatch()
 
 while True:
 
@@ -162,7 +162,7 @@ while True:
             if rtype == 0: # A data block
                 bctr = w1 & 0xffffff
                 tstamp = int(r.pop(0)) | (int(r.pop(0)) << 32)
-                mask = int(r.pop(0)) | int(r.pop(0)) >> 32
+                mask = int(r.pop(0)) | (int(r.pop(0)) << 32)
 #                for _ in range(2):
 #                    r.pop(0)
                 c = bin(mask).count('1')
