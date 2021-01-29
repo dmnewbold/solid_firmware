@@ -1,0 +1,5 @@
+<node id="TOP">
+	<node id="csr" address="0x0" module="file://payload.xml"/>
+	<node id="io" address="0x20" module="file://sc_io_64chan.xml"/>
+	<node id="daq" address="0x100" module="file://sc_daq.xml"/>
+</node>
