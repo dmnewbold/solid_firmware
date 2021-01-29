@@ -114,7 +114,7 @@ begin
 	ctrl_chan_inc <= ctrl(0)(15);
 	ctrl_zs_blks <= ctrl(0)(23 downto 16);
 	ctrl_nzs_blks <= ctrl(0)(27 downto 24);
-	stat(0) <= X"0000000" & "00"  & sync_err & wait_sync;
+	stat(0) <= X"0000000" & '0' & dr_en & sync_err & wait_sync;
 	stat(1) <= std_logic_vector(sctr_s(31 downto 0));
 	stat(2) <= X"0000" & std_logic_vector(sctr_s(47 downto 32));
 	stat(3) <= std_logic_vector(sync_ctr);
