@@ -219,7 +219,7 @@ begin
 		"10" when ST_VETO,
 		"11" when others;
 
-	veto <= '1' when state = ST_VETO else '0';
+	veto <= '1' when state /= ST_RUN else '0';
 	
 -- ZS thresholds
 
