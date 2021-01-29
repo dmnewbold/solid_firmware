@@ -24,7 +24,7 @@ entity sc_rtrig is
 		rst40: in std_logic;
 		rand: in std_logic_vector(31 downto 0);
 		sctr: in std_logic_vector(47 downto 0);
-		force: out std_logic
+		trig: out std_logic
 	);
 
 end sc_rtrig;
@@ -58,7 +58,7 @@ begin
 		mask(i) <= '0' when i >= to_integer(unsigned(ctrl_div)) else '1';
 	end generate;
 
-	force <= ((not ctrl_mode and not or_reduce(rand(mask'range) and mask)) or
+	trig <= ((not ctrl_mode and not or_reduce(rand(mask'range) and mask)) or
 		(ctrl_mode and not or_reduce(sctr(BLK_RADIX + mask'left downto BLK_RADIX) and mask))) and
 			ctrl_en and not or_reduce(sctr(BLK_RADIX - 1 downto 0));
 

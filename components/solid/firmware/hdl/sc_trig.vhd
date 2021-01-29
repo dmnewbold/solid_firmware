@@ -30,7 +30,7 @@ entity sc_trig is
 		kack: in std_logic_vector(N_CHAN - 1 downto 0);
 		zs_sel: out std_logic_vector(1 downto 0);
 		trig: in sc_trig_array;
-		force: in std_logic;
+		rand_trig: in std_logic;
 		ext_trig_in: in std_logic;
 		ext_trig_out: out std_logic;
 		ro_d: out std_logic_vector(31 downto 0);
@@ -53,13 +53,13 @@ architecture rtl of sc_trig is
 	signal ctrl, ctrl_mask: ipb_reg_v(0 downto 0);
 	signal stat: ipb_reg_v(1 downto 0);
 	signal stb: std_logic_vector(0 downto 0);
-	signal ctrl_dtmon_en, ctrl_trig_in_en, ctrl_trig_out_force, ctrl_coinc_mode: std_logic;
+	signal ctrl_dtmon_en, ctrl_trig_in_en, ctrl_trig_out_force, ctrl_coinc_mode, ctrl_force: std_logic;
 	signal masks: ipb_reg_v(N_CHAN_TRG * 2 - 1 downto 0);
 	signal trig_mask: std_logic_vector(N_TRG - 1 downto 0);
 	signal hop_cfg: std_logic_vector(31 downto 0);
 	signal ctrig: sc_trig_array;
 	signal lq: std_logic_vector(15 downto 0);
-	signal rveto, lvalid, lack, mark, err: std_logic;
+	signal force, rveto, lvalid, lack, mark, err: std_logic;
 	signal zs_cfg: std_logic_vector(31 downto 0);
 	signal keep_i, flush_i: std_logic;
 	signal b_q, t_q: std_logic_vector(31 downto 0);
@@ -107,6 +107,7 @@ begin
 	ctrl_trig_in_en <= ctrl(0)(1);
 	ctrl_trig_out_force <= ctrl(0)(2) and stb(0);
 	ctrl_coinc_mode <= ctrl(0)(3);
+	ctrl_force <= ctrl(0)(4) and stb(0);
 	stat(0) <= X"0" & tctr;
 	stat(1) <= X"0000000" & "00" & rveto & err;
 
@@ -175,6 +176,8 @@ begin
 			ipbus_out => ipbr(N_SLV_HOP_CFG),
 			q(0) => hop_cfg
 		);
+		
+	force <= ctrl_force or rand_trig;
 
 	ltrig: entity work.sc_local_trig
 		port map(

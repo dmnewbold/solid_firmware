@@ -51,7 +51,7 @@ architecture rtl of sc_daq is
 	signal trig_keep, trig_flush: std_logic;
 	signal trig_kack: std_logic_vector(N_CHAN - 1 downto 0);
 	signal fake: std_logic_vector(13 downto 0);
-	signal force_trig, thresh_hit: std_logic;
+	signal rand_trig, thresh_hit: std_logic;
 	signal nzs_blks: std_logic_vector(3 downto 0);
 	signal zs_sel: std_logic_vector(1 downto 0);
 	signal chan_trig: sc_trig_array;
@@ -136,7 +136,7 @@ begin
 			rst40 => rst40_i,
 			rand => rand,
 			sctr => sctr,
-			force => force_trig
+			trig => rand_trig
 		);
 			
 -- Data channels
@@ -191,7 +191,7 @@ begin
 			kack => trig_kack,
 			zs_sel => zs_sel,
 			trig => chan_trig,
-			force => force_trig,
+			rand_trig => rand_trig,
 			ext_trig_in => trig_in,
 			ext_trig_out => trig_out,
 			ro_d => trig_d,

@@ -165,9 +165,9 @@ begin
 	
 -- Last gasp message flag
 
-	rveto_d <= rveto and en when rising_edge(clk40) and mark = '1';
-	last_gasp <= rveto and not rveto_d;
-	hoorah <= rveto_d and not rveto;
+	rveto_d <= rveto when rising_edge(clk40) and mark = '1';
+	last_gasp <= rveto and not rveto_d and en;
+	hoorah <= rveto_d and not rveto and en;
 	
 -- Trigger data to readout
 
