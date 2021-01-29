@@ -39,7 +39,7 @@ begin
 		generic map(
 			FIFO_READ_LATENCY => 0,
 			FIFO_WRITE_DEPTH => DERAND_DEPTH,
-			PROG_FULL_THRESH => 2 ** (BLK_RADIX - 1) + 8,
+			PROG_FULL_THRESH => DERAND_DEPTH - 2 ** BLK_RADIX - 8,
 			READ_DATA_WIDTH => 33,
 			READ_MODE => "fwft",
 			WRITE_DATA_WIDTH => 33

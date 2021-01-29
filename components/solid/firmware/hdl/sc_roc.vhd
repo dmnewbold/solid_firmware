@@ -63,7 +63,7 @@ architecture rtl of sc_roc is
 	signal tfifo_full, tfifo_empty, tfifo_ren, tfifo_blkend, tfifo_warn: std_logic;
 	type state_t is (ST_IDLE, ST_TRIG, ST_DERAND, ST_WLEN, ST_ERR);
 	signal state: state_t;
-	signal chandone, ren_i, occ_rst: std_logic;
+	signal chandone, ren_i, cherr, occ_rst: std_logic;
 
 begin
 
@@ -105,7 +105,7 @@ begin
 	
 	rsti <= not ctrl_en;
 		
-	stat(0) <= X"0000" & "000" & err & tfifo_blkend & tfifo_warn & tfifo_full & tfifo_empty &
+	stat(0) <= X"0000" & "00" & cherr & err & tfifo_blkend & tfifo_warn & tfifo_full & tfifo_empty &
 		'0' & hfifo_valid & hfifo_full & hfifo_empty & '0' & fifo_valid & fifo_full & fifo_empty;
 	stat(1) <= std_logic_vector(dctr);
 		
@@ -252,7 +252,9 @@ begin
 					end if;
 				
 				when ST_DERAND => -- Move event data
-					if evtdone = '1' and fifo_full = '0' then
+					if cherr = '1' then
+						state <= ST_ERR;
+					elsif evtdone = '1' and fifo_full = '0' then
 						state <= ST_WLEN;
 					end if;
 					
@@ -302,8 +304,9 @@ begin
 		end if;
 	end process;
 	
-	ren_i <= '1' when state = ST_DERAND and mask(to_integer(chan_i)) = '1' and empty = '0' and fifo_full = '0' else '0';
-
+	ren_i <= '1' when state = ST_DERAND and mask(to_integer(chan_i)) = '1' and fifo_full = '0' else '0';
+	cherr <= '1' when state = ST_DERAND and mask(to_integer(chan_i)) = '1' and empty = '1' else '0';
+	
 	ren <= ren_i;
 	chan <= std_logic_vector(chan_i);
 	
