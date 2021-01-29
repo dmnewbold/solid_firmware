@@ -1,0 +1,42 @@
+<node id="tlink" description="Inter-plane serial links" fwinfo="endpoint;width=2">
+	<node id="ctrl" address="0x0">
+	    <node id="en_us_tx_phy" mask="0x1"/>
+	    <node id="en_us_rx_phy" mask="0x2"/>
+	    <node id="en_us_tx" mask="0x4"/>
+	    <node id="en_us_rx" mask="0x8"/>
+	    <node id="en_ds_tx_phy" mask="0x10"/>
+	    <node id="en_ds_rx_phy" mask="0x20"/>
+	    <node id="en_ds_tx" mask="0x40"/>
+	    <node id="en_ds_rx" mask="0x80"/>
+		<node id="loop_us" mask="0x700"/>
+		<node id="loop_ds" mask="0x7000"/>
+	</node>
+	<node id="us_stat" address="0x2">
+		<node id="phy_rdy_tx" mask="0x1"/>
+		<node id="phy_rdy_rx" mask="0x2"/>
+		<node id="buf_tx" mask="0xc"/>
+		<node id="buf_rx" mask="0x70"/>
+		<node id="tx_empty" mask="0x100"/>
+		<node id="tx_full" mask="0x200"/>
+		<node id="rx_empty" mask="0x400"/>
+		<node id="rx_full" mask="0x800"/>
+		<node id="rx_up" mask="0x1000"/>
+		<node id="rx_fail" mask="0x2000"/>
+		<node id="rx_cause" mask="0x4000"/>
+		<node id="remote_id" mask="0xff0000"/>
+	</node>
+	<node id="ds_stat" address="0x3">
+		<node id="phy_rdy_tx" mask="0x1"/>
+		<node id="phy_rdy_rx" mask="0x2"/>
+		<node id="buf_tx" mask="0xc"/>
+		<node id="buf_rx" mask="0x70"/>
+		<node id="tx_empty" mask="0x100"/>
+		<node id="tx_full" mask="0x200"/>
+		<node id="rx_empty" mask="0x400"/>
+		<node id="rx_full" mask="0x800"/>
+		<node id="rx_up" mask="0x1000"/>
+		<node id="rx_fail" mask="0x2000"/>
+		<node id="rx_cause" mask="0x4000"/>
+		<node id="remote_id" mask="0xff0000"/>
+	</node>
+</node>
