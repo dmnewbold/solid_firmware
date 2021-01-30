@@ -312,7 +312,7 @@ begin
 	end process;
 	
 	ren_i <= '1' when state = ST_DERAND and m = '1' and fifo_full = '0' and empty = '0' else '0';
-	cherr <= '1' when state = ST_DERAND and first = '1' and empty = '1' else '0';
+	cherr <= '1' when state = ST_DERAND and m = '1' and first = '1' and empty = '1' else '0';
 	
 	ren <= ren_i;
 	chan <= std_logic_vector(chan_i);
