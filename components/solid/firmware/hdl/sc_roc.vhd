@@ -63,7 +63,7 @@ architecture rtl of sc_roc is
 	signal tfifo_full, tfifo_empty, tfifo_ren, tfifo_blkend, tfifo_warn: std_logic;
 	type state_t is (ST_IDLE, ST_TRIG, ST_DERAND, ST_WLEN, ST_ERR);
 	signal state: state_t;
-	signal chandone, ren_i, cherr, occ_rst: std_logic;
+	signal m, chandone, nextchan, first, ren_i, cherr, occ_rst: std_logic;
 
 begin
 
@@ -274,9 +274,11 @@ begin
 	
 	err <= '1' when state = ST_ERR else '0';
 	
-	chandone <= '1' when mask(to_integer(chan_i)) = '0' or blkend = '1' else '0';
+	m <= mask(to_integer(chan_i));
+	chandone <= blkend or not m;
 	evtdone <= '1' when (chan_i = N_CHAN - 1 and chandone = '1' and state = ST_DERAND) or
 		((ttype /= X"0" or or_reduce(mask) = '0') and tfifo_blkend = '1' and state = ST_TRIG) else '0';
+	nextchan <= '1' when state = ST_DERAND and chandone = '1' and fifo_full = '0' and evtdone = '0' else '0';
 	
 	process(clk)
 	begin
@@ -288,8 +290,13 @@ begin
 				if fifo_wen = '1' then
 					evtlen <= evtlen + 1;
 				end if;
-				if state = ST_DERAND and chandone = '1' and fifo_full = '0' and evtdone = '0' then
-					chan_i <= chan_i + 1;
+				if nextchan = '1' then
+					chan_i <= chan_i + 1; 
+				end if;
+				if nextchan = '1' or state = ST_TRIG then
+					first <= '1';
+				else
+					first <= '0';
 				end if;
 				if state = ST_TRIG then
 					if evtlen = to_unsigned(0, 16) then
@@ -304,8 +311,8 @@ begin
 		end if;
 	end process;
 	
-	ren_i <= '1' when state = ST_DERAND and mask(to_integer(chan_i)) = '1' and fifo_full = '0' else '0';
-	cherr <= '1' when state = ST_DERAND and mask(to_integer(chan_i)) = '1' and empty = '1' else '0';
+	ren_i <= '1' when state = ST_DERAND and m = '1' and fifo_full = '0' and empty = '0' else '0';
+	cherr <= '1' when state = ST_DERAND and first = '1' and empty = '1' else '0';
 	
 	ren <= ren_i;
 	chan <= std_logic_vector(chan_i);
