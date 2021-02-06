@@ -131,26 +131,26 @@ f = open(sys.argv[1], "wb")
 start_time = time.time()
 
 while total_data < max_data:
-
-    while True:
-    	time.usleep(pval)
-        v1 = board.getNode("daq.roc.buf.count").read() # Get the buffer data count
-        board.dispatch()
-        p.pop(0)
-        p.append(v1)
-        av_sz = sum(p) / len(p)
-        if av_sz < ptarget:
-        	pval = pval // 2;
-        else
-        	pval = pval * 2
+	
+	while True:
+		time.usleep(pval)
+		v1 = board.getNode("daq.roc.buf.count").read() # Get the buffer data count
+		board.dispatch()
+		p.pop(0)
+		p.append(v1)
+		av_sz = sum(p) / len(p)
+		if av_sz < ptarget:
+			pval = pval // 2;
+		else
+			pval = pval * 2
 		print("delay now %dus" % pval)
-        if v1 != 0:
-            break
+		if v1 != 0:
+			break
 
-    total_data += v1
-    b = board.getNode("daq.roc.buf.data").readBlock(int(v1)) # Read the buffer contents
-    board.dispatch()
-    array.array('L', b).tofile(f)
+	total_data += v1
+	b = board.getNode("daq.roc.buf.data").readBlock(int(v1)) # Read the buffer contents
+	board.dispatch()
+	array.array('L', b).tofile(f)
     
 f.close()
 print("%d bytes at %fkB/s" % (total_data, float(total_data) / (time.time() - start_time)))
