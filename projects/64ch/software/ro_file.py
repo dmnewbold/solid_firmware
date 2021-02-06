@@ -145,7 +145,7 @@ while total_data < max_data:
 		p.append(v1)
 		av_sz = sum(p) / len(p)
 		if av_sz < ptarget:
-                    if pval < pmax: pval = pval * 2;
+			if pval < pmax: pval = pval * 2;
 		else:
 			pval = pval / 2
 		print("delay now %fs" % pval)
