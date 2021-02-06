@@ -1,11 +1,13 @@
 #!/usr/bin/python
 
+from __future__ import print_function
+
 import uhal
 import time
 import sys
 import collections
 import array
-from future import print
+
 
 def dump():
     b0 = board.getNode("daq.trig.csr.evt_ctr").read() # Event counter
@@ -44,14 +46,14 @@ board.dispatch()
 board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
 board.dispatch()
 
-sleep(1)
+time.sleep(1)
 
 srcs = 64 * [0x3]
 thresh = 64 * [0x2000]
 
 tap = 0
 slip = 0
-chans = 64
+chans = 4
 for i in range(chans):
     board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
     board.getNode("daq.chan.csr.ctrl.src").write(srcs[i]) # Set source to fake data
@@ -117,8 +119,10 @@ evts = 0
 total_data = 0
 max_data = 1024 * 1024 # 4kB
 n_trig = 4
-pval = 10000 # Start at 10ms
+pval = 0.01 # Start at 10ms
+pmax = 1 # No more than 1s per read check
 ptarget = 1024
+
 p = 8 * [0]
 
 #print "Firing triggers"
@@ -134,17 +138,17 @@ start_time = time.time()
 while total_data < max_data:
 	
 	while True:
-		time.usleep(pval)
+		time.sleep(pval)
 		v1 = board.getNode("daq.roc.buf.count").read() # Get the buffer data count
 		board.dispatch()
 		p.pop(0)
 		p.append(v1)
 		av_sz = sum(p) / len(p)
 		if av_sz < ptarget:
-			pval = pval // 2;
+                    if pval < pmax: pval = pval * 2;
 		else:
-			pval = pval * 2
-		print("delay now %dus" % pval)
+			pval = pval / 2
+		print("delay now %fs" % pval)
 		if v1 != 0:
 			break
 
