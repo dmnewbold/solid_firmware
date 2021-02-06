@@ -141,7 +141,7 @@ while total_data < max_data:
 		av_sz = sum(p) / len(p)
 		if av_sz < ptarget:
 			pval = pval // 2;
-		else
+		else:
 			pval = pval * 2
 		print("delay now %dus" % pval)
 		if v1 != 0:
