@@ -111,7 +111,7 @@ for i_chan in chans:
             for w in d:
                 if int(w) & 0x3ff == patt:
                     c += 1
-#          	print hex(w),
+#               print hex(w),
 #            print hex(i_chan), hex(i_slip), hex(i_tap), c
             res[i_slip * taps_per_slip - i_tap] = (c == cap_len)
             board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
@@ -124,7 +124,7 @@ for i_chan in chans:
         else:
             swap = 0
             board.getNode("daq.timing.csr.ctrl.chan_slip_l").write(0x1) # Increment slip
-            board.getNode("daq.timing.csr.ctrl.chan_slip_l").write(0x0)            
+            board.getNode("daq.timing.csr.ctrl.chan_slip_l").write(0x0)
         board.getNode("daq.chan.csr.ctrl.swap").write(swap)
         board.dispatch()
 

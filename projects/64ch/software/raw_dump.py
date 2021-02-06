@@ -1,7 +1,13 @@
 #!/usr/bin/python
 
+from __future__ import print_function
+
 import sys
 import collections
+
+MAX_EVTS = 1000
+N_TRIG = 4
+READ_SIZE = 16 * 1024 # Read 64kB at a time
 
 def zsdot(i, c):
     return ' ' if i == 0 else c
@@ -10,21 +16,21 @@ def zsfmt(i):
     return "%s%s%04x %s%s%04x" % (zsdot(i & 0x8000, 'E'), zsdot(i & 0x4000, 'Z'), i & 0x3fff,
                                   zsdot(i & 0x80000000, 'E'), zsdot(i & 0x40000000, 'Z'), (i & 0x3fff0000) >> 16)
 
-f = open(sys.argv[1])
-
-r = list()
+r = array.array('L')
 evts = 0
-max_evts = 100000
-n_trig = 4
+done = False
 
-while True:
+f = open(sys.argv[2], "rb")
 
-# Need to read some large block of data here or map the file
+start_time = time.time()
+total_data = 0
 
-    b = board.getNode("daq.roc.buf.data").readBlock(int(v1)) # Read the buffer contents
-    board.dispatch()
+while not done:
 
-    r += b;
+    try:
+        r.fromfile(f, READ_SIZE)
+    except EOFError:
+        done = True
 
     while len(r) > 0:
 
@@ -46,8 +52,6 @@ while True:
                 bctr = w1 & 0xffffff
                 tstamp = int(r.pop(0)) | (int(r.pop(0)) << 32)
                 mask = int(r.pop(0)) | (int(r.pop(0)) << 32)
-#                for _ in range(2):
-#                    r.pop(0)
                 c = bin(mask).count('1')
                 print "\tctr: %08x time: %012x mask: %016x chans: %02x" % (bctr, tstamp, mask, c)
                 tcnt = 0
@@ -82,17 +86,14 @@ while True:
                         dump()
                         sys.exit()
                     tcnt += cnt
-#                if tcnt != l - 7:
-#                    r.pop(0)
                 evts += 1
                 dumpstat()
-                if evts >= max_evts:
-                    sys.exit()
+                if evts >= MAX_EVTS:
+                    done = True
             elif rtype == 1: # A trigger block
                 ttype = w1 & 0x3ffff
                 tstamp = int(r.pop(0)) | (int(r.pop(0)) << 32)
-                for _ in range(2 * n_trig + 1):
-#                                       print hex(r.pop(0))
+                for _ in range(2 * N_TRIG + 1):
                     r.pop(0)
                 print "\ttbits: %08x time: %012x" % (ttype, tstamp)
             else:
@@ -100,3 +101,6 @@ while True:
                 sys.exit()
         else:
             break
+
+f.close()
+print("Elapsed time: %f" % (time.time() - start_time))
