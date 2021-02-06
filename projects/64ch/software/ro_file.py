@@ -98,7 +98,7 @@ board.getNode("daq.trig.seq.conf.data").write(0x00010000) # Set offset = 0, bloc
 
 # DAQ initialisation
 
-print "Starting DAQ..."
+print("Starting DAQ...")
 board.getNode("daq.roc.csr.ctrl.en").write(0x1) # Enable readout buffer
 board.getNode("daq.timing.csr.ctrl.zs_blks").write(0x2) # Configure buffers for two ZS blocks
 board.getNode("daq.timing.csr.ctrl.nzs_blks").write(0x2) # Configure buffers for two NZS blocks
