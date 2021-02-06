@@ -1,10 +1,11 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 
 import uhal
 import time
 import sys
 import collections
 import array
+from future import print
 
 def dump():
     b0 = board.getNode("daq.trig.csr.evt_ctr").read() # Event counter
