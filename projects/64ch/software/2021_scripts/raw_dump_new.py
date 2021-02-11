@@ -42,6 +42,7 @@ def get_evt(files):
 					print("Shop! Type: %d w0: %08x w1: %08x  len: %04x" % (rtype, w0, w1, l))
 					if rtype < 2:
 						yield (rtype, l, r[:l])
+						del r[:l]
 					else:
 						print("Bad readout type")
 						really_done = True
