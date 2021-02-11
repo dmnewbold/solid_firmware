@@ -73,7 +73,7 @@ f.close()
 for s_ch in settings:
 
     (i_chan, i_slip, i_tap) = s_ch
-	
+
     board.getNode("csr.ctrl.chan").write(i_chan) # Talk to correct channel
     board.getNode("daq.chan.csr.ctrl.mode").write(0x1) # Set to capture mode
     board.getNode("daq.chan.csr.ctrl.src").write(0x0) # Set source to ADC
@@ -87,8 +87,8 @@ for s_ch in settings:
         board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1) # Increment slip
         board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0)
         board.dispatch()
-        
-    for _ in range(i_tap): 
+
+    for _ in range(i_tap):
         board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
         board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
         board.dispatch()
@@ -98,8 +98,8 @@ for s_ch in settings:
     aslip = board.getNode("daq.chan.csr.stat.slip").read()
     board.dispatch()
     if i_slip != aslip or i_tap != atap:
-    	print "Colossal bullshit has occured"
-    	sys.exit()
+        print "Colossal bullshit has occured"
+        sys.exit()
 
     board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x1) # Capture
     board.getNode("daq.timing.csr.ctrl.chan_cap").write(0x0)
@@ -115,7 +115,7 @@ for s_ch in settings:
             if r & 0x1 == 1:
                 break
                 print "Crap no capture", hex(i_chan), hex(i_slip), hex(i_tap), hex(r), time.clock()
-            
+
         for w in d:
             if int(w) & 0x3fff == patt:
                 c += 1
@@ -128,4 +128,3 @@ for s_ch in settings:
     board.getNode("daq.chan.csr.ctrl.en_buf").write(0x0) # Disable this channel
     board.getNode("daq.chan.csr.ctrl.en_sync").write(0x0) # Disable sync commands
     board.dispatch()
-

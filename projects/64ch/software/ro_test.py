@@ -54,7 +54,7 @@ for i in range(1):
         board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x1)
         board.getNode("daq.timing.csr.ctrl.chan_slip").write(0x0)
 
-    for itap in range(tap): 
+    for itap in range(tap):
         board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1)
         board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
 

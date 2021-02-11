@@ -15,4 +15,3 @@ for hw in hw_list:
 
     hw.getNode("daq.timing.csr.ctrl.en_ext_sync").write(1)
     hw.dispatch()
-
