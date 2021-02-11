@@ -13,7 +13,7 @@ READ_SIZE = 16 * 1024 # Read 64kB at a time
 
 def get_evt(files):
 	
-	r = array.array('L')
+	r = array.array('I')
 	really_done = False
 	
 	for f in files:

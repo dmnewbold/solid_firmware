@@ -61,7 +61,7 @@ while total_data < MAX_DATA:
         total_data += v1
         b = board.getNode("daq.roc.buf.data").readBlock(int(v1)) # Read the buffer contents
         board.dispatch()
-        array.array('L', b).tofile(f)
+        array.array('I', b).tofile(f)
         f.flush()
     
 f.close()
