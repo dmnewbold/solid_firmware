@@ -9,8 +9,7 @@ import time
 
 MAX_EVTS = 1000
 N_TRIG = 4
-#READ_SIZE = 16 * 1024 # Read 64kB at a time
-READ_SIZE = 64 # Read 64kB at a time
+READ_SIZE = 16 * 1024 # Read 64kB at a time
 
 def get_evt(files):
 	
@@ -27,8 +26,6 @@ def get_evt(files):
 				r.fromfile(f, READ_SIZE)
 			except EOFError:
 				done = True
-
-#			print([hex(x) for x in r])
 		
 			while len(r) > 0:
 		
@@ -68,13 +65,61 @@ evts = 0
 max_evts = 100
 start_time = time.time()
 total_data = 0
+done = False
 
 gen = get_evt([sys.argv[1]])
 
-for (rtype, l, d) in gen:
+for (rtype, l, r) in gen:
 
 	print("Got one")
-	if rtype == 1: evts += 1
-	if evts == max_evts: break
+	w1 = r.pop(0)
+	
+	if rtype == 0: # A data block
+		bctr = w1 & 0xffffff
+		tstamp = int(r.pop(0)) | (int(r.pop(0)) << 32)
+		mask = int(r.pop(0)) | (int(r.pop(0)) << 32)
+		c = bin(mask).count('1')
+		print("\tctr: %08x time: %012x mask: %016x chans: %02x" % (bctr, tstamp, mask, c))
+		tcnt = 0
+		for i in range(64):
+			if mask & (1 << i) == 0:
+				continue
+			print("\tchan %02x" % (i))
+			print("\t\t%04x" % 0, end = '')
+			cnt = 0
+			zcnt = 0
+			while True:
+				cnt += 1;
+				g = int(r.pop(0))
+				if g & 0x4000 == 0:
+					zcnt += 1
+				else:
+					zcnt += (g & 0x3fff) + 1
+				if g & 0x8000 == 0:
+					if g & 0x40000000 == 0:
+						zcnt += 1
+					else:
+						zcnt += ((g & 0x3fff0000) >> 16) + 1
+				print(zsfmt(g), end = '')
+				if cnt % 8 == 0:
+					print("\n\t\t%04x" % cnt, end = '')
+				if g & 0x80008000 != 0:
+					print()
+					break;
+			print("\t\tlen: %04x" % cnt, "zlen: %04x" % zcnt)
+			if zcnt != 0x100:
+				print("Bad news: chan %02x zcnt is %04x" % (i, zcnt))
+				done = True
+			tcnt += cnt
+		evts += 1
+		if evts >= MAX_EVTS:
+			done = True
+	else: # A trigger block
+		ttype = w1 & 0x3ffff
+		tstamp = int(r.pop(0)) | (int(r.pop(0)) << 32)
+		for _ in range(2 * N_TRIG + 1): r.pop(0)
+		print("\ttbits: %08x time: %012x" % (ttype, tstamp))
+		
+	if done: break
 
 print("Elapsed time: %f" % (time.time() - start_time))
