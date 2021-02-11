@@ -59,8 +59,8 @@ for i in range(chans):
 # Trigger generators
 
 board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
-board.getNode("daq.rtrig.ctrl.div").write(0x04) # Set random trigger rate to 40MHz / 2^11 = 20kHz
-#board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
+board.getNode("daq.rtrig.ctrl.div").write(0x0a) # Set random trigger rate to 40MHz / 2^11 = 20kHz
+board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
 board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
 
 # Sequencer
@@ -97,8 +97,8 @@ while True:
 
 # Send some triggers
 
-print("Firing triggers")
+#print("Firing triggers")
 
-for i in range(8):
-    board.getNode("daq.trig.csr.ctrl.force").write(0x1)
-    board.dispatch()
+#for i in range(8):
+#    board.getNode("daq.trig.csr.ctrl.force").write(0x1)
+#    board.dispatch()
