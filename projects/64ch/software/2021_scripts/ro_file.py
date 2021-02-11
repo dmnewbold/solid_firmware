@@ -65,4 +65,4 @@ while total_data < MAX_DATA:
         f.flush()
     
 f.close()
-print("%d bytes at %fB/s" % (total_data, float(total_data) / (time.time() - start_time)))
+print("%d bytes at %fB/s" % (total_data * 4, float(total_data * 4) / (time.time() - start_time)))
