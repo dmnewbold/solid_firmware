@@ -69,7 +69,7 @@ gen = get_evt([sys.argv[1]])
 for (rtype, l, d) in gen:
 
 	print("Got one")
-	if rtype = 1: evts += 1
+	if rtype == 1: evts += 1
 	if evts == max_evts: break
 
 print("Elapsed time: %f" % (time.time() - start_time))
