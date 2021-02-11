@@ -83,7 +83,6 @@ for i in range(chans):
 board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
 board.getNode("daq.rtrig.ctrl.div").write(0x04) # Set random trigger rate to 40MHz / 2^11 = 20kHz
 #board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
-#board.getNode("daq.rtrig.ctrl.en").write(0x0) # Enable random trigger generator
 board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
 
 # Sequencer
@@ -145,9 +144,9 @@ while total_data < max_data:
 		p.append(v1)
 		av_sz = sum(p) / len(p)
 		pval = pval * av_sz / ptarget
+		if pval > pmax: pval = pmax
 		print("delay now %fs" % pval)
-		if v1 != 0:
-			break
+		if v1 != 0: break
 
         print("Reading out %dB" % (v1))
 	total_data += v1
