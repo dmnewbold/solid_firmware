@@ -20,7 +20,7 @@ def get_evt(files):
 		f = open(sys.argv[1], "rb")
 		done = False
 
-		while not done:
+		while not done or really_done:
 
 			try:
 				r.fromfile(f, READ_SIZE)
@@ -32,6 +32,7 @@ def get_evt(files):
 				m = int(r[0])
 				if (m >> 24) != 0xaa:
 					print("Bad event header")
+					print(r)
 					really_done = True
 					break
 				l = m & 0xffff
