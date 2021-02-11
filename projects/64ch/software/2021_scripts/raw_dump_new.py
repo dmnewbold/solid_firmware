@@ -18,36 +18,36 @@ def get_evt(files):
 	
 	for f in files:
 		f = open(sys.argv[1], "rb")
-		done = false
+		done = False
 
 		while not done:
-	
-		try:
-			r.fromfile(f, READ_SIZE)
-		except EOFError:
-			done = True
-	
-		while len(r) > 0:
-	
-			m = int(r[0])
-			if (m >> 24) != 0xaa:
-				print("Bad event header")
-				really_done = True
-				break
-			l = m & 0xffff
-			if len(r) >= l:
-				w0 = r.pop(0)
-				w1 = r.pop(0)
-				rtype = (w1 >> 28)
-				print("Shop! Type: %d w0: %08x w1: %08x  len: %04x" % (rtype, w0, w1, l))
-				if rtype < 2:
-					yield (rtype, l, r[:l])
-				else:
-					print("Bad readout type")
+
+			try:
+				r.fromfile(f, READ_SIZE)
+			except EOFError:
+				done = True
+		
+			while len(r) > 0:
+		
+				m = int(r[0])
+				if (m >> 24) != 0xaa:
+					print("Bad event header")
 					really_done = True
 					break
-			else:
-				break
+				l = m & 0xffff
+				if len(r) >= l:
+					w0 = r.pop(0)
+					w1 = r.pop(0)
+					rtype = (w1 >> 28)
+					print("Shop! Type: %d w0: %08x w1: %08x  len: %04x" % (rtype, w0, w1, l))
+					if rtype < 2:
+						yield (rtype, l, r[:l])
+					else:
+						print("Bad readout type")
+						really_done = True
+						break
+				else:
+					break
 		
 		f.close()
 		if really_done: break
