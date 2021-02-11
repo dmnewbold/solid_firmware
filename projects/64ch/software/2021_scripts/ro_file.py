@@ -136,7 +136,6 @@ f = open(sys.argv[2], "wb")
 start_time = time.time()
 
 while total_data < max_data:
-<<<<<<< HEAD:projects/64ch/software/ro_file.py
 	
 	while True:
 		time.sleep(pval)
@@ -145,10 +144,7 @@ while total_data < max_data:
 		p.pop(0)
 		p.append(v1)
 		av_sz = sum(p) / len(p)
-		if av_sz < ptarget:
-			if pval < pmax: pval = pval * 2;
-		else:
-			pval = pval / 2
+		pval = pval * av_sz / ptarget
 		print("delay now %fs" % pval)
 		if v1 != 0:
 			break
@@ -160,28 +156,5 @@ while total_data < max_data:
 	array.array('L', b).tofile(f)
         f.flush()
     
-=======
-
-    while True:
-        time.sleep(pval)
-        v1 = board.getNode("daq.roc.buf.count").read() # Get the buffer data count
-        board.dispatch()
-        p.pop(0)
-        p.append(v1)
-        av_sz = sum(p) / len(p)
-        if av_sz < ptarget:
-            if pval < pmax: pval = pval * 2;
-        else:
-            pval = pval / 2
-        print("delay now %fs" % pval)
-        if v1 != 0:
-            break
-
-    total_data += v1
-    b = board.getNode("daq.roc.buf.data").readBlock(int(v1)) # Read the buffer contents
-    board.dispatch()
-    array.array('L', b).tofile(f)
-
->>>>>>> 83567767fe80b699d45cba4bc598c09a5df99a52:projects/64ch/software/2021_scripts/ro_file.py
 f.close()
 print("%d bytes at %fkB/s" % (total_data, float(total_data) / (time.time() - start_time)))
