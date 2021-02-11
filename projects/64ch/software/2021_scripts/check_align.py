@@ -61,15 +61,10 @@ def zsfmt(i):
     return "%s%s%04x %s%s%04x" % (zsdot(i & 0x8000, 'E'), zsdot(i & 0x4000, 'Z'), i & 0x3fff,
                                   zsdot(i & 0x80000000, 'E'), zsdot(i & 0x40000000, 'Z'), (i & 0x3fff0000) >> 16)
 
-evts = 0
-start_time = time.time()
-done = False
-
-gen = get_evt([sys.argv[1]])
+gen = get_evt(sys.argv[1:])
 
 for (rtype, l, r) in gen:
 
-	print("Got one")
 	w1 = r.pop(0)
 	
 	if rtype == 0: # A data block
@@ -82,42 +77,6 @@ for (rtype, l, r) in gen:
 		for i in range(64):
 			if mask & (1 << i) == 0:
 				continue
-			print("\tchan %02x" % (i))
-			print("\t\t%04x" % 0, end = '')
-			cnt = 0
-			zcnt = 0
-			while True:
-				cnt += 1;
-				g = int(r.pop(0))
-				if g & 0x4000 == 0:
-					zcnt += 1
-				else:
-					zcnt += (g & 0x3fff) + 1
-				if g & 0x8000 == 0:
-					if g & 0x40000000 == 0:
-						zcnt += 1
-					else:
-						zcnt += ((g & 0x3fff0000) >> 16) + 1
-				print(zsfmt(g), end = '')
-				if cnt % 8 == 0:
-					print("\n\t\t%04x" % cnt, end = '')
-				if g & 0x80008000 != 0:
-					print()
-					break;
-			print("\t\tlen: %04x" % cnt, "zlen: %04x" % zcnt)
-			if zcnt != 0x100:
-				print("Bad news: chan %02x zcnt is %04x" % (i, zcnt))
-				done = True
-			tcnt += cnt
-		evts += 1
-		if evts >= MAX_EVTS:
-			done = True
-	else: # A trigger block
-		ttype = w1 & 0x3ffff
-		tstamp = int(r.pop(0)) | (int(r.pop(0)) << 32)
-		for _ in range(2 * N_TRIG + 1): r.pop(0)
-		print("\ttbits: %08x time: %012x" % (ttype, tstamp))
-		
-	if done: break
+			print("Chan %02x present")
 
-print("Elapsed time: %f" % (time.time() - start_time))
+
