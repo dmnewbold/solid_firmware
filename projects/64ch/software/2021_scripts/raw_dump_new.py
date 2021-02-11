@@ -9,7 +9,8 @@ import time
 
 MAX_EVTS = 1000
 N_TRIG = 4
-READ_SIZE = 16 * 1024 # Read 64kB at a time
+#READ_SIZE = 16 * 1024 # Read 64kB at a time
+READ_SIZE = 64 # Read 64kB at a time
 
 def get_evt(files):
 	
@@ -26,19 +27,21 @@ def get_evt(files):
 				r.fromfile(f, READ_SIZE)
 			except EOFError:
 				done = True
+
+#			print([hex(x) for x in r])
 		
 			while len(r) > 0:
 		
 				m = int(r[0])
 				if (m >> 24) != 0xaa:
 					print("Bad event header")
-					print(r)
+					print([hex(x) for x in r])
 					really_done = True
 					break
 				l = m & 0xffff
 				if len(r) >= l:
 					w0 = r.pop(0)
-					w1 = r.pop(0)
+					w1 = r[0]
 					rtype = (w1 >> 28)
 					print("Shop! Type: %d w0: %08x w1: %08x  len: %04x" % (rtype, w0, w1, l))
 					if rtype < 2:
