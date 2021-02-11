@@ -53,7 +53,7 @@ while total_data < MAX_DATA:
 		p.pop(0)
 		p.append(v1)
 		av_sz = sum(p) / len(p)
-		pval = pval * av_sz / ptarget
+		pval = pval * ptarget / av_sz
 		if pval > pmax: pval = pmax
 		if v1 != 0: break
 
@@ -65,4 +65,4 @@ while total_data < MAX_DATA:
         f.flush()
     
 f.close()
-print("%d bytes at %fkB/s" % (total_data, float(total_data) / (time.time() - start_time)))
+print("%d bytes at %fB/s" % (total_data, float(total_data) / (time.time() - start_time)))
