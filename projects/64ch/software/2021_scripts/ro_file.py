@@ -49,6 +49,7 @@ while total_data < MAX_DATA:
 
         time.sleep(pval)
         v1 = board.getNode("daq.roc.buf.count").read() # Get the buffer data count
+        v2 = board.getNode("daq.timing.csr.stat.running").read()
         board.dispatch()
         p.pop(0)
         p.append(v1)
@@ -58,7 +59,11 @@ while total_data < MAX_DATA:
         else:
             pval = pval * ptarget / av_sz
         if v1 != 0: break
+        if v2 == 0: break # No data in buffer, and readout stopped
 
+	if v2 == 0:
+		print("Finished")
+		break;
     print("Reading out %dB" % (v1))
     total_data += v1
     b = board.getNode("daq.roc.buf.data").readBlock(int(v1)) # Read the buffer contents
