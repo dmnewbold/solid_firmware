@@ -25,7 +25,7 @@ board.dispatch()
 time.sleep(1)
 
 CHANS = 64
-TAPS = 0
+TAPS = 32
 BLOCKS_PER_TAP = 1
 PAUSE = 0.1
 
