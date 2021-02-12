@@ -35,6 +35,10 @@ for i in range(CHANS):
     board.getNode("daq.chan.zs_thresh").writeBlock(2 * [0]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
     board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
     board.getNode("daq.chan.csr.ctrl.en_sync").write(0x1) # Enable sync commands
+    
+# Triggers
+
+board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
 
 # Sequencer
 
