@@ -32,8 +32,8 @@ PAUSE = 0.1
 for i in range(CHANS):
     print("Doing %d" % (i))
     board.getNode("csr.ctrl.chan").write(i) # Talk to channel
-    board.getNode("daq.chan.csr.ctrl.src").write(0) # Set source to real data
-    board.getNode("daq.chan.zs_thresh").writeBlock(2 * [0]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
+    board.getNode("daq.chan.csr.ctrl.src").write(3) # Set source to real data
+    board.getNode("daq.chan.zs_thresh").writeBlock(2 * [0x2000]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
     board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
     board.getNode("daq.chan.csr.ctrl.en_sync").write(0x1) # Enable sync commands
     
