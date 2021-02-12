@@ -39,9 +39,9 @@ for i in range(CHANS):
     
 # Triggers
 
-board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
-board.getNode("daq.rtrig.ctrl.div").write(0x0a) # Set random trigger rate to 40MHz / 2^11 = 20kHz
-board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
+#board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
+#board.getNode("daq.rtrig.ctrl.div").write(0x0a) # Set random trigger rate to 40MHz / 2^11 = 20kHz
+#board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
 board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
 
 # Sequencer
