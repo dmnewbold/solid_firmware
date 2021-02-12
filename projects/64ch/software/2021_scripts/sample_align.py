@@ -25,11 +25,12 @@ board.dispatch()
 time.sleep(1)
 
 CHANS = 64
-TAPS = 32
+TAPS = 0
 BLOCKS_PER_TAP = 1
 PAUSE = 0.1
 
 for i in range(CHANS):
+	print("Doing %d" % (i))
     board.getNode("csr.ctrl.chan").write(i) # Talk to channel
     board.getNode("daq.chan.csr.ctrl.src").write(0) # Set source to real data
     board.getNode("daq.chan.zs_thresh").writeBlock(2 * [0]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
@@ -38,9 +39,9 @@ for i in range(CHANS):
     
 # Triggers
 
-#board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
-#board.getNode("daq.rtrig.ctrl.div").write(0x0a) # Set random trigger rate to 40MHz / 2^11 = 20kHz
-#board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
+board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
+board.getNode("daq.rtrig.ctrl.div").write(0x0a) # Set random trigger rate to 40MHz / 2^11 = 20kHz
+board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
 board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
 
 # Sequencer
