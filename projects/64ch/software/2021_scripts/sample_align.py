@@ -58,12 +58,19 @@ board.getNode("daq.timing.csr.ctrl.nzs_blks").write(0x2) # Configure buffers for
 board.getNode("daq.timing.csr.ctrl.pipeline_en").write(1) # Enable front-end pipeline
 board.getNode("daq.timing.csr.ctrl.force_sync").write(1) # And... go.
 board.dispatch()
+
 while True:
     b = board.getNode("daq.timing.csr.stat.running").read()
     board.dispatch()
     if b == 1:
         print("Running")
         break
+        
+for i in range(CHANS):
+	board.getNode("csr.ctrl.chan").write(i)
+	v = board.getNode("daq.chan.csr.stat").read()
+	board.dispatch()
+	print("Chan %d: %x" % (i, v))
 
 for i_tap in range(TAPS):
 	for i_blk in range(BLOCKS_PER_TAP):
