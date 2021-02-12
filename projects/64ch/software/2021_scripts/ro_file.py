@@ -63,7 +63,7 @@ while total_data < MAX_DATA:
 
 	if v2 == 0:
 		print("Finished")
-		break;
+		break
     print("Reading out %dB" % (v1))
     total_data += v1
     b = board.getNode("daq.roc.buf.data").readBlock(int(v1)) # Read the buffer contents
