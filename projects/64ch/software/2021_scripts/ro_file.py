@@ -44,27 +44,27 @@ f = open(sys.argv[2], "wb")
 start_time = time.time()
 
 while total_data < MAX_DATA:
-	
-	while True:
-		
-		time.sleep(pval)
-		v1 = board.getNode("daq.roc.buf.count").read() # Get the buffer data count
-		board.dispatch()
-		p.pop(0)
-		p.append(v1)
-		av_sz = sum(p) / len(p)
-		if pval > pmax or av_sz == 0:
-			pval = pmax
-		else:
-			pval = pval * ptarget / av_sz
-		if v1 != 0: break
 
-        print("Reading out %dB" % (v1))
-        total_data += v1
-        b = board.getNode("daq.roc.buf.data").readBlock(int(v1)) # Read the buffer contents
+    while True:
+
+        time.sleep(pval)
+        v1 = board.getNode("daq.roc.buf.count").read() # Get the buffer data count
         board.dispatch()
-        array.array('I', b).tofile(f)
-        f.flush()
-    
+        p.pop(0)
+        p.append(v1)
+        av_sz = sum(p) / len(p)
+        if pval > pmax or av_sz == 0:
+            pval = pmax
+        else:
+            pval = pval * ptarget / av_sz
+        if v1 != 0: break
+
+    print("Reading out %dB" % (v1))
+    total_data += v1
+    b = board.getNode("daq.roc.buf.data").readBlock(int(v1)) # Read the buffer contents
+    board.dispatch()
+    array.array('I', b).tofile(f)
+    f.flush()
+
 f.close()
 print("%d bytes at %fB/s" % (total_data * 4, float(total_data * 4) / (time.time() - start_time)))

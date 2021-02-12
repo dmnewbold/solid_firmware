@@ -56,7 +56,7 @@ sleep(1)
 chans = 64
 srcs = chans * [0x3]
 thresh = chans * [0x2000]
-slip = chans * [0] 
+slip = chans * [0]
 tap = chans * [0]
 
 for i in range(chans):
@@ -75,13 +75,13 @@ for i in range(chans):
     for j in range(tap[i]):
         board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1)
     board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x0)
-    board.dispatch() 
+    board.dispatch()
     v_slip = board.getNode("daq.chan.csr.stat.slip").read()
     v_tap = board.getNode("daq.chan.csr.stat.tap").read()
     board.dispatch()
     if v_slip != slip[i] or v_tap != tap[i]:
-    	print "Bad delay values read back: set %d, %d read %d, %d" % (slip[i], tap[i], v_slip, v_tap)
-    	sys.exit()
+        print "Bad delay values read back: set %d, %d read %d, %d" % (slip[i], tap[i], v_slip, v_tap)
+        sys.exit()
     board.getNode("daq.chan.csr.ctrl.en_sync").write(0)
 
 # Fake data

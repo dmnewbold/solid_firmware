@@ -36,7 +36,7 @@ for i in range(CHANS):
     board.getNode("daq.chan.zs_thresh").writeBlock(2 * [0x2000]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
     board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
     board.getNode("daq.chan.csr.ctrl.en_sync").write(0x1) # Enable sync commands
-    
+
 # Triggers
 
 #board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
@@ -65,18 +65,18 @@ while True:
     if b == 1:
         print("Running")
         break
-        
+
 for i in range(CHANS):
-	board.getNode("csr.ctrl.chan").write(i)
-	v = board.getNode("daq.chan.csr.stat").read()
-	board.dispatch()
-	print("Chan %d: %x" % (i, v))
+    board.getNode("csr.ctrl.chan").write(i)
+    v = board.getNode("daq.chan.csr.stat").read()
+    board.dispatch()
+    print("Chan %d: %x" % (i, v))
 
 for i_tap in range(TAPS):
-	for i_blk in range(BLOCKS_PER_TAP):
-		print("Fire")
-		board.getNode("daq.trig.csr.ctrl.force").write(0x1) # Fire a trigger
-		board.dispatch()
-		time.sleep(PAUSE)
-	board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
-	board.dispatch()
+    for i_blk in range(BLOCKS_PER_TAP):
+        print("Fire")
+        board.getNode("daq.trig.csr.ctrl.force").write(0x1) # Fire a trigger
+        board.dispatch()
+        time.sleep(PAUSE)
+    board.getNode("daq.timing.csr.ctrl.chan_inc").write(0x1) # Increment tap
+    board.dispatch()
