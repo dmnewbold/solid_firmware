@@ -20,7 +20,7 @@ def spi_write(spi, addr, data):
     r = spi.getNode("ctrl").read()
     spi.getClient().dispatch()
     if r & 0x100 != 0:
-        print "SPI write error", hex(addr), hex(data)
+        print("SPI write error", hex(addr), hex(data))
 
 def spi_read(spi, addr):
     spi.getNode("d0").write(0x8000 + (addr << 8)) # Read from addr
@@ -30,7 +30,7 @@ def spi_read(spi, addr):
     r = spi.getNode("ctrl").read()
     spi.getClient().dispatch()
     if r & 0x100 != 0:
-        print "SPI read error", hex(addr)
+        print("SPI read error", hex(addr))
     return d & 0xffff
 
 offsets = [0, 13, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11]
