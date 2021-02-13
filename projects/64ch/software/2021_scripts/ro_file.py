@@ -54,10 +54,10 @@ while total_data < MAX_DATA:
         p.pop(0)
         p.append(v1)
         av_sz = sum(p) / len(p)
-        if pval > pmax or av_sz == 0:
+        if av_sz == 0:
             pval = pmax
         else:
-            pval = pval * ptarget / av_sz
+            pval = min(pval * ptarget / av_sz, pmax)
         print(v1, v2, pval)
         if v1 != 0 or v2 == 0: break
 
