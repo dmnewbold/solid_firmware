@@ -70,15 +70,8 @@ while True:
         print("Running")
         break
 
-for i in range(CHANS):
-    board.getNode("csr.ctrl.chan").write(i)
-    v = board.getNode("daq.chan.csr.stat").read()
-    board.dispatch()
-    print("Chan %d: %x" % (i, v))
-
 for i_tap in range(TAPS):
     for i_blk in range(BLOCKS_PER_TAP):
-        print("Fire")
         board.getNode("daq.trig.csr.ctrl.force").write(0x1) # Fire a trigger
         board.dispatch()
         time.sleep(PAUSE)
