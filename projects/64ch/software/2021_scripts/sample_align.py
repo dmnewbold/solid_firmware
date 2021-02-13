@@ -32,7 +32,6 @@ PAUSE = 0.1
 INVERT = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 
 for i in range(CHANS):
-    print("Doing %d" % (i))
     board.getNode("csr.ctrl.chan").write(i) # Talk to channel
     board.getNode("daq.chan.csr.ctrl.src").write(0) # Set source to real data
     board.getNode("daq.chan.zs_thresh").writeBlock(2 * [0x2000]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
