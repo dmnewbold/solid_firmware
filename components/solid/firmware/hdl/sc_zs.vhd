@@ -50,7 +50,7 @@ begin
 				ctr <= ctr + 1;
 			end if;
 			we <= ((not (z0 and z1)) or f) and ed;
-			if z1 = '1' then
+			if z1 = '1' or f = '1' then
 				q <= di(15) & '1' & sd & (12 - CTR_W downto 0 => '0') & std_logic_vector(ctr);
 			else
 				q <= di;
