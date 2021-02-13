@@ -58,13 +58,12 @@ while total_data < MAX_DATA:
             pval = pmax
         else:
             pval = min(pval * ptarget / av_sz, pmax)
-        print(v1, v2, pval)
         if v1 != 0 or v2 == 0: break
 
     if v2 == 0:
         print("Finished")
         break
-    print("Reading out %dB" % (v1))
+    print("Reading out %dB" % (v1 * 4))
     total_data += v1
     b = board.getNode("daq.roc.buf.data").readBlock(int(v1)) # Read the buffer contents
     board.dispatch()

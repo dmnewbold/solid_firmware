@@ -16,14 +16,6 @@ v = board.getNode("csr.id").read()
 board.dispatch()
 print("Board ID:", hex(v))
 
-board.getNode("daq.timing.csr.ctrl.rst").write(1) # Hold clk40 domain in reset
-board.dispatch()
-
-board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
-board.dispatch()
-
-time.sleep(1)
-
 CHANS = 64
 TAPS = 32
 BLOCKS_PER_TAP = 1
@@ -34,7 +26,7 @@ INVERT = [0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25]
 for i in range(CHANS):
     board.getNode("csr.ctrl.chan").write(i) # Talk to channel
     board.getNode("daq.chan.csr.ctrl.src").write(0) # Set source to real data
-    board.getNode("daq.chan.zs_thresh").writeBlock(2 * [0x2000]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
+    board.getNode("daq.chan.zs_thresh").writeBlock(2 * [0x0]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
     if i in INVERT:
         board.getNode("daq.chan.csr.ctrl.invert").write(0x1) # Invert the data
     board.getNode("daq.chan.csr.ctrl.en_buf").write(0x1) # Enable this channel
