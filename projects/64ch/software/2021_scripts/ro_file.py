@@ -58,7 +58,7 @@ while total_data < MAX_DATA:
             pval = pmax
         else:
             pval = pval * ptarget / av_sz
-        print(v1, v2)
+        print(v1, v2, pval)
         if v1 != 0 or v2 == 0: break
 
     if v2 == 0:
