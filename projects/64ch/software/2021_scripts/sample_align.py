@@ -68,7 +68,7 @@ for i_tap in range(TAPS):
         board.getNode("csr.ctrl.chan").write(i) # Talk to channel
         chstat.append(board.getNode("daq.chan.csr.stat").read())
     board.dispatch()
-    print("Stat:", chstat)
+    print("Stat:", [int(x) for x in chstat])
     for i_blk in range(BLOCKS_PER_TAP):
         board.getNode("daq.trig.csr.ctrl.force").write(0x1) # Fire a trigger
         board.dispatch()
