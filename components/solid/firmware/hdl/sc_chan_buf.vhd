@@ -33,7 +33,8 @@ entity sc_chan_buf is
 		kack: out std_logic;
 		q: out std_logic_vector(31 downto 0); -- output to derand; clk40 dom
 		q_blkend: out std_logic;
-		wen: out std_logic -- derand write enable
+		wen: out std_logic; -- derand write enable
+		zs_err: out std_logic
 	);
 
 end sc_chan_buf;
@@ -49,6 +50,7 @@ architecture rtl of sc_chan_buf is
 	signal pnz, pzw, pzr, zs_first_addr, ctr, max_cont: unsigned(BUF_RADIX - 1 downto 0);
 	signal zs_en_d, nzen_d, wenz, wez, wezu, rez: std_logic;
 	signal zs_run, zs_keep, supp, buf_doom, buf_full_i, p, q_blkend_i: std_logic;
+	signal bcnt: unsigned(7 downto 0);
 	
 begin
 
@@ -207,6 +209,31 @@ begin
 
 	q <= q_zs_d & q_zs_dd;
 	q_blkend <= q_blkend_i;
-	wen <= zs_run and zs_keep and p;		
+	wen <= zs_run and zs_keep and p;
 	
+-- ZS sanity check
+
+	process(clk40)
+	begin
+		if rising_edge(clk40) then
+			if zs_run = '0' then
+				bcnt <= X"00";
+			else
+				if q_zs(14) = '1' then
+					bcnt <= bcnt + unsigned(q_zs(7 downto 0));
+				else
+					bcnt <= bcnt + 1;
+				end if;
+				if q_zs(15) = '1' then
+					bcnt <= X"00";
+					if bcnt /= X"00" then
+						zs_err <= '1';
+					else
+						zs_err <= '0';
+					end if;
+				end if;
+			end if;
+		end if;
+	end process;
+
 end rtl;

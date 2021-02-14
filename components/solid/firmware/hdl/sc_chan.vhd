@@ -74,7 +74,7 @@ architecture rtl of sc_chan is
 	signal blkend, dr_blkend, dr_wen: std_logic;
 	type state_t is (ST_WAIT, ST_RUN, ST_VETO, ST_ERR);
 	signal state: state_t;
-	signal nzs_en_d, dr_empty, enb, enb_d, dr_en_i, veto: std_logic;
+	signal nzs_en_d, dr_empty, enb, enb_d, dr_en_i, veto, zs_err: std_logic;
 	signal state_dec: std_logic_vector(1 downto 0);
 	
 	attribute ASYNC_REG: string;
@@ -124,7 +124,7 @@ begin
 	slip_h <= sync_ctrl(1) and ctrl_en_sync; -- CDC
 	inc <= sync_ctrl(3) and ctrl_en_sync; -- CDC
 	
-	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & "00" & state_dec & dr_warn & dr_full & buf_full & '0'; -- CDC
+	stat(0) <= X"00" & "000" & cntout & std_logic_vector(act_slip) & "00" & state_dec & dr_warn & dr_full & buf_full & zs_err; -- CDC
 
 -- Keep track of slips and taps for debug
 
@@ -271,7 +271,8 @@ begin
 			kack => kack,
 			q => dr_d,
 			q_blkend => dr_blkend,
-			wen => dr_wen
+			wen => dr_wen,
+			zs_err => zs_err
 		);
 
 -- Derandomiser
