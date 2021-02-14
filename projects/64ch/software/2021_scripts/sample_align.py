@@ -61,6 +61,8 @@ while True:
         print("Running")
         break
 
+chstat = []
+
 for i_tap in range(TAPS):
     print("Doing tap %d" % (i_tap))
     for i in range(CHANS):
