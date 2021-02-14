@@ -216,21 +216,21 @@ begin
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
-			if zs_run = '0' then
+			if zs_en = '0' then
 				bcnt <= X"00";
-			else
+			elsif zs_run = '1' then
 				if q_zs(14) = '1' then
 					bcnt <= bcnt + unsigned(q_zs(7 downto 0));
 				else
 					bcnt <= bcnt + 1;
 				end if;
 				bc <= q_zs(15);
-				if bc = '1' then
-					if bcnt /= X"00" then
-						zs_err <= '1';
-					else
-						zs_err <= '0';
-					end if;
+			end if;
+			if bc = '1' then
+				if bcnt /= X"00" then
+					zs_err <= '1';
+				else
+					zs_err <= '0';
 				end if;
 			end if;
 		end if;
