@@ -62,7 +62,7 @@ while True:
         break
 
 for i_tap in range(TAPS):
-	print("Doing tap %d" % (i_tap))
+    print("Doing tap %d" % (i_tap))
     for i in range(CHANS):
         board.getNode("csr.ctrl.chan").write(i) # Talk to channel
         chstat[i] = board.getNode("daq.chan.csr.stat")
