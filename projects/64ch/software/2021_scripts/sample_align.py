@@ -61,13 +61,12 @@ while True:
         print("Running")
         break
 
-chstat = []
-
 for i_tap in range(TAPS):
     print("Doing tap %d" % (i_tap))
+    chstat = []
     for i in range(CHANS):
         board.getNode("csr.ctrl.chan").write(i) # Talk to channel
-        chstat[i] = board.getNode("daq.chan.csr.stat")
+        chstat.append(board.getNode("daq.chan.csr.stat"))
     board.dispatch()
     print("Stat:", chstat)
     for i_blk in range(BLOCKS_PER_TAP):
