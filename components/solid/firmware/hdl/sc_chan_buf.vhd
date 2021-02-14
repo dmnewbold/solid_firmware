@@ -18,12 +18,12 @@ use work.top_decl.all;
 entity sc_chan_buf is
 	port(
 		clk40: in std_logic;
+		rst40: in std_logic;
 		clk80: in std_logic;
 		nzs_blks: in std_logic_vector(3 downto 0); -- number of blocks in NZS buffer
 		buf_rst: in std_logic; -- general reset; clk40 dom
 		d: in std_logic_vector(15 downto 0); -- data in; clk40 dom
 		blkend: in std_logic;
-		nzs_en: in std_logic; -- enable nzs buffer; clk40 dom
 		zs_thresh: in std_logic_vector(13 downto 0); -- ZS threshold; clk40 dom
 		zs_en: in std_logic; -- enable zs buffer; clk40 dom
 		buf_full: out std_logic; -- buffer err flag; clk40 dom
@@ -48,7 +48,7 @@ architecture rtl of sc_chan_buf is
 	signal d_nzs, q_nzs, d_zs, q_zs, q_zs_d, q_zs_dd: std_logic_vector(15 downto 0);
 	signal addra, addrb: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr, zs_first_addr, ctr, max_cont: unsigned(BUF_RADIX - 1 downto 0);
-	signal zsgo, nzen_d, wenz, wez, wezu, rez: std_logic;
+	signal wez, wezu, rez: std_logic;
 	signal zs_run, zs_keep, supp, buf_doom, buf_full_i, p, q_blkend_i, bc: std_logic;
 	signal bcnt: unsigned(7 downto 0);
 	
@@ -57,7 +57,7 @@ begin
 	zs_first_addr <= shift_left(unsigned(std_logic_vector'((BUF_RADIX - 1 downto 4 => '0') & nzs_blks)), BLK_RADIX) + ZS_DEL;
 	max_cont <= ZS_LAST_ADDR - zs_first_addr - MARGIN;
 	
--- NZS / ZS buffer
+-- Buffer RAM
 
 	ram: entity work.sc_dpram
 		generic map(
@@ -89,14 +89,12 @@ begin
 	addra <= std_logic_vector(pnz);
 	addrb <= std_logic_vector(pzw) when c = '1' else std_logic_vector(pzr);
 
--- NZS pointer control
-
-	nzen_d <= nzs_en when rising_edge(clk40);
+-- NZS buffer control; just a simple circular buffer
 	
 	process(clk40)
 	begin
 		if falling_edge(clk40) then
-			if nzen_d = '0' then
+			if rst40 = '0' then
 				pnz <= (others => '0');
 			else
 				if pnz = zs_first_addr - 1 then
@@ -108,12 +106,10 @@ begin
 		end if;
 	end process;
 	
-	wenz <= nzs_en;
 	d_nzs <= blkend & '0' & d(13 downto 0);
 	
 -- Zero suppression
 
-	zsgo <= zs_en when rising_edge(clk40) and q_nzs(15) = '1';
 	supp <= buf_doom and soft;
 
 	zs: entity work.sc_zs
@@ -122,17 +118,17 @@ begin
 		)
 		port map(
 			clk => clk40,
-			en => zsgo,
+			en => zs_en,
 			thresh => zs_thresh,
 			supp => supp,
 			d => q_nzs,
 			q => d_zs,
 			we => wezu
 		);
-		
+
 	wez <= wezu and (soft or not buf_doom);
 
--- ZS pointer control
+-- ZS buffer control
 
 	process(clk40)
 	begin

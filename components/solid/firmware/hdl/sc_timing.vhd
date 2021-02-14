@@ -34,7 +34,6 @@ entity sc_timing is
 		sctr: out std_logic_vector(47 downto 0); -- sample counter
 		chan_sync_ctrl: out std_logic_vector(3 downto 0); -- Timing signals to channels
 		dr_en: out std_logic;
-		nzs_en: out std_logic;
 		zs_en: out std_logic;
 		rand: out std_logic_vector(31 downto 0);
 		nzs_blks: out std_logic_vector(3 downto 0)
@@ -201,7 +200,6 @@ begin
 			nzs_blks => ctrl_nzs_blks,
 			sync => sync,
 			sctr => sctr_i,
-			nzs_en => nzs_en,
 			zs_en => zs_en,
 			dr_en => dr_en_i
 		);

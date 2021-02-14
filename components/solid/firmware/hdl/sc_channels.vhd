@@ -34,7 +34,6 @@ entity sc_channels is
 		sctr: in std_logic_vector(47 downto 0);
 		fake: in std_logic_vector(13 downto 0);
 		nzs_blks: in std_logic_vector(3 downto 0);
-		nzs_en: in std_logic;
 		zs_en: in std_logic;
 		dr_en: in std_logic;
 		keep: in std_logic;
@@ -111,7 +110,6 @@ begin
 				sctr => sctr,
 				fake => fake,
 				nzs_blks => nzs_blks,
-				nzs_en => nzs_en,
 				zs_en => zs_en,
 				dr_en => dr_en,
 				keep => keep,

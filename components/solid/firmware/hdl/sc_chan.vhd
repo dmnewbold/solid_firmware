@@ -37,7 +37,6 @@ entity sc_chan is
 		sctr: in std_logic_vector(47 downto 0);		
 		fake: in std_logic_vector(13 downto 0);
 		nzs_blks: in std_logic_vector(3 downto 0);
-		nzs_en: in std_logic;
 		zs_en: in std_logic;
 		dr_en: in std_logic;
 		keep: in std_logic;
@@ -74,7 +73,7 @@ architecture rtl of sc_chan is
 	signal blkend, dr_blkend, dr_wen: std_logic;
 	type state_t is (ST_WAIT, ST_RUN, ST_VETO, ST_ERR);
 	signal state: state_t;
-	signal nzs_en_d, dr_empty, enb, enb_d, dr_en_i, veto, zs_err: std_logic;
+	signal dr_empty, enb, enb_d, dr_en_i, veto, zs_err: std_logic;
 	signal state_dec: std_logic_vector(1 downto 0);
 	
 	attribute ASYNC_REG: string;
@@ -172,8 +171,6 @@ begin
 		
 -- State machine
 
-	nzs_en_d <= nzs_en when rising_edge(clk40);
-
 	enb <= ctrl_en_buf when rising_edge(clk40); -- CDC, synchroniser for ctrl_en_buf
 	enb_d <= enb when rising_edge(clk40);
 	
@@ -186,7 +183,7 @@ begin
 				case state is
 
 				when ST_WAIT => -- Wait for sync
-					if nzs_en = '1' and nzs_en_d = '0' then
+					if zs_en = '1' then
 						state <= ST_RUN;
 					end if;
 				
@@ -256,12 +253,12 @@ begin
 	buf: entity work.sc_chan_buf
 		port map(
 			clk40 => clk40,
+			rst40 => rst40,
 			clk80 => clk80,
 			nzs_blks => nzs_blks,
 			buf_rst => rst40,
 			d => d_buf,
 			blkend => blkend,	
-			nzs_en => nzs_en,
 			zs_thresh => zs_thresh,
 			zs_en => zs_en,
 			buf_full => buf_full,
@@ -309,7 +306,7 @@ begin
 			clk40 => clk40,
 			rst40 => rst40,
 			mark => blkend,
-			en => nzs_en,
+			en => zs_en,
 			d => d_buf(13 downto 0),
 			trig => trig
 		);
