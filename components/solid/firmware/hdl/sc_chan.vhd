@@ -73,7 +73,7 @@ architecture rtl of sc_chan is
 	signal blkend, dr_blkend, dr_wen: std_logic;
 	type state_t is (ST_WAIT, ST_RUN, ST_VETO, ST_ERR);
 	signal state: state_t;
-	signal dr_empty, enb, enb_d, dr_en_i, veto, zs_err: std_logic;
+	signal dr_empty, enb, enb_d, veto, zs_err: std_logic;
 	signal state_dec: std_logic_vector(1 downto 0);
 	
 	attribute ASYNC_REG: string;
