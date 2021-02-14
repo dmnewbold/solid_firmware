@@ -261,6 +261,7 @@ begin
 			blkend => blkend,	
 			zs_thresh => zs_thresh,
 			zs_en => zs_en,
+			dr_en => dr_en,
 			buf_full => buf_full,
 			veto => veto,
 			soft => ctrl_soft_en,

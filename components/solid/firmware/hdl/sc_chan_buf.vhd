@@ -26,6 +26,7 @@ entity sc_chan_buf is
 		blkend: in std_logic;
 		zs_thresh: in std_logic_vector(13 downto 0); -- ZS threshold; clk40 dom
 		zs_en: in std_logic; -- enable zs buffer; clk40 dom
+		dr_en: in std_logic;
 		buf_full: out std_logic; -- buffer err flag; clk40 dom
 		veto: in std_logic;
 		soft: in std_logic;
@@ -49,7 +50,7 @@ architecture rtl of sc_chan_buf is
 	signal addra, addrb: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr, zs_first_addr, ctr, max_cont: unsigned(BUF_RADIX - 1 downto 0);
 	signal wez, wezu, rez: std_logic;
-	signal zs_run, zs_keep, supp, buf_doom, buf_full_i, p, q_blkend_i, bc: std_logic;
+	signal zs_run, zs_keep, supp, buf_doom, buf_full_i, p, q_blkend_i, bc, rogo: std_logic;
 	signal bcnt: unsigned(7 downto 0);
 	
 begin
@@ -179,15 +180,16 @@ begin
 -- Readout to derand
 
 	kack <= blkend and keep and not veto;
+	rogo <= blkend and dr_en;
 	
 	process(clk40)
 	begin
 		if rising_edge(clk40) then
-			if zs_en = '0' then
+			if dr_en = '0' then
 				zs_run <= '0';
 				p <= '0';
 			else
-				if blkend = '1' then
+				if rogo = '1' then
 					zs_run <= '1';
 					zs_keep <= keep and not veto;
 				elsif p = '1' and q_blkend_i = '1' then
@@ -200,7 +202,7 @@ begin
 		end if;
 	end process;
 	
-	rez <= blkend or (zs_run and not (q_zs_d(15) or (q_zs_dd(15) and p)));
+	rez <= rogo or (zs_run and not (q_zs_d(15) or (q_zs_dd(15) and p)));
 	q_blkend_i <= q_zs_d(15) or q_zs_dd(15);
 
 	q <= q_zs_d & q_zs_dd;
