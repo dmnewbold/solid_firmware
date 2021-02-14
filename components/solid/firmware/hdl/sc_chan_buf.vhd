@@ -48,7 +48,7 @@ architecture rtl of sc_chan_buf is
 	signal d_nzs, q_nzs, d_zs, q_zs, q_zs_d, q_zs_dd: std_logic_vector(15 downto 0);
 	signal addra, addrb: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr, zs_first_addr, ctr, max_cont: unsigned(BUF_RADIX - 1 downto 0);
-	signal zs_en_d, nzen_d, wenz, wez, wezu, rez: std_logic;
+	signal zsgo, nzen_d, wenz, wez, wezu, rez: std_logic;
 	signal zs_run, zs_keep, supp, buf_doom, buf_full_i, p, q_blkend_i, bc: std_logic;
 	signal bcnt: unsigned(7 downto 0);
 	
@@ -113,16 +113,16 @@ begin
 	
 -- Zero suppression
 
-	zs_en_d <= zs_en when rising_edge(clk40);
+	zsgo <= zs_en when rising_edge(clk40) and q_nzs(15) = '1';
 	supp <= buf_doom and soft;
-		
+
 	zs: entity work.sc_zs
 		generic map(
 			CTR_W => BLK_RADIX
 		)
 		port map(
 			clk => clk40,
-			en => zs_en_d,
+			en => zsgo,
 			thresh => zs_thresh,
 			supp => supp,
 			d => q_nzs,
@@ -218,7 +218,7 @@ begin
 		if rising_edge(clk40) then
 			if zs_en = '0' then
 				bcnt <= X"00";
-			elsif zs_run = '1' then
+			elsif rez = '1' then
 				if q_zs(14) = '1' then
 					bcnt <= bcnt + unsigned(q_zs(7 downto 0));
 				else
