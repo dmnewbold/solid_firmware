@@ -66,7 +66,7 @@ for i_tap in range(TAPS):
     chstat = []
     for i in range(CHANS):
         board.getNode("csr.ctrl.chan").write(i) # Talk to channel
-        chstat.append(board.getNode("daq.chan.csr.stat"))
+        chstat.append(board.getNode("daq.chan.csr.stat").read())
     board.dispatch()
     print("Stat:", chstat)
     for i_blk in range(BLOCKS_PER_TAP):
