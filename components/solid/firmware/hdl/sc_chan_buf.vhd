@@ -223,7 +223,7 @@ begin
 					bcnt <= bcnt + unsigned(q_zs(7 downto 0));
 				else
 					bcnt <= bcnt + 1;
-				end if;]
+				end if;
 				bc <= q_zs(15);
 				if bc = '1' then
 					if bcnt /= X"00" then
