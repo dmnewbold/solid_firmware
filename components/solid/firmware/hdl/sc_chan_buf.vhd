@@ -68,11 +68,11 @@ begin
 			clk => clk80,
 			wea => c,
 			da => d_nzs, -- NZS data in on r/e of clk40
-			qa => q_nzs, -- NZS data out on r/e of clk40
+			qa => q_nzs, -- NZS data out on f/e of clk40
 			addra => addra,
 			web => c,
 			db => d_zs, -- ZS data in on r/e of clk40
-			qb => q_zs, -- ZS data out on f/e of clk40
+			qb => q_zs, -- ZS data out on r/e of clk40
 			addrb => addrb
 		);
 
@@ -216,13 +216,13 @@ begin
 		if rising_edge(clk40) then
 			if zs_en = '0' then
 				bcnt <= X"00";
-			elsif rez = '1' then
-				if q_zs(14) = '1' then
-					bcnt <= bcnt + unsigned(q_zs(7 downto 0));
+			elsif wezu = '1' then
+				if d_zs(14) = '1' then
+					bcnt <= bcnt + unsigned(d_zs(7 downto 0));
 				else
 					bcnt <= bcnt + 1;
 				end if;
-				bc <= q_zs(15);
+				bc <= d_zs(15);
 			end if;
 			if bc = '1' then
 				if bcnt /= X"00" then
