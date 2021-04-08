@@ -37,7 +37,6 @@ begin
 		if rising_edge(clk40) then
 			if rst40 = '1' or en = '0' then
 				up <= '0';
-				nzs_en <= '0';
 				zs_en <= '0';
 				dr_en <= '0';
 			else
