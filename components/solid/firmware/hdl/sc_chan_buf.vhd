@@ -94,8 +94,8 @@ begin
 	
 	process(clk40)
 	begin
-		if falling_edge(clk40) then
-			if rst40 = '0' then
+		if rising_edge(clk40) then
+			if rst40 = '1' then
 				pnz <= (others => '0');
 			else
 				if pnz = zs_first_addr - 1 then
