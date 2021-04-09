@@ -187,18 +187,18 @@ begin
 		if rising_edge(clk40) then
 			if dr_en = '0' then
 				zs_run <= '0';
+				p <= '0';
 			else
 				if rogo = '1' then
 					zs_run <= '1';
 					zs_keep <= keep and not veto;
+				elsif q_zs(15) = '1' then
+					zs_run <= '0';
 					p <= '0';
 				else
 					p <= not p;
-					if q_zs(15) = '1' then
-						zs_run <= '0';
-					end if;
-					l <= q_zs(15);
 				end if;
+				l <= q_zs(15);
 			end if;
 			if p = '0' then
 				q(15 downto 0) <= q_zs;
