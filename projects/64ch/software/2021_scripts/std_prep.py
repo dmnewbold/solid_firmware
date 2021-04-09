@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 # This script sets up the board with a standard configuration and starts the DAQ pipeline
+#
+# std_prep.py BOARD_ID channel_count trigger_divisor
 
 from __future__ import print_function
 
@@ -29,9 +31,11 @@ time.sleep(1)
 srcs = 64 * [0x3]
 thresh = 64 * [0x2000]
 
-tap = 0
-slip = 0
-chans = 4
+chans = sys.argv[2]
+rate_div = sys.argv[3]
+
+print("Setting up board %s, %d channels, rate %d Hz" % (sys.argv[1], chans, 40000000 / (2 ^ rate_div))
+
 for i in range(chans):
     board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
     board.getNode("daq.chan.csr.ctrl.src").write(srcs[i]) # Set source to fake data
