@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# This script sets up the ADC chips on the board
+# This script sets up the ADC chips on the board, in test pattern mode
 
 from __future__ import print_function
 

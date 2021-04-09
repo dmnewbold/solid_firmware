@@ -20,14 +20,6 @@ v = board.getNode("csr.id").read()
 board.dispatch()
 print("Board ID:", hex(v))
 
-board.getNode("daq.timing.csr.ctrl.rst").write(1) # Hold clk40 domain in reset
-board.dispatch()
-
-board.getNode("csr.ctrl.soft_rst").write(1) # Reset ipbus registers
-board.dispatch()
-
-time.sleep(1)
-
 srcs = 64 * [0x3]
 thresh = 64 * [0x2000]
 
@@ -63,7 +55,7 @@ for i in range(chans):
 # Trigger generators
 
 board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
-board.getNode("daq.rtrig.ctrl.div").write(0x0a) # Set random trigger rate to 40MHz / 2^11 = 20kHz
+board.getNode("daq.rtrig.ctrl.div").write(rate_div) # Set random trigger rate
 board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
 board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
 
@@ -98,11 +90,3 @@ while True:
     if b == 1:
         print("Running")
         break
-
-# Send some triggers
-
-#print("Firing triggers")
-
-#for i in range(8):
-#    board.getNode("daq.trig.csr.ctrl.force").write(0x1)
-#    board.dispatch()
