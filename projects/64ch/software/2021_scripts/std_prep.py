@@ -52,12 +52,13 @@ for i in range(chans):
 #board.getNode("daq.fake.params.size.level").write(0x2000) # Pulse height
 #board.getNode("daq.fake.params.size.ped").write(0x0) # Pedestal
 
-# Trigger generators
+# Random trigger generator
 
-board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
-board.getNode("daq.rtrig.ctrl.div").write(rate_div) # Set random trigger rate
-board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
-board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
+if rate_div != 0:
+	board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
+	board.getNode("daq.rtrig.ctrl.div").write(rate_div) # Set random trigger rate
+	board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
+	board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
 
 # Sequencer
 
