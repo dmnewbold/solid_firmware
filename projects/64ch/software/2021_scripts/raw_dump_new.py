@@ -71,7 +71,6 @@ gen = get_evt([sys.argv[1]])
 
 for (rtype, l, r) in gen:
 
-    print("Got one")
     w1 = r.pop(0)
 
     if rtype == 0: # A data block

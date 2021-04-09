@@ -29,6 +29,7 @@ rate_div = int(sys.argv[3])
 print("Setting up board %s, %d channels, rate %d Hz" % (sys.argv[1], chans, 40000000 / (2 ^ rate_div)))
 
 for i in range(chans):
+	print("Setting up channel %d" % (i))
     board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
     board.getNode("daq.chan.csr.ctrl.src").write(srcs[i]) # Set source to fake data
     board.getNode("daq.chan.zs_thresh").writeBlock(2 * [thresh[i]]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
