@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#
+# This script parses and prints the content of a recorded readout file
 
 from __future__ import print_function
 

@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#
+# This script is DEPRECATED - do not use
 
 import uhal
 from time import sleep

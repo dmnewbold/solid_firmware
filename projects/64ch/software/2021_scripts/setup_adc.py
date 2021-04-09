@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#
+# This script sets up the ADC chips on the board
 
 from __future__ import print_function
 

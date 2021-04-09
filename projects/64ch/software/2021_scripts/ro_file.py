@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 # The script does the readout loop and writes the data to a file
+#
+# The readout starts when the pipeline is enabled
 
 from __future__ import print_function
 

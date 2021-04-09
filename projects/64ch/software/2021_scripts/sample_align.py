@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#
+# This script configures the board for alignment testing, and fires a few triggers per slip / tap setting for analysis offline
 
 from __future__ import print_function
 

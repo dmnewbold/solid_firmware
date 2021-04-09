@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# This script resets and sets up the board
+# This script sets up the board with a standard configuration and starts the DAQ pipeline
 
 from __future__ import print_function
 

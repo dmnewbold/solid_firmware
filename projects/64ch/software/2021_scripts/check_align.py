@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#
+# This script reads a readout file to check ADC alignment
 
 from __future__ import print_function
 
