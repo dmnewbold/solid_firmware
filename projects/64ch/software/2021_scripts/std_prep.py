@@ -34,7 +34,7 @@ thresh = 64 * [0x2000]
 chans = sys.argv[2]
 rate_div = sys.argv[3]
 
-print("Setting up board %s, %d channels, rate %d Hz" % (sys.argv[1], chans, 40000000 / (2 ^ rate_div))
+print("Setting up board %s, %d channels, rate %d Hz" % (sys.argv[1], chans, 40000000 / (2 ^ rate_div)))
 
 for i in range(chans):
     board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
