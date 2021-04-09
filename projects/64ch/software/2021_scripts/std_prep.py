@@ -31,8 +31,8 @@ time.sleep(1)
 srcs = 64 * [0x3]
 thresh = 64 * [0x2000]
 
-chans = sys.argv[2]
-rate_div = sys.argv[3]
+chans = int(sys.argv[2])
+rate_div = int(sys.argv[3])
 
 print("Setting up board %s, %d channels, rate %d Hz" % (sys.argv[1], chans, 40000000 / (2 ^ rate_div)))
 
