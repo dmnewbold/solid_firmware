@@ -30,7 +30,7 @@ print("Setting up board %s, %d channels, rate %d Hz" % (sys.argv[1], chans, 4000
 
 for i in range(chans):
     print("Setting up channel %d" % (i))
-        board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
+    board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
     board.getNode("daq.chan.csr.ctrl.src").write(srcs[i]) # Set source to fake data
     board.getNode("daq.chan.zs_thresh").writeBlock(2 * [thresh[i]]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
 #    board.getNode("daq.chan.trig_thresh.threshold.thresh").write(0x1000) # Set ctrig 0 threshold
