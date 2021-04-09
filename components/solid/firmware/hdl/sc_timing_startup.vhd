@@ -44,7 +44,7 @@ begin
 					up <= '1';
 				end if;
 				if up = '1' then
-					if unsigned(sctr(3 + BLK_RADIX downto 0)) = unsigned(nzs_blks) + 1 & to_unsigned(ZS_DEL, BLK_RADIX) then
+					if unsigned(sctr(3 + BLK_RADIX downto 0)) = unsigned(nzs_blks) + 1 & to_unsigned(ZS_DEL - 1, BLK_RADIX) then
 						zs_en <= '1';
 					elsif unsigned(sctr(7 + BLK_RADIX downto 0)) = unsigned(nzs_blks) + unsigned(zs_blks) & X"00" then
 						dr_en <= '1';
