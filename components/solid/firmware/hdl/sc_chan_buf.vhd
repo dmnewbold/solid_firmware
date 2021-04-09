@@ -192,11 +192,13 @@ begin
 					zs_run <= '1';
 					zs_keep <= keep and not veto;
 					p <= '0';
-				elsif q_zs(15) = '1' then
-					zs_run <= '0';
+				else
+					p <= not p;
+					if q_zs(15) = '1' then
+						zs_run <= '0';
+					end if;
+					l <= q_zs(15);
 				end if;
-				p <= not p;
-				l <= q_zs(15);
 			end if;
 			if p = '0' then
 				q(15 downto 0) <= q_zs;
