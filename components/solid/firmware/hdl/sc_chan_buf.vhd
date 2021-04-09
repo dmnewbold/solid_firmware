@@ -46,11 +46,11 @@ architecture rtl of sc_chan_buf is
 	constant MARGIN: integer := 4;
 
 	signal c: std_logic;
-	signal d_nzs, q_nzs, d_zs, q_zs, q_zs_d, q_zs_dd: std_logic_vector(15 downto 0);
+	signal d_nzs, q_nzs, d_zs, q_zs: std_logic_vector(15 downto 0);
 	signal addra, addrb: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr, zs_first_addr, ctr, max_cont: unsigned(BUF_RADIX - 1 downto 0);
 	signal wez, wezu, rez: std_logic;
-	signal zs_run, zs_keep, supp, buf_doom, buf_full_i, p, q_blkend_i, bc, rogo: std_logic;
+	signal zs_run, zs_keep, supp, buf_doom, buf_full_i, p, q_blkend_i, bc, rogo, l: std_logic;
 	signal bcnt: unsigned(7 downto 0);
 	
 begin
@@ -187,27 +187,29 @@ begin
 		if rising_edge(clk40) then
 			if dr_en = '0' then
 				zs_run <= '0';
-				p <= '0';
 			else
 				if rogo = '1' then
 					zs_run <= '1';
 					zs_keep <= keep and not veto;
-				elsif p = '1' and q_blkend_i = '1' then
+					p <= '0';
+				elsif q_zs(15) = '1' then
 					zs_run <= '0';
 				end if;
 				p <= not p;
+				l <= q_zs(15);
 			end if;
-			q_zs_d <= q_zs;
-			q_zs_dd <= q_zs_d;
+			if p = '0' then
+				q(15 downto 0) <= q_zs;
+			else
+				q(31 downto 16) <= q_zs;
+			end if;
 		end if;
 	end process;
 	
-	rez <= rogo or (zs_run and not (q_zs_d(15) or (q_zs_dd(15) and p)));
-	q_blkend_i <= q_zs_d(15) or q_zs_dd(15);
+	rez <= rogo or (zs_run and not l);
 
-	q <= q_zs_d & q_zs_dd;
-	q_blkend <= q_blkend_i;
-	wen <= zs_run and zs_keep and p;
+	q_blkend <= l;
+	wen <= zs_run and zs_keep and (p or l);
 	
 -- ZS sanity check
 
