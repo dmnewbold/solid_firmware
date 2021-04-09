@@ -29,8 +29,8 @@ rate_div = int(sys.argv[3])
 print("Setting up board %s, %d channels, rate %d Hz" % (sys.argv[1], chans, 40000000 / (2 ^ rate_div)))
 
 for i in range(chans):
-	print("Setting up channel %d" % (i))
-    board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
+    print("Setting up channel %d" % (i))
+        board.getNode("csr.ctrl.chan").write(i) # Talk to channel 0
     board.getNode("daq.chan.csr.ctrl.src").write(srcs[i]) # Set source to fake data
     board.getNode("daq.chan.zs_thresh").writeBlock(2 * [thresh[i]]) # Set ZS thresholds #0 = 0x2000, #1 = 0x2000
 #    board.getNode("daq.chan.trig_thresh.threshold.thresh").write(0x1000) # Set ctrig 0 threshold
@@ -56,10 +56,10 @@ for i in range(chans):
 # Random trigger generator
 
 if rate_div != 0:
-	board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
-	board.getNode("daq.rtrig.ctrl.div").write(rate_div) # Set random trigger rate
-	board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
-	board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
+    board.getNode("daq.rtrig.ctrl.dist").write(0x1) # Set random trigger generator to interval mode
+    board.getNode("daq.rtrig.ctrl.div").write(rate_div) # Set random trigger rate
+    board.getNode("daq.rtrig.ctrl.en").write(0x1) # Enable random trigger generator
+    board.getNode("daq.trig.loc_mask").write(0x8) # Enable trigger type 3 (random trigger)
 
 # Sequencer
 
