@@ -197,7 +197,7 @@ begin
 				end if;
 				if q_zs(15) = '1' then
 					p <= '0';
-				else
+				elsif rez = '1' then
 					p <= not p;
 				end if;
 				l <= q_zs(15);

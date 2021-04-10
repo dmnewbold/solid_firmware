@@ -62,7 +62,7 @@ while total_data < MAX_DATA:
             pval = min(pval * ptarget / av_sz, pmax)
         if v1 != 0 or v2 == 0: break
 
-    if v2 == 0:
+    if v1 == 0 and v2 == 0:
         print("Finished")
         break
     print("Reading out %dB" % (v1 * 4))
