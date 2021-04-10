@@ -223,7 +223,7 @@ begin
 				zs_err_i <= '0';
 			elsif wezu = '1' then
 				if d_zs(14) = '1' then
-					bcnt <= bcnt + unsigned(d_zs(7 downto 0));
+					bcnt <= bcnt + unsigned(d_zs(7 downto 0)) + 1;
 				else
 					bcnt <= bcnt + 1;
 				end if;
