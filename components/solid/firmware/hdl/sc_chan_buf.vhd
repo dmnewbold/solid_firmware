@@ -211,7 +211,7 @@ begin
 	rez <= rogo or (zs_run and not l);
 
 	q_blkend <= l;
-	wen <= zs_run and zs_keep and (p or l);
+	wen <= zs_keep and ((zs_run and p) or l);
 	
 -- ZS sanity check
 

@@ -1,45 +1,54 @@
 #!/usr/bin/python
+#
+# This script reads the status of various functional blocks
+
+from __future__ import print_function
 
 import uhal
 import time
 import sys
-
+import collections
 
 uhal.setLogLevelTo(uhal.LogLevel.ERROR)
-hw_list = []
-#manager = uhal.ConnectionManager("file://connections.xml")
-#for a in sys.argv[1:]:
-#    hw_list.append(manager.getDevice(a))
+manager = uhal.ConnectionManager("file://connections.xml")
+board = manager.getDevice(sys.argv[1])
+board.getClient().setTimeoutPeriod(10000)
 
-sys.path.append('/home/dsaunder/workspace/go_projects/src/bitbucket.org/solidexperiment/readout-software/scripts')
-import detector_config_tools
-ips = detector_config_tools.currentIPs(False)
-for ip in ips:
-    hw_list.append(uhal.getDevice("board", "ipbusudp-2.0://192.168.235." + str(ip) + ":50001", "file://addrtab/top.xml"))
+v = board.getNode("csr.id").read()
+board.dispatch()
+print("Board ID:", hex(v))
 
+if len(sys.argv) > 2:
+    chans = int(sys.argv[2])
+else:
+    chans = 0
 
-for hw in hw_list:
-    print hw.id()
+v = board.getNode("csr.stat").read()
+board.dispatch()
+print("csr.stat: %x" % (int(v)))
 
-    v = hw.getNode("csr.id").read();
-    vs = hw.getNode("csr.stat").read()
-    vt = hw.getNode("daq.timing.csr.stat").read()
-    hw.dispatch()
-    print "csr.id", hex(v), "csr.stat", hex(vs), "timing.csr.stat", hex(vt)
+v = board.getNode("daq.timing.csr.stat").read()
+board.dispatch()
+print("daq.timing.csr.stat: %x" % (int(v)))
 
-    for i in ["us","ds"]:
-        n = hw.getNode("daq.tlink."+i+"_stat")
-        v_rdy_tx = n.getNode("phy_rdy_tx").read()
-        v_rdy_rx = n.getNode("phy_rdy_rx").read()
-        v_buf_tx = n.getNode("buf_tx").read()
-        v_buf_rx = n.getNode("buf_tx").read()
-        v_tx_empty = n.getNode("tx_empty").read()
-        v_tx_full = n.getNode("tx_full").read()
-        v_rx_empty = n.getNode("rx_empty").read()
-        v_rx_full = n.getNode("rx_full").read()
-        v_rx_up = n.getNode("rx_up").read()
-        v_rx_fail = n.getNode("rx_fail").read()
-        v_rx_cause = n.getNode("rx_cause").read()
-        v_rem_id = n.getNode("remote_id").read()
-        hw.dispatch()
-        print i, "rdy_tx:", v_rdy_tx, "rdy_rx:", v_rdy_rx, "buf_tx:", v_buf_tx, "buf_rx", v_buf_rx, "tx_empty:", v_tx_empty, "tx_full:", v_tx_full, "rx_empty:", v_rx_empty, "rx_full:", v_rx_full, "rx_up:", v_rx_up, "rx_fail:", v_rx_fail, "rx_cause:", v_rx_cause, "remote_id:", v_rem_id
+v = board.getNode("daq.tlink.us_stat").read()
+v2 = board.getNode("daq.tlink.ds_stat").read()
+board.dispatch()
+print("daq.tlink.us_stat: %x" % (int(v)))
+print("daq.tlink.ds_stat: %x" % (int(2)))
+
+v = board.getNode("daq.trig.csr.stat").read()
+v = board.getNode("daq.trig.csr.evt_ctr").read()
+board.dispatch()
+print("daq.trig.csr.stat: %x" % (int(v)))
+print("daq.trig.csr.evt_ctr: %x" % (int(v2)))
+
+v = board.getNode("daq.roc.csr.stat").read()
+board.dispatch()
+print("daq.roc.csr.stat: %x" % (int(v)))
+
+for i in range(chans):
+    board.getNode("csr.ctrl.chan").write(i)
+    v = board.getNode("daq.chan.csr.stat").read()
+    board.dispatch()
+    print("chan %x stat: %x" % (i, int(v)))
