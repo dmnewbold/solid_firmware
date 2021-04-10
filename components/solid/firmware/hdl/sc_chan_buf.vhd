@@ -194,6 +194,8 @@ begin
 					zs_keep <= keep and not veto;
 				elsif q_zs(15) = '1' then
 					zs_run <= '0';
+				end if;
+				if q_zs(15) = '1' then
 					p <= '0';
 				else
 					p <= not p;
