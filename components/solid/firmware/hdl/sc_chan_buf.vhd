@@ -207,13 +207,13 @@ begin
 			else
 				q(31 downto 16) <= q_zs;
 			end if;
+			wenu <= zs_run and (p or q_zs(15));
 		end if;
 	end process;
 	
 	rez <= rogo or (zs_run and not l);
 
 	q_blkend <= l;
-	wenu <= zs_run and (not p or l);
 	wen <= wenu and zs_keep;
 	
 -- ZS sanity check
