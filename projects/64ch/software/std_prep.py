@@ -26,7 +26,7 @@ thresh = 16 * [0x0, 0x1000, 0x2000, 0x3000]
 chans = int(sys.argv[2])
 rate_div = int(sys.argv[3])
 
-print("Setting up board %s, %d channels, rate %f Hz" % (sys.argv[1], chans, 40000000.0 / (2 ^ rate_div)))
+print("Setting up board %s, %d channels, rate %f Hz" % (sys.argv[1], chans, 40000000.0 / (2 ** rate_div)))
 
 for i in range(chans):
     print("Setting up channel %d" % (i))
