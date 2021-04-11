@@ -179,8 +179,8 @@ begin
 
 -- Readout to derand
 
-	kack <= blkend and keep and not veto;
 	rogo <= blkend and dr_en;
+	kack <= rogo and keep and not veto;
 	
 	process(clk40)
 	begin
@@ -190,10 +190,12 @@ begin
 				p <= '0';
 			else
 				if rogo = '1' then
-					zs_run <= '1';
 					zs_keep <= keep and not veto;
-				elsif q_zs(15) = '1' then
+				end if;
+				if q_zs(15) = '1' then
 					zs_run <= '0';
+				elsif rogo = '1' then
+					zs_run <= '1';
 				end if;
 				if q_zs(15) = '1' then
 					p <= '0';
