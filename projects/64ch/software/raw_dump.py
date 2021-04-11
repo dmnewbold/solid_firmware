@@ -60,7 +60,7 @@ def zsdot(i, c):
     return ' ' if i == 0 else c
 
 def zsfmt(i):
-    return "%s%s%04x %s%s%04x" % (zsdot(i & 0x8000, 'E'), zsdot(i & 0x4000, 'Z'), i & 0x3fff,
+    return "%s%s%04x%s%s%04x" % (zsdot(i & 0x8000, 'E'), zsdot(i & 0x4000, 'Z'), i & 0x3fff,
                                   zsdot(i & 0x80000000, 'E'), zsdot(i & 0x40000000, 'Z'), (i & 0x3fff0000) >> 16)
 
 evts = 0
