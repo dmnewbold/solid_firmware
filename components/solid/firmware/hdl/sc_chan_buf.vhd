@@ -213,8 +213,8 @@ begin
 	rez <= rogo or (zs_run and not l);
 
 	q_blkend <= l;
-	wen <= ((zs_run and not p) or l);
-	wenq <= wenu and zs_keep;
+	wenu <= ((zs_run and not p) or l);
+	wen <= wenu and zs_keep;
 	
 -- ZS sanity check
 
