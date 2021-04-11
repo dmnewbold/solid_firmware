@@ -21,7 +21,7 @@ board.dispatch()
 print("Board ID:", hex(v))
 
 srcs = 64 * [0x3]
-thresh = 64 * [0x2000]
+thresh = 32 * [0x0000, 0x2000]
 
 chans = int(sys.argv[2])
 rate_div = int(sys.argv[3])

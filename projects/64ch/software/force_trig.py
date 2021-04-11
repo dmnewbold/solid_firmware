@@ -31,6 +31,6 @@ while True:
 
 print("Firing triggers")
 
-for i in range(8):
+for i in range(1):
     board.getNode("daq.trig.csr.ctrl.force").write(0x1)
     board.dispatch()
