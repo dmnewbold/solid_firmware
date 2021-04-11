@@ -49,7 +49,7 @@ architecture rtl of sc_chan_buf is
 	signal d_nzs, q_nzs, d_zs, q_zs: std_logic_vector(15 downto 0);
 	signal addra, addrb: std_logic_vector(BUF_RADIX - 1 downto 0);
 	signal pnz, pzw, pzr, zs_first_addr, ctr, max_cont: unsigned(BUF_RADIX - 1 downto 0);
-	signal wez, wezu, rez: std_logic;
+	signal wez, wezu, rez, wenu: std_logic;
 	signal zs_run, zs_keep, supp, buf_doom, buf_full_i, p, bc, rogo, l, zs_err_i: std_logic;
 	signal bcnt: unsigned(7 downto 0);
 	
@@ -213,7 +213,8 @@ begin
 	rez <= rogo or (zs_run and not l);
 
 	q_blkend <= l;
-	wen <= zs_keep and ((zs_run and p) or l);
+	wen <= ((zs_run and not p) or l);
+	wenq <= wenu and zs_keep;
 	
 -- ZS sanity check
 
